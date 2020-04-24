@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><!--
+scan：当此属性设置为true时，配置文件如果发生改变，将会被重新加载，默认值为true。
+scanPeriod：设置监测配置文件是否有修改的时间间隔，如果没有给出时间单位，默认单位是毫秒当scan为true时，此属性生效。默认的时间间隔为1分钟。
+debug：当此属性设置为true时，将打印出logback内部日志信息，实时查看logback运行状态。默认值为false。
+-->
+<configuration scan="false" scanPeriod="60 seconds" debug="false">
+    <!-- 日志开头不会显示logback自身的内部状态日志 -->
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+    <!-- ch.qos.logback.core.ConsoleAppender 表示控制台输出 -->
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <!--
+        日志输出格式：
+			%d表示日期时间，
+			%thread表示线程名，
+			%-5level：级别从左显示5个字符宽度
+			%logger{50} 表示logger名字最长50个字符，否则按照句点分割。 
+			%msg：日志消息，
+			%n是换行符
+        -->
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %green(%-5level) %cyan([%thread])  %-35.35logger{36} : %msg%n</pattern>
+        </layout>
+    </appender>
+    <!-- 
+    root与logger是父子关系，没有特别定义则默认为root，任何一个类只会和一个logger对应，
+    要么是定义的logger，要么是root，判断的关键在于找到这个logger，然后判断这个logger的appender和level。 
+    -->
+    <root level="info">
+        <appender-ref ref="stdout" />
+        <!--<appender-ref ref="appLogAppender" />-->
+    </root>
+</configuration> 
