@@ -1,6 +1,6 @@
 package com.sym;
 
-import com.sym.algorithm.snowFlake.SnowFlake;
+import com.sym.algorithm.snowflake.SymSnowFlake;
 import org.junit.Test;
 
 import java.util.HashSet;
@@ -90,10 +90,10 @@ public class SnowFlakeTest {
      */
     @Test
     public void testFour(){
-        SnowFlake snowFlake = new SnowFlake(0,0);
+        SymSnowFlake symSnowFlake = new SymSnowFlake(0,0);
         Set<Long> set = new HashSet<>(1000);
         for( int i=0;i<1000;i++ ){
-            long id = snowFlake.nextID();
+            long id = symSnowFlake.nextID();
             if( set.contains( id ) ){
                 throw new RuntimeException("代码有bug，生成重复ID了,id="+id);
             }else{
@@ -109,14 +109,14 @@ public class SnowFlakeTest {
     @Test
     public void testFive() throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(3);
-        SnowFlake snowFlake = new SnowFlake(05,0);
+        SymSnowFlake symSnowFlake = new SymSnowFlake(05,0);
         Set<Long> set = new HashSet<>(3000);
         for( int i=1;i<4;i++ ){
             final int idx = i;
             new Thread(()->{
                 try{
                     for( int j=0;j<1000;j++ ){
-                        long id = snowFlake.nextID();
+                        long id = symSnowFlake.nextID();
                         if( set.contains( id ) ){
                             throw new RuntimeException("多线程环境下，生成重复ID了,id="+id+"，thread="+Thread.currentThread().getName());
                         }else{

@@ -1,7 +1,5 @@
 package com.sym.algorithm.question.group1;
 
-import com.sym.util.ArrayPrintUtil;
-
 import java.util.ArrayList;
 import java.util.List;
 

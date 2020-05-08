@@ -4,11 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.sym</groupId>
-    <artifactId>datastruct</artifactId>
+    <artifactId>datastruct_algorithm</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <name>Java数据结构与算法</name>
-    <description>常用的数据结构和算法</description>
+    <description>java描述的数据结构和算法基础</description>
 
     <dependencies>
         <dependency>
