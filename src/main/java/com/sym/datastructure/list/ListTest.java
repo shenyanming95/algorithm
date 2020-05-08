@@ -1,8 +1,8 @@
 package com.sym.datastructure.list;
 
 import com.sym.datastructure.list.array.SymArrayList;
-import com.sym.datastructure.list.linked.SingleLinkedList;
 import com.sym.datastructure.list.linked.DoublyLinkedList;
+import com.sym.datastructure.list.linked.SingleLinkedList;
 import org.junit.Test;
 
 import java.util.Random;

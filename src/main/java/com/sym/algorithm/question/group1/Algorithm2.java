@@ -1,5 +1,7 @@
 package com.sym.algorithm.question.group1;
 
+import com.sym.util.SymArrayUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +64,6 @@ public class Algorithm2 {
         for (int i = 0, size = list.size(); i < size; i++) {
             result[i] = list.get(i);
         }
-        ArrayPrintUtil.print(result);
+        SymArrayUtil.print(result);
     }
 }

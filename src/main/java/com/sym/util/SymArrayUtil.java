@@ -32,13 +32,13 @@ public class SymArrayUtil {
     /**
      * 打印二维数组
      */
-    public static <T> void print(T[][] array) {
+    public static void print(int[][] array) {
         if (null == array || array.length == 0) {
             return;
         }
-        for (T[] internalArray : array) {
-            for (T data : internalArray) {
-                System.out.printf("%s\t", data);
+        for (int[] internalArray : array) {
+            for (int data : internalArray) {
+                System.out.printf("%d\t", data);
             }
             System.out.println();
         }

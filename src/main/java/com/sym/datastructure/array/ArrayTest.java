@@ -14,7 +14,7 @@ public class ArrayTest {
     @Test
     public void testOne() {
         // 打印一维数组
-        Integer[] array = new Integer[]{12, 3, 43543, 534, 67};
+        int[] array = new int[]{12, 3, 43543, 534, 67};
         SymArrayUtil.print(array);
     }
 
