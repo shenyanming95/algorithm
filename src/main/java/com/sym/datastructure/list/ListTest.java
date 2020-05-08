@@ -22,7 +22,8 @@ public class ListTest {
     public void testOrderTable() {
         Random r = new Random();
         System.out.println("===================测试顺序表=================");
-        SymArrayList<Integer> list = new SymArrayList<>(8);
+        // 创建容量为3的集合, 向里面插入5个数据
+        SymArrayList<Integer> list = new SymArrayList<>(3);
         for (int i = 0; i < 5; i++) {
             // 往数据表添加数据
             list.add(r.nextInt(100));
