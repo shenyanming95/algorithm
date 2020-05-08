@@ -1,5 +1,7 @@
 package com.sym.algorithm.sort;
-import static com.sym.util.ArraySortUtil.*;
+
+import com.sym.util.SymArrayUtil;
+
 /**
  * 插入排序
  * 
@@ -9,16 +11,14 @@ import static com.sym.util.ArraySortUtil.*;
  * 第三次循环：取到下标为3的元素，与其左边元素(下标为2,1,0)依次比较...若大于下标为2的元素则结束第三次循环，若小于则互换他两的位置，比较下标为2和1的元素大小,...依次类推
  * ...
  * 第n-1次循环，取到下标为(n-2,n-3,...,0)的元素，依次比较...
- * 
- * 
- * @author user
+ *
+ * @author ym.shen
  *
  */
 public class InsertSort {
 	
 	/**
 	 * 排序
-	 * @param arr
 	 */
 	public static void sort(int[] arr){
 		int start;
@@ -43,12 +43,12 @@ public class InsertSort {
 		int[] arr = {50,45,120,5,4551,12,454,502,16,3,232};
 		
 		System.out.println("排序前...");
-		printArr(arr);
+		SymArrayUtil.print(arr);
 		
 		sort(arr);
 		
 		System.out.println("排序后...");
-		printArr(arr);
+		SymArrayUtil.print(arr);
 	}
 
 }

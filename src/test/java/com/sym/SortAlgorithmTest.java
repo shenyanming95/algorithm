@@ -4,12 +4,12 @@ import com.sym.algorithm.sort.BubbleSort;
 import com.sym.algorithm.sort.InsertSort;
 import com.sym.algorithm.sort.QuickSort;
 import com.sym.algorithm.sort.SelectSort;
+import com.sym.util.SymArrayUtil;
 import com.sym.util.TimeUtil;
 import org.junit.Test;
 
 import java.util.Arrays;
 
-import static com.sym.util.ArraySortUtil.getRandomArray;
 
 /**
  * 比较各排序算法耗费的时间
@@ -21,7 +21,7 @@ public class SortAlgorithmTest {
     @Test
     public void test() {
         // 待排序数组
-        int[] arr1 = getRandomArray(12580);
+        int[] arr1 = SymArrayUtil.getRandomArray(12580);
         int[] arr2 = Arrays.copyOf(arr1, arr1.length);
         int[] arr3 = Arrays.copyOf(arr1, arr1.length);
         int[] arr4 = Arrays.copyOf(arr1, arr1.length);
