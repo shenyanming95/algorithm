@@ -77,15 +77,14 @@ public class DoublyLinkedList<T> implements IList<T> {
             // 若链表为空，则当前结点作为首结点
             // 并且将尾节点指向它
             head.setNext(dataNode);
-            tail = dataNode;
         } else {
             // 若链表不为空，则获取链表的尾结点
             Node<T> temp = tail;
             // 设置新的尾结点
             temp.setNext(dataNode);
             dataNode.setPrev(temp);
-            tail = dataNode;
         }
+        tail = dataNode;
         length++;
     }
 
@@ -155,6 +154,7 @@ public class DoublyLinkedList<T> implements IList<T> {
     }
 
     @Override
+    @SuppressWarnings("unChecked")
     public T get(int i) {
 
         if (i < 0 || i > length) {
@@ -173,6 +173,9 @@ public class DoublyLinkedList<T> implements IList<T> {
             p = p.getNext();
             j++;
         }
+        if(p == null){
+            return null;
+        }
         return (T) p.getData();
     }
 
@@ -180,7 +183,7 @@ public class DoublyLinkedList<T> implements IList<T> {
     public int indexOf(T o) {
         int j = 0;
         // 首结点
-        Node p = head.getNext();
+        Node<T> p = head.getNext();
         while (p != null && !p.getData().equals(o)) {
             p = p.getNext();
             j++;
@@ -204,7 +207,8 @@ public class DoublyLinkedList<T> implements IList<T> {
 
     @Override
     public void display() {
-        Node p = head.getNext();//取到首结点
+        //取到首结点
+        Node<T> p = head.getNext();
         while (p != null) {
             System.out.print(p.getData() + " ");
             p = p.getNext();

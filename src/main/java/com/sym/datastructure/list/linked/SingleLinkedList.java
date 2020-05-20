@@ -87,12 +87,11 @@ public class SingleLinkedList<T> implements IList<T> {
          */
         if (i == index) {
             // 插入到链表尾巴，此时temp就是尾节点
-            temp.setNext(newNode);
         } else {
             // 插入到链表中间，此时temp就是待插入位置的上一个结点
             newNode.setNext(temp.getNext());
-            temp.setNext(newNode);
         }
+        temp.setNext(newNode);
     }
 
     @Override
@@ -102,7 +101,9 @@ public class SingleLinkedList<T> implements IList<T> {
 
     @Override
     public void delete(int index) {
-        if (index < 0 || isEmpty()) throw new IllegalArgumentException("数组下标位置有误：" + index);
+        if (index < 0 || isEmpty()) {
+            throw new IllegalArgumentException("数组下标位置有误：" + index);
+        }
         int i = 0;
         Node<T> temp = head;
         while (null != temp && i < index) {
