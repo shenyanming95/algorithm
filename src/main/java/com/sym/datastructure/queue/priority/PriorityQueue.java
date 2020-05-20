@@ -80,8 +80,9 @@ public class PriorityQueue implements IQueue {
      */
     @Override
     public Object peek() {
-        if (front == null)
+        if (front == null){
             return null;
+        }
         return front.getData();
     }
 
@@ -127,8 +128,9 @@ public class PriorityQueue implements IQueue {
      */
     @Override
     public Object poll() {
-        if (front == null)
+        if (front == null){
             return null;
+        }
         Node p = front;
         front = p.getNext();
         return p.getData();
@@ -139,9 +141,9 @@ public class PriorityQueue implements IQueue {
      */
     @Override
     public void display() {
-        if (front == null)
+        if (front == null){
             System.out.println("队列为空");
-        else {
+        } else {
             StringBuilder s = new StringBuilder();
             Node p = front;
             while (p != null) {

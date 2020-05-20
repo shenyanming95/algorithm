@@ -84,8 +84,9 @@ public class LinkedQueue implements IQueue {
      */
     @Override
     public Object peek() {
-        if (front == null)
+        if (front == null){
             return null;
+        }
         return front.getData();
     }
 
