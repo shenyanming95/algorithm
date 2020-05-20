@@ -24,14 +24,18 @@ public class SparseArray {
      * 将一个整形数组转换为对应的稀疏数组
      */
     public static int[][] toSparseArray(int[][] srcArray) {
-        if (null == srcArray || srcArray.length == 0) return null;
+        if (null == srcArray || srcArray.length == 0) {
+            return null;
+        }
         // 先取原数组的行数、列数和有效值数 内部
         int srcRows = srcArray.length;
         int srcColumns = srcArray[0].length;
         int validValues = 0;
         for (int[] internalArray : srcArray) {
             for (int i : internalArray) {
-                if (0 != i) validValues++;
+                if (0 != i) {
+                    validValues++;
+                }
             }
         }
         // 创建稀疏数组的结构，并且设置它的首行数据
@@ -65,7 +69,9 @@ public class SparseArray {
      * 将稀疏数组还原成原整型数组
      */
     public static int[][] fromSparseArray(int[][] sparseArray) {
-        if (null == sparseArray || sparseArray.length == 0) return null;
+        if (null == sparseArray || sparseArray.length == 0) {
+            return null;
+        }
         // 根据稀疏数组首行，先构建原数组模型
         int rows = sparseArray[0][0];
         int columns = sparseArray[0][1];

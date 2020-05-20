@@ -4,7 +4,10 @@ import com.sym.util.SymArrayUtil;
 import org.junit.Test;
 
 /**
- * Created by shenYm on 2019/9/3.
+ * 数组测试
+ *
+ * @author shenYm
+ * @date 2019/9/3
  */
 public class ArrayTest {
 
