@@ -2,6 +2,7 @@
 # Intellij
 ######################
 .idea/
+target/
 *.iml
 *.iws
 *.ipr
@@ -30,7 +31,6 @@
 *build/
 *out/
 *classes/
-*target/
 
 ######################
 # Gradle
@@ -65,3 +65,5 @@ flyway/jars/*.jar
 # Configurations
 ######################
 database.properties
+target/generated-sources/
+target/generated-test-sources/
