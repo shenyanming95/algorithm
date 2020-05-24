@@ -1,7 +1,5 @@
 package com.sym.datastructure.queue.array;
 
-import com.sym.datastructure.queue.IQueue;
-
 /**
  * 顺序队列,底层还是以数组来储存元素,但是为了防止假溢出,逻辑上处理成循环队列（可以通过取模实现）
  * front 表示队首,指向队列的首元素
@@ -15,7 +13,8 @@ import com.sym.datastructure.queue.IQueue;
  * @author ym.shen
  * @see  CircleArrayQueueV2
  */
-public class CircleArrayQueue implements IQueue {
+@SuppressWarnings("unchecked")
+public class CircleArrayQueue<E> implements IArrayQueue<E> {
 
     /**
      * 底层数组,保存队列的元素
@@ -55,6 +54,7 @@ public class CircleArrayQueue implements IQueue {
         return front == rear;
     }
 
+    @Override
     public boolean isFull() {
         return front == (rear + 1) % maxLength;
     }
@@ -66,45 +66,44 @@ public class CircleArrayQueue implements IQueue {
     }
 
     @Override
-    public Object peek() {
+    public E peek() {
         if (isEmpty()) {
             return null;
         } else {
-            return elements[front];
+            return (E)elements[front];
         }
     }
 
     @Override
-    public void offer(Object o) {
+    public void offer(E e) {
         if (isFull()) {
             throw new IllegalArgumentException("queue is full");
         }
-        elements[rear] = o;
+        elements[rear] = e;
         rear = (rear + 1) % elements.length;
     }
 
     @Override
-    public Object poll() {
+    public E poll() {
         if (isEmpty()) {
             throw new IllegalArgumentException("queue is null");
         }
         Object t = elements[front];
         front = (front + 1) % elements.length;
-        return t;
+        return (E)t;
     }
 
     @Override
-    public void display() {
+    public String toString() {
         if (isEmpty()) {
-            System.out.println("[]");
-            return;
+            return "[]";
         }
-        System.out.print("[");
+        StringBuilder sb = new StringBuilder("[");
         int index = front;
         for (int i = 0, len = (rear - front + maxLength) % maxLength; i < len; i++) {
-            System.out.print(elements[index] + (i == len - 1 ? "" : ","));
+            sb.append(elements[index]).append(i == len - 1 ? "" : ",");
             index = (index + 1) % maxLength;
         }
-        System.out.println("]");
+        return sb.append("]").toString();
     }
 }

@@ -15,7 +15,10 @@ import com.sym.datastructure.queue.IQueue;
  * @author ym.shen
  * @see  CircleArrayQueue
  */
-public class CircleArrayQueueV2 implements IQueue {
+@SuppressWarnings("unchecked")
+public class CircleArrayQueueV2<E> implements IArrayQueue<E> {
+
+    private final static int DEFAULT_CAPACITY = 10;
 
     private Object[] elements;
     private int concurrentSize;
@@ -24,7 +27,7 @@ public class CircleArrayQueueV2 implements IQueue {
     private int maxLength;
 
     public CircleArrayQueueV2() {
-        this(10);
+        this(DEFAULT_CAPACITY);
     }
 
     public CircleArrayQueueV2(int capacity) {
@@ -43,6 +46,7 @@ public class CircleArrayQueueV2 implements IQueue {
         return concurrentSize == 0;
     }
 
+    @Override
     public boolean isFull() {
         return front == rear && concurrentSize > 0;
     }
@@ -53,21 +57,21 @@ public class CircleArrayQueueV2 implements IQueue {
     }
 
     @Override
-    public Object peek() {
+    public E peek() {
         if (front == rear && concurrentSize == 0) {
             throw new IllegalArgumentException("queue is null");
         }
-        return elements[front];
+        return (E)elements[front];
     }
 
     @Override
-    public void offer(Object o) {
+    public void offer(E e) {
         //首先判断队列是否满了
         if (isFull()) {
             throw new IllegalArgumentException("queue is full");
         }
         // 将新元素放在队尾指标rear指向的位置
-        elements[rear] = o;
+        elements[rear] = e;
         // 然后将队尾指标加1取模（这样才能保证队列是循环队列）
         rear = (rear + 1) % maxLength;
         // 当前元素指标累加1
@@ -75,7 +79,7 @@ public class CircleArrayQueueV2 implements IQueue {
     }
 
     @Override
-    public Object poll() {
+    public E poll() {
         // 首先判断队列是否为空
         if (isEmpty()) {
             throw new IllegalArgumentException("queue is null");
@@ -86,21 +90,20 @@ public class CircleArrayQueueV2 implements IQueue {
         front = (front + 1) % maxLength;
         // 当前元素指标减1
         concurrentSize--;
-        return o;
+        return (E)o;
     }
 
     @Override
-    public void display() {
+    public String toString() {
         if (isEmpty()) {
-            System.out.println("[]");
-            return;
+            return "[]";
         }
-        System.out.print("[");
+        StringBuilder sb = new StringBuilder("[");
         int index = front;
         for (int i = 0; i < concurrentSize; i++) {
-            System.out.print(elements[index] + (i == concurrentSize - 1 ? "" : ","));
+            sb.append(elements[index]).append(i == concurrentSize - 1 ? "" : ",");
             index = (index + 1) % maxLength;
         }
-        System.out.println("]");
+        return sb.append("]").toString();
     }
 }

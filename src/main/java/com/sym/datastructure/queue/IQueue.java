@@ -1,10 +1,9 @@
 package com.sym.datastructure.queue;
 
 /**
- *
  * 队列接口
  */
-public interface IQueue {
+public interface IQueue<E> {
 
 	/**
 	 * 队列置空
@@ -27,23 +26,18 @@ public interface IQueue {
 	 * 获取队首元素,不会执行出队操作
 	 * @return 队首元素
 	 */
-	Object peek();
+	E peek();
 
 	/**
 	 * 入队操作
-	 * @param o 数据
+	 * @param e 数据
 	 */
-	void offer(Object o);
+	void offer(E e);
 
 	/**
 	 * 出队操作
 	 * @return 队首元素
 	 */
-	Object poll();
-
-	/**
-	 * 按队首→队尾顺序遍历队列
-	 */
-	void display();
+	E poll();
 
 }
