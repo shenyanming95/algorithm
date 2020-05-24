@@ -1,7 +1,7 @@
 package com.sym.datastructure.stack;
 
-import com.sym.datastructure.stack.array.SymArrayStack;
-import com.sym.datastructure.stack.linked.SymLinkedStack;
+import com.sym.datastructure.stack.array.ArrayStack;
+import com.sym.datastructure.stack.linked.LinkedStack;
 import org.junit.Test;
 
 /**
@@ -17,7 +17,7 @@ public class StackTest {
      */
     @Test
     public void arrayStackTest() {
-        IStack<Integer> stack = new SymArrayStack<>();
+        IStack<Integer> stack = new ArrayStack<>();
         System.out.println("==============测试顺序栈===============");
         System.out.println("new一个顺序栈，是否为空？" + stack.isEmpty());
         for (int i = 0; i < 5; i++) {
@@ -36,7 +36,7 @@ public class StackTest {
      */
     @Test
     public void linkedStackTest() {
-        IStack<Integer> stack = new SymLinkedStack<>();
+        IStack<Integer> stack = new LinkedStack<>();
         System.out.println("==============测试链栈===============");
         System.out.println("new一个链栈，是否为空？" + stack.isEmpty());
         for (int i = 0; i < 7; i++) {

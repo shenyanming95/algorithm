@@ -10,7 +10,7 @@ import com.sym.datastructure.stack.IStack;
  * @author ym.shen
  * Created on 2020/5/8 14:59
  */
-public class SymArrayStack<T> implements IStack<T> {
+public class ArrayStack<T> implements IStack<T> {
 
     /**
      * 顺序栈底层的储存结构，数组
@@ -22,12 +22,12 @@ public class SymArrayStack<T> implements IStack<T> {
      */
     private int top;
 
-    public SymArrayStack() {
+    public ArrayStack() {
         elementData = new Object[10];
         top = 0;
     }
 
-    public SymArrayStack(int capacity) {
+    public ArrayStack(int capacity) {
         elementData = new Object[capacity];
         top = 0;
     }

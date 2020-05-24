@@ -7,7 +7,7 @@ import lombok.Data;
  * @author ym.shen
  * Created on 2020/5/8 15:05
  */
-public class SymLinkedStack<T> implements IStack<T> {
+public class LinkedStack<T> implements IStack<T> {
 
     /**
      * 栈顶指针
@@ -17,7 +17,7 @@ public class SymLinkedStack<T> implements IStack<T> {
     /**
      * 无参构造方法，链栈入栈和出栈都只在栈顶实现，因此它不像链表需要一个头结点
      */
-    public SymLinkedStack() {
+    public LinkedStack() {
     }
 
     /**
