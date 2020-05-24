@@ -1,7 +1,7 @@
 package com.sym.algorithm.question.group1;
 
 import com.sym.datastructure.stack.IStack;
-import com.sym.datastructure.stack.array.SymArrayStack;
+import com.sym.datastructure.stack.array.ArrayStack;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -25,7 +25,7 @@ public class Algorithm3 {
         /*
          * 栈结构，用于保存左分隔符并匹配右分隔符
          */
-        private IStack<String> stack = new SymArrayStack<>(100);
+        private IStack<String> stack = new ArrayStack<>(100);
 
         /*
          * 左分隔符返回1，右分隔符返回2，其他分隔符返回3
