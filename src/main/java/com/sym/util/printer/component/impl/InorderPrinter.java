@@ -1,4 +1,7 @@
-package com.sym.util.printer;
+package com.sym.util.printer.component.impl;
+
+import com.sym.util.printer.BinaryTreeInfo;
+import com.sym.util.printer.component.AbstractPrinter;
 
 /**
 
@@ -21,17 +24,17 @@ package com.sym.util.printer;
  * @author MJ Lee
  *
  */
-public class InorderPrinter extends Printer {
+public class InorderPrinter extends AbstractPrinter {
 	private static String rightAppend;
 	private static String leftAppend;
 	private static String blankAppend;
 	private static String lineAppend;
 	static {
 		int length = 2;
-		rightAppend = "┌" + Strings.repeat("─", length);
-		leftAppend = "└" + Strings.repeat("─", length);
-		blankAppend = Strings.blank(length + 1);
-		lineAppend = "│" + Strings.blank(length);
+		rightAppend = "┌" + repeat("─", length);
+		leftAppend = "└" + repeat("─", length);
+		blankAppend = blank(length + 1);
+		lineAppend = "│" + blank(length);
 	}
 
 	public InorderPrinter(BinaryTreeInfo tree) {
@@ -70,7 +73,7 @@ public class InorderPrinter extends Printer {
 		
 		String nodeString = "";
 		if (right != null) {
-			rightPrefix += Strings.blank(length);
+			rightPrefix += blank(length);
 			nodeString += printString(right, 
 					rightPrefix + rightAppend, 
 					rightPrefix + lineAppend, 
@@ -78,7 +81,7 @@ public class InorderPrinter extends Printer {
 		}
 		nodeString += nodePrefix + string + "\n";
 		if (left != null) {
-			leftPrefix += Strings.blank(length);
+			leftPrefix += blank(length);
 			nodeString += printString(left, 
 					leftPrefix + leftAppend, 
 					leftPrefix + blankAppend, 

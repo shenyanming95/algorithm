@@ -1,4 +1,7 @@
-package com.sym.util.printer;
+package com.sym.util.printer.component.impl;
+
+import com.sym.util.printer.BinaryTreeInfo;
+import com.sym.util.printer.component.AbstractPrinter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,7 +25,7 @@ import java.util.Queue;
  * @author MJ Lee
  *
  */
-public class LevelOrderPrinter extends Printer {
+public class LevelOrderPrinter extends AbstractPrinter {
 	/**
 	 * 节点之间允许的最小间距（最小只能填1）
 	 */
@@ -60,7 +63,7 @@ public class LevelOrderPrinter extends Printer {
 			StringBuilder rowSb = new StringBuilder();
 			for (Node node : rowNodes) {
 				int leftSpace = node.x - rowSb.length() - minX;
-				rowSb.append(Strings.blank(leftSpace));
+				rowSb.append(blank(leftSpace));
 				rowSb.append(node.string);
 			}
 

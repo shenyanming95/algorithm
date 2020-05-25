@@ -1,5 +1,9 @@
 package com.sym.util.printer;
 
+import com.sym.util.printer.component.AbstractPrinter;
+import com.sym.util.printer.component.impl.InorderPrinter;
+import com.sym.util.printer.component.impl.LevelOrderPrinter;
+
 /**
  * 
  * @author MJ Lee
@@ -37,7 +41,7 @@ public final class BinaryTrees {
 		return printer(tree, style).printString();
 	}
 
-	private static Printer printer(BinaryTreeInfo tree, PrintStyle style) {
+	private static AbstractPrinter printer(BinaryTreeInfo tree, PrintStyle style) {
 		if (style == PrintStyle.INORDER) return new InorderPrinter(tree);
 		return new LevelOrderPrinter(tree);
 	}
