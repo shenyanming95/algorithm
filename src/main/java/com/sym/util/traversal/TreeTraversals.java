@@ -1,5 +1,7 @@
 package com.sym.util.traversal;
 
+import com.sym.datastructure.queue.IQueue;
+import com.sym.datastructure.queue.linked.LinkedQueue;
 import com.sym.datastructure.tree.ITree;
 import lombok.extern.slf4j.Slf4j;
 
@@ -64,18 +66,18 @@ public class TreeTraversals {
      */
     public static void levelOrder(ITree.TreeTraversal tree) {
         StringBuilder sb = new StringBuilder("[");
-        Queue<ITree.TreeTraversal> queue = new ArrayDeque<>(64);
-        queue.add(tree);
+        IQueue<ITree.TreeTraversal> queue = new LinkedQueue<>();
+        queue.offer(tree);
         while(!queue.isEmpty()){
             ITree.TreeTraversal currentNode = queue.poll();
             sb.append(currentNode.root()).append(", ");
             ITree.TreeTraversal left = currentNode.left();
             ITree.TreeTraversal right = currentNode.right();
             if(null != left){
-                queue.add(left);
+                queue.offer(left);
             }
             if(null != right){
-                queue.add(right);
+                queue.offer(right);
             }
         }
         if (sb.length() > 1) {
