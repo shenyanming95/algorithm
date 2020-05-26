@@ -15,6 +15,12 @@ package com.sym.algorithm.question.group1;
  */
 public class Algorithm4 {
 
+    public static void main(String[] args) {
+        String s1 = "4,5,2,4,2,2,4,9,2,1";
+        String s2 = "5,6,4";
+        ListNode listNode = addTwoNumbers(initList(s1), initList(s2));
+        System.out.println(listNode);
+    }
 
     /**
      * 链表节点
@@ -39,5 +45,60 @@ public class Algorithm4 {
             sb.append("]");
             return sb.toString();
         }
+    }
+
+    /**
+     * 解题思路就是类似手算加减乘除一样, 按位就算, 最大的数也就 9 + 9 + 1 = 19
+     * @param first 链表1
+     * @param second 链表2
+     * @return 相加后的链表
+     */
+    public static ListNode addTwoNumbers(ListNode first, ListNode second){
+        ListNode resultNode = null;
+        ListNode currentNode = null;
+        ListNode n1 = first;
+        ListNode n2 = second;
+        int carry = 0;
+        while(n1 != null || n2 != null){
+            int v1 = n1 == null ? 0 : n1.val;
+            int v2 = n2 == null ? 0 : n2.val;
+            int sum = v1 + v2 + carry;
+            // 表示进位
+            carry = (sum / 10);
+            // 表示节点值
+            int val = (sum % 10);
+
+            // 创建节点
+            if(null == resultNode){
+                resultNode = new ListNode(val);
+                currentNode = resultNode;
+            }else{
+                currentNode.next = new ListNode(val);
+                currentNode = currentNode.next;
+            }
+            if(n1 != null){
+                n1 = n1.next;
+            }
+            if(n2 != null){
+                n2 = n2.next;
+            }
+        }
+        return resultNode;
+    }
+
+    public static ListNode initList(String numberString){
+        ListNode resultNode = null;
+        ListNode currentNode = null;
+        for(String number : numberString.split(",")){
+            int n = Integer.parseInt(number);
+            if(null == resultNode){
+                resultNode = new ListNode(n);
+                currentNode = resultNode;
+            }else{
+                currentNode.next = new ListNode(n);
+                currentNode = currentNode.next;
+            }
+        }
+        return resultNode;
     }
 }
