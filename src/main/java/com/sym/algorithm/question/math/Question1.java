@@ -1,4 +1,4 @@
-package com.sym.algorithm.question.group1;
+package com.sym.algorithm.question.math;
 
 /**
  * 问题：输入两个正整数m和n，求其最大公约数和最小公倍数
@@ -6,9 +6,8 @@ package com.sym.algorithm.question.group1;
  * @author shenym
  * @date 2020/3/26 19:25
  */
+public class Question1 {
 
-public class Algorithm1 {
-    
     public static void main(String[] args) {
         int num1 = 17;
         int num2 = 34;

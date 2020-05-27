@@ -1,4 +1,4 @@
-package com.sym.algorithm.question.group3;
+package com.sym.algorithm.question.math;
 
 import com.sym.util.TimeUtil;
 
@@ -10,19 +10,19 @@ import com.sym.util.TimeUtil;
  * @date 2020/3/26 20:52
  */
 
-public class Algorithm2 {
+public class Question5 {
 
     public static void main(String[] args) {
         // 假设求第45位的斐波那契数
         int i = 45;
         // 递归算法
         TimeUtil.execute("递归算法", () -> {
-            int sum = Algorithm2.getFibonacci0(i);
+            int sum = Question5.getFibonacci0(i);
             System.out.println("结果值：" + sum);
         });
         // 循环算法
         TimeUtil.execute("循环算法", () -> {
-            int sum = Algorithm2.getFibonacci1(i);
+            int sum = Question5.getFibonacci1(i);
             System.out.println("结果值：" + sum);
         });
     }

@@ -1,4 +1,4 @@
-package com.sym.algorithm.question.group3;
+package com.sym.algorithm.question.math;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -11,10 +11,10 @@ import java.util.Set;
  * @date 2020/3/26 19:30
  */
 
-public class Algorithm1 {
+public class Question4 {
     
     public static void main(String[] args) {
-        Algorithm1.getPerfectNumber(1000);
+        Question4.getPerfectNumber(1000);
     }
 
     /**

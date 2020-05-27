@@ -1,4 +1,4 @@
-package com.sym.algorithm.question.group2;
+package com.sym.algorithm.question.string;
 
 /**
  * 题目：输入一行字符，分别统计出其中英文字母、空格、数字和其它字符的个数
@@ -7,10 +7,10 @@ package com.sym.algorithm.question.group2;
  * @date 2020/3/26 19:29
  */
 
-public class Algorithm1 {
+public class Question0 {
     
     public static void main(String[] args) {
-        Algorithm1.display("321 12312sadseqwez$$#34");
+        Question0.display("321 12312sadseqwez$$#34");
     }
 
     private static void display(String param) {

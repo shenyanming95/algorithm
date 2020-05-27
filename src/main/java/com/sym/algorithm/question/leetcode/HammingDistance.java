@@ -1,4 +1,4 @@
-package com.sym.algorithm.question.group2;
+package com.sym.algorithm.question.leetcode;
 
 /**
  * 题目：给出两个整数, 计算它们之间的汉明距离(Hamming distance).
@@ -6,11 +6,12 @@ package com.sym.algorithm.question.group2;
  *
  * 何为汉明距离？汉明距离是两个字符串对应位置的不同字符的个数,
  * 换句话说，它就是将一个字符串变换成另外一个字符串所需要替换的字符个数.
+ * 题目地址：https://leetcode-cn.com/problems/hamming-distance/
  *
  * @author ym.shen
  * Created on 2020/5/8 16:30
  */
-public class Algorithm3 {
+public class HammingDistance {
 
     public static void main(String[] args) {
         int number1 = 9527;

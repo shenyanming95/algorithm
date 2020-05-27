@@ -1,4 +1,4 @@
-package com.sym.algorithm.question.group1;
+package com.sym.algorithm.question.string;
 
 import com.sym.datastructure.stack.IStack;
 import com.sym.datastructure.stack.array.ArrayStack;
@@ -13,7 +13,7 @@ import java.util.Set;
  * @author ym.shen
  * Created on 2020/5/8 15:22
  */
-public class Algorithm3 {
+public class Question2 {
     public static void main(String[] args) {
         DelimiterMatcher matcher = new DelimiterMatcher();
         String string = "(/*1**/)";

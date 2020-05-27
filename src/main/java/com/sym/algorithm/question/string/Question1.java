@@ -1,4 +1,4 @@
-package com.sym.algorithm.question.group2;
+package com.sym.algorithm.question.string;
 
 /**
  * 题目：给定一个字符串例如word, 判断另一个子串是否可以通配. 例如：
@@ -8,7 +8,7 @@ package com.sym.algorithm.question.group2;
  * @date 2020/3/26 19:37
  */
 
-public class Algorithm2 {
+public class Question1 {
 
     public static void main(String[] args) {
         // s = “internationalization"， abbr = "i12iz4n

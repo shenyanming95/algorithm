@@ -1,4 +1,4 @@
-package com.sym.algorithm.question.group2;
+package com.sym.algorithm.question.math;
 
 /**
  * 题目: 打印出所有的"水仙花数"，所谓"水仙花数"是指一个三位数，其各位数字立方和等于该数本身.
@@ -8,10 +8,10 @@ package com.sym.algorithm.question.group2;
  * @date 2020/3/26 19:13
  */
 
-public class Algorithm0 {
+public class Question2 {
     
     public static void main(String[] args) {
-        Algorithm0.doRun(1, 1000);
+        Question2.doRun(1, 1000);
     }
 
     private static void doRun(int start, int end){

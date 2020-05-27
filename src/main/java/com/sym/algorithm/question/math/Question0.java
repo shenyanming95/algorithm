@@ -1,4 +1,6 @@
-package com.sym.algorithm.question.group1;
+package com.sym.algorithm.question.math;
+
+import com.sym.util.TimeUtil;
 
 /**
  * 题目： 输入两个数，判断这两个数之间有多少个素数，并输出所有素数
@@ -6,22 +8,19 @@ package com.sym.algorithm.question.group1;
  * @author shenym
  * @date 2020/3/26 19:04
  */
+public class Question0 {
 
-public class Algorithm0 {
-    
     public static void main(String[] args) {
-        Algorithm0.doRun(1, 9999);
-        //TimeUtil.execute("判断素数", ()-> Algorithm0.doRun(1, 9999));
+        TimeUtil.execute("判断素数", ()-> Question0.doRun(1, 9999));
     }
 
-    public static void doRun(int start, int end){
-        if(end <= start){
+    public static void doRun(int start, int end) {
+        if (end <= start) {
             return;
         }
         int i = start;
-        int j = end;
-        for(; i < j; i++){
-            if(isPrime(i)){
+        for (; i < end; i++) {
+            if (isPrime(i)) {
                 System.out.println(i);
             }
         }

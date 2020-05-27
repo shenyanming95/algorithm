@@ -1,4 +1,4 @@
-package com.sym.algorithm.question.group1;
+package com.sym.algorithm.question.leetcode;
 
 import com.sym.util.SymArrayUtil;
 
@@ -15,7 +15,7 @@ import java.util.List;
  * @date 2020/3/26 19:33
  */
 
-public class Algorithm2 {
+public class MergeInterval {
 
     public static void main(String[] args) {
         // [1, 3], [2, 6], [8, 10], [15, 18]

@@ -1,4 +1,4 @@
-package com.sym.algorithm.question.group3;
+package com.sym.algorithm.question.leetcode;
 
 import com.sym.util.SymArrayUtil;
 
@@ -13,7 +13,7 @@ import java.util.Map;
  * @author shenyanming
  * Created on 2020/5/12 08:39
  */
-public class Algorithm3 {
+public class TwoSum {
 
     public static void main(String[] args) {
         int[] array = new int[]{2, 10, 40, 14, 67, 55, 21};

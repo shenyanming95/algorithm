@@ -1,4 +1,4 @@
-package com.sym.algorithm.question.group1;
+package com.sym.algorithm.question.leetcode;
 
 /**
  * 给出两个非空的链表用来表示两个非负的整数。其中，它们各自的位数是按照逆序的方式存储的，
@@ -13,7 +13,7 @@ package com.sym.algorithm.question.group1;
  * @author shenyanming
  * Created on 2020/5/13 08:38
  */
-public class Algorithm4 {
+public class AddTwoNumbers {
 
     public static void main(String[] args) {
         String s1 = "4,5,2,4,2,2,4,9,2,1";
