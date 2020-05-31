@@ -1,4 +1,4 @@
-package com.sym.datastructure.tree;
+package com.sym.structure.tree;
 
 import com.sym.util.printer.BinaryTreeInfo;
 

@@ -1,6 +1,6 @@
-package com.sym.datastructure.tree.bst;
+package com.sym.structure.tree.bst;
 
-import com.sym.datastructure.tree.ITree;
+import com.sym.structure.tree.ITree;
 
 /**
  * 二叉搜索树, Binary Search Tree, 简称BST. 是二叉树的一种, 也称为二叉查找树、二叉排序树.

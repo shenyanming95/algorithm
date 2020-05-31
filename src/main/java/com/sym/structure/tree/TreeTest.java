@@ -1,6 +1,6 @@
-package com.sym.datastructure.tree;
+package com.sym.structure.tree;
 
-import com.sym.datastructure.tree.bst.BinarySearchTree;
+import com.sym.structure.tree.bst.BinarySearchTree;
 import com.sym.util.traversal.TreeTraversals;
 import com.sym.util.printer.BinaryTrees;
 import lombok.extern.slf4j.Slf4j;
