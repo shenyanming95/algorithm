@@ -1,4 +1,4 @@
-package com.sym.datastructure.stack;
+package com.sym.structure.stack;
 
 /**
  * 栈接口

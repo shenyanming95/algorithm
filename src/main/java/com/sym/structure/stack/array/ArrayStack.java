@@ -1,6 +1,6 @@
-package com.sym.datastructure.stack.array;
+package com.sym.structure.stack.array;
 
-import com.sym.datastructure.stack.IStack;
+import com.sym.structure.stack.IStack;
 
 /**
  * 自定义顺序栈.

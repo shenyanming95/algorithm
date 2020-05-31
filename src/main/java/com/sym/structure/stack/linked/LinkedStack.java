@@ -1,6 +1,6 @@
-package com.sym.datastructure.stack.linked;
+package com.sym.structure.stack.linked;
 
-import com.sym.datastructure.stack.IStack;
+import com.sym.structure.stack.IStack;
 import lombok.Data;
 
 /**

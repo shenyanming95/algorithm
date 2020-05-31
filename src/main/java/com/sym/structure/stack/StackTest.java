@@ -1,7 +1,7 @@
-package com.sym.datastructure.stack;
+package com.sym.structure.stack;
 
-import com.sym.datastructure.stack.array.ArrayStack;
-import com.sym.datastructure.stack.linked.LinkedStack;
+import com.sym.structure.stack.array.ArrayStack;
+import com.sym.structure.stack.linked.LinkedStack;
 import org.junit.Test;
 
 /**
