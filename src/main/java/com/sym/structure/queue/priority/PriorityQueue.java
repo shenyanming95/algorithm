@@ -1,7 +1,7 @@
-package com.sym.datastructure.queue.priority;
+package com.sym.structure.queue.priority;
 
 
-import com.sym.datastructure.queue.IQueue;
+import com.sym.structure.queue.IQueue;
 import lombok.Data;
 
 import java.util.Comparator;

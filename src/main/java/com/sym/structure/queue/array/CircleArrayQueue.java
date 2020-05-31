@@ -1,4 +1,4 @@
-package com.sym.datastructure.queue.array;
+package com.sym.structure.queue.array;
 
 /**
  * 顺序队列,底层还是以数组来储存元素,但是为了防止假溢出,逻辑上处理成循环队列（可以通过取模实现）

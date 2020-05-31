@@ -1,8 +1,8 @@
-package com.sym.datastructure.queue;
+package com.sym.structure.queue;
 
-import com.sym.datastructure.queue.array.CircleArrayQueue;
-import com.sym.datastructure.queue.linked.LinkedQueue;
-import com.sym.datastructure.queue.priority.PriorityQueue;
+import com.sym.structure.queue.array.CircleArrayQueue;
+import com.sym.structure.queue.linked.LinkedQueue;
+import com.sym.structure.queue.priority.PriorityQueue;
 import org.junit.Test;
 
 import java.util.Random;

@@ -1,6 +1,6 @@
-package com.sym.datastructure.queue.linked;
+package com.sym.structure.queue.linked;
 
-import com.sym.datastructure.queue.IQueue;
+import com.sym.structure.queue.IQueue;
 import lombok.Data;
 
 /**

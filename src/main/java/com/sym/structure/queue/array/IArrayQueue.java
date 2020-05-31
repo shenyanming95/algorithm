@@ -1,6 +1,6 @@
-package com.sym.datastructure.queue.array;
+package com.sym.structure.queue.array;
 
-import com.sym.datastructure.queue.IQueue;
+import com.sym.structure.queue.IQueue;
 
 /**
  * 基于数组实现的队列

@@ -1,4 +1,4 @@
-package com.sym.datastructure.queue;
+package com.sym.structure.queue;
 
 /**
  * 队列接口
