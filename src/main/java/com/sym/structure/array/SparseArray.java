@@ -1,4 +1,4 @@
-package com.sym.datastructure.array;
+package com.sym.structure.array;
 
 /**
  * 稀疏数组, 用来对数组进行压缩处理, 规定：

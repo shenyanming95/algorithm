@@ -1,4 +1,4 @@
-package com.sym.datastructure.array;
+package com.sym.structure.array;
 
 import com.sym.util.SymArrayUtil;
 import org.junit.Test;
