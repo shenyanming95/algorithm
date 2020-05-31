@@ -1,4 +1,4 @@
-package com.sym.datastructure.list;
+package com.sym.structure.list;
 
 /**
  * 列表接口

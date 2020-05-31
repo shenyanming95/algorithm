@@ -1,6 +1,6 @@
-package com.sym.datastructure.list.array;
+package com.sym.structure.list.array;
 
-import com.sym.datastructure.list.IList;
+import com.sym.structure.list.IList;
 
 import java.util.Objects;
 

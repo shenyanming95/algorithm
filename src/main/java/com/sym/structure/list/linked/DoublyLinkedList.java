@@ -1,6 +1,6 @@
-package com.sym.datastructure.list.linked;
+package com.sym.structure.list.linked;
 
-import com.sym.datastructure.list.IList;
+import com.sym.structure.list.IList;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
