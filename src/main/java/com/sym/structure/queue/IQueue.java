@@ -20,7 +20,7 @@ public interface IQueue<E> {
 	 * 返回队列的长度
 	 * @return 队列长度
 	 */
-	int length();
+	int size();
 
 	/**
 	 * 获取队首元素,不会执行出队操作

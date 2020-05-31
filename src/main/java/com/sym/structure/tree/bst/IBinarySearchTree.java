@@ -11,4 +11,10 @@ import com.sym.structure.tree.ITree;
  */
 
 public interface IBinarySearchTree<E> extends ITree<E> {
+
+    /**
+     * 返回二叉搜索树的高度
+     * @return height
+     */
+    int height();
 }

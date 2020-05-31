@@ -73,7 +73,7 @@ public class PriorityQueue<E> implements IQueue<E> {
      * 返回队列的长度
      */
     @Override
-    public int length() {
+    public int size() {
         int count = 0;
         Node<E> p = front;
         while (p != null) {

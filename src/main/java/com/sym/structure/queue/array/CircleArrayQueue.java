@@ -60,7 +60,7 @@ public class CircleArrayQueue<E> implements IArrayQueue<E> {
     }
 
     @Override
-    public int length() {
+    public int size() {
         // 取队首和队尾差值的绝对值
         return (rear - front + elements.length) % elements.length;
     }

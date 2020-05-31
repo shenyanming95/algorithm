@@ -1,5 +1,7 @@
 package com.sym.structure.tree.bst;
 
+import com.sym.structure.queue.IQueue;
+import com.sym.structure.queue.linked.LinkedQueue;
 import com.sym.structure.tree.ITree;
 
 import java.util.Comparator;
@@ -128,9 +130,9 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
             }
             // 当循环退出, 表示已经找到一个合适的位置, 通过判断result正负形, 来决定位于 父节点 的左边还是右边
             BstNode<E> newNode = new BstNode<>(e, currentParentNode);
-            if(result > 0){
+            if (result > 0) {
                 currentParentNode.right = newNode;
-            }else {
+            } else {
                 currentParentNode.left = newNode;
             }
         }
@@ -139,56 +141,138 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
 
     /**
      * 找到对应的元素, 将它删除, 然后取它的左节点来替换它
+     *
      * @param e 待删除元素
      */
     @Override
     public void remove(E e) {
-        if(isEmpty()){
+        if (isEmpty()) {
             return;
         }
         BstNode<E> target = doSearch(e);
-        if(null != target){
+        if (null != target) {
             // 若删除的是根节点
-            if(target == root){
+            if (target == root) {
 
-            }else{
+            } else {
                 // 删除非根节点
             }
         }
     }
 
+    /**
+     * 查找某个元素是否存在于二叉搜索树中
+     *
+     * @param e 元素
+     * @return true-exist
+     */
     @Override
     public boolean contains(E e) {
         Objects.requireNonNull(e);
-        if(isEmpty()){
+        if (isEmpty()) {
             return false;
         }
         return null != doSearch(e);
     }
 
+    /**
+     * 二叉搜索树的遍历
+     *
+     * @return {@link TreeTraversal}
+     */
     @Override
     public TreeTraversal traversal() {
         return root;
     }
 
-    private int doCompare(E first, E second){
-        return null != this.comparator?
-                comparator.compare(first, second) : ((Comparable<E>)first).compareTo(second);
+    /**
+     * 返回二叉搜索树的高度
+     *
+     * @return 高度
+     */
+    @Override
+    public int height() {
+        // 递归的方式
+        // return doComputeHeightV2(root);
+
+        // 遍历的方式
+        return doComputeHeight(root);
     }
 
-    private BstNode<E> doSearch(E e){
+    /**
+     * 二叉搜索树的元素比较
+     *
+     * @param first  元素1
+     * @param second 元素2
+     * @return 返回1, 0,-1分别表示元素1大于元素2, 元素1等于元素2, 元素1小于元素2
+     */
+    private int doCompare(E first, E second) {
+        return null != this.comparator ? comparator.compare(first, second) : ((Comparable<E>) first).compareTo(second);
+    }
+
+    /**
+     * 二叉搜素树的搜索逻辑
+     *
+     * @param e 元素
+     * @return null-不存在, 反之返回元素所在的节点
+     */
+    private BstNode<E> doSearch(E e) {
         BstNode<E> temp = root;
-        while(null != temp){
+        while (null != temp) {
             int result = doCompare(e, temp.element);
-            if(result > 0){
+            if (result > 0) {
                 temp = temp.right;
-            }else if(result < 0){
+            } else if (result < 0) {
                 temp = temp.left;
-            }else{
+            } else {
                 return temp;
             }
         }
         return null;
+    }
+
+    /**
+     * 通过遍历（层序遍历）的方式计算高度
+     *
+     * @return 高度
+     */
+    private int doComputeHeight(BstNode<E> root) {
+        if (null == root) {
+            return 0;
+        }
+        IQueue<BstNode<E>> queue = new LinkedQueue<>();
+        queue.offer(root);
+        int levelCount = 1;
+        int height = 0;
+        while (!queue.isEmpty()) {
+            BstNode<E> node = queue.poll();
+            levelCount--;
+            if (null != node.left) {
+                queue.offer(node.left);
+            }
+            if (null != node.right) {
+                queue.offer(node.right);
+            }
+            if (levelCount == 0) {
+                height++;
+                levelCount = queue.size();
+            }
+        }
+        return height;
+    }
+
+    /**
+     * 通过递归的方式计算二叉搜索树的高度
+     *
+     * @param root 根节点
+     * @return 高度
+     */
+    private int doComputeHeightV2(BstNode<E> root) {
+        if (null == root) {
+            return 0;
+        }
+        // 一旦能递归调用, 说明这一层的节点存在, 说明树的高度就要加1;
+        return 1 + Math.max(doComputeHeightV2(root.left), doComputeHeightV2(root.right));
     }
 
     /* 借助外部工具类, 打印二叉树的结构图 - start*/
@@ -199,17 +283,17 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
 
     @Override
     public Object left(Object node) {
-        return ((BstNode<E>)node).left;
+        return ((BstNode<E>) node).left;
     }
 
     @Override
     public Object right(Object node) {
-        return ((BstNode<E>)node).right;
+        return ((BstNode<E>) node).right;
     }
 
     @Override
     public Object string(Object node) {
-        return ((BstNode<E>)node).element;
+        return ((BstNode<E>) node).element;
     }
     /* 借助外部工具类, 打印二叉树的结构图 - end*/
 }

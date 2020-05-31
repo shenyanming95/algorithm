@@ -50,7 +50,7 @@ public class CircleArrayQueueV2<E> implements IArrayQueue<E> {
     }
 
     @Override
-    public int length() {
+    public int size() {
         return maxLength;
     }
 

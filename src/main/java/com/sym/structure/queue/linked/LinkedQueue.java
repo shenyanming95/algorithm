@@ -65,7 +65,7 @@ public class LinkedQueue<E> implements IQueue<E> {
      * 队列长度
      */
     @Override
-    public int length() {
+    public int size() {
         //取到队列首结点
         Node<E> p = front;
         int count = 0;

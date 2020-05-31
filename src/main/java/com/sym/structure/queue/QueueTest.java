@@ -21,11 +21,11 @@ public class QueueTest {
     public void testLinearSqQueue() {
         CircleArrayQueue<String> queue = new CircleArrayQueue<>(5);
         initQueue(5, queue);
-        System.out.println("队列的长度为：" + queue.length());
+        System.out.println("队列的长度为：" + queue.size());
         System.out.println(queue);
         System.out.println("读取队首元素：" + queue.peek());
         System.out.println("弹出队首元素：" + queue.poll());
-        System.out.println("此时队列长度为：" + queue.length());
+        System.out.println("此时队列长度为：" + queue.size());
         System.out.println("加入新元素");
         queue.offer("新元素");
         System.out.println(queue);
@@ -45,12 +45,12 @@ public class QueueTest {
                 e.printStackTrace();
             }
         }
-        System.out.println("队列的长度为：" + queue.length());
+        System.out.println("队列的长度为：" + queue.size());
         System.out.print("遍历队列：");
         System.out.println(queue);
         System.out.println("读取队首元素：" + queue.peek());
         System.out.println("弹出队首元素：" + queue.poll());
-        System.out.println("此时队列长度为：" + queue.length());
+        System.out.println("此时队列长度为：" + queue.size());
         System.out.println("加入新元素");
         try {
             queue.offer("新元素");
@@ -75,12 +75,12 @@ public class QueueTest {
                 e.printStackTrace();
             }
         }
-        System.out.println("此时队列长度=" + queue.length());
+        System.out.println("此时队列长度=" + queue.size());
         System.out.print("遍历队列：");
         System.out.println(queue);
         System.out.println("读取队首元素：" + queue.peek());
         System.out.println("弹出队首元素：" + queue.poll());
-        System.out.println("此时队列长度=" + queue.length());
+        System.out.println("此时队列长度=" + queue.size());
         System.out.print("遍历队列：");
         System.out.println(queue);
         System.out.println("加入新元素...");
