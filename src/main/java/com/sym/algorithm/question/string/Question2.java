@@ -1,7 +1,7 @@
 package com.sym.algorithm.question.string;
 
-import com.sym.datastructure.stack.IStack;
-import com.sym.datastructure.stack.array.ArrayStack;
+import com.sym.structure.stack.IStack;
+import com.sym.structure.stack.array.ArrayStack;
 
 import java.util.Arrays;
 import java.util.HashSet;

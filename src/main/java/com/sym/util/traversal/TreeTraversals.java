@@ -1,12 +1,9 @@
 package com.sym.util.traversal;
 
-import com.sym.datastructure.queue.IQueue;
-import com.sym.datastructure.queue.linked.LinkedQueue;
-import com.sym.datastructure.tree.ITree;
+import com.sym.structure.queue.IQueue;
+import com.sym.structure.queue.linked.LinkedQueue;
+import com.sym.structure.tree.ITree;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.ArrayDeque;
-import java.util.Queue;
 
 /**
  * 二叉树{@link ITree}的遍历方式
