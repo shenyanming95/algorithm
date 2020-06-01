@@ -1,12 +1,12 @@
 package com.sym.algorithm.question.leetcode;
 
 /**
- * 题目：给出两个整数, 计算它们之间的汉明距离(Hamming distance).
- * 例如：10 和 7，它们的二进制为分别为 00001010、00000111, 所以它们的汉明距离为：3
+ * 给出两个整数, 计算它们之间的汉明距离(Hamming distance).何为汉明距离？汉明距离是两个字符串对应位置的不同字符的个数,
+ * 换句话说，它就是将一个字符串变换成另外一个字符串所需要替换的字符个数.例如：10 和 7，它们的二进制为分别为 00001010、00000111,
+ * 所以它们的汉明距离为：3.
  *
- * 何为汉明距离？汉明距离是两个字符串对应位置的不同字符的个数,
- * 换句话说，它就是将一个字符串变换成另外一个字符串所需要替换的字符个数.
- * 题目地址：https://leetcode-cn.com/problems/hamming-distance/
+ * 来源：力扣（LeetCode）
+ * 链接：https://leetcode-cn.com/problems/hamming-distance
  *
  * @author ym.shen
  * Created on 2020/5/8 16:30
