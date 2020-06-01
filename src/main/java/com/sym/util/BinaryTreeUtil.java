@@ -1,7 +1,6 @@
 package com.sym.util;
 
 import com.sym.structure.tree.bst.BinarySearchTree;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author shenyanming
@@ -15,7 +14,7 @@ public class BinaryTreeUtil {
         BinarySearchTree<T> bst = new BinarySearchTree<>();
         String[] nodeArray = nodeString.split(",");
         for (String nodeValue : nodeArray) {
-            if(StringUtils.isBlank(nodeString)){
+            if(!"".equals(nodeValue)){
                 continue;
             }
             bst.add((T)nodeValue);
