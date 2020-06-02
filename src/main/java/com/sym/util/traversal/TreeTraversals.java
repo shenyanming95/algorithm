@@ -102,9 +102,9 @@ public class TreeTraversals {
         if (null == tree) {
             return;
         }
-        preorder(tree.left(), sb);
+        inorder(tree.left(), sb);
         sb.append(tree.root()).append(", ");
-        preorder(tree.right(), sb);
+        inorder(tree.right(), sb);
     }
 
     /**
@@ -114,8 +114,8 @@ public class TreeTraversals {
         if (null == tree) {
             return;
         }
-        preorder(tree.left(), sb);
-        preorder(tree.right(), sb);
+        postorder(tree.left(), sb);
+        postorder(tree.right(), sb);
         sb.append(tree.root()).append(", ");
     }
 }

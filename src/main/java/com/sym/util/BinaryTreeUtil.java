@@ -9,15 +9,14 @@ import com.sym.structure.tree.bst.BinarySearchTree;
 
 public class BinaryTreeUtil {
 
-    @SuppressWarnings("unchecked")
-    public static <T> BinarySearchTree<T> newBinarySearchTree(String nodeString){
-        BinarySearchTree<T> bst = new BinarySearchTree<>();
+    public static BinarySearchTree<Integer> newBinarySearchTree(String nodeString){
+        BinarySearchTree<Integer> bst = new BinarySearchTree<>();
         String[] nodeArray = nodeString.split(",");
         for (String nodeValue : nodeArray) {
-            if(!"".equals(nodeValue)){
+            if("".equals(nodeValue)){
                 continue;
             }
-            bst.add((T)nodeValue);
+            bst.add(Integer.parseInt(nodeValue));
         }
         return bst;
     }

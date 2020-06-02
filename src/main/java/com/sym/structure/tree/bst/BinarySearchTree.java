@@ -140,7 +140,9 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
     }
 
     /**
-     * 找到对应的元素, 将它删除, 然后取它的左节点来替换它
+     * 找到对应的元素, 将它删除, 然后取它的左节点来替换它：
+     * 1.叶子节点直接删除
+     * 2.删除度为1的节点, 用子节点替换它
      *
      * @param e 待删除元素
      */
@@ -273,6 +275,70 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
         }
         // 一旦能递归调用, 说明这一层的节点存在, 说明树的高度就要加1;
         return 1 + Math.max(doComputeHeightV2(root.left), doComputeHeightV2(root.right));
+    }
+
+    /**
+     * 获取指定节点的前驱节点, 所谓前驱节点, 即一颗二叉树通过中序遍历后当前节点的前一个节点.
+     * 在二叉搜索树中, 节点的前驱节点就是比它小的那个节点, 有3种情况查询前驱节点：
+     * 1)、若指定节点的左子树不为空, 则左子树的最右边的节点就是它的前驱节点, 即node.left.right.right.right...(因为中序遍历是左子树遍历完以后才访问根节点, 仔细想一下就对了)
+     * 2)、若指定节点的左子树为空, 但是父节点不为空, 则要找最小的祖父节点, 换句话说就是找到当前节点在其父节点的右子树中, 即node.parent.parent.parent...直至node = parent.right
+     * 3)、若指定节点的左子树为空, 并且父节点也为空, 则当前节点就没有前驱节点, 其实当前节点也是根节点
+     *
+     * @param node 指定节点
+     * @return 指定节点的前驱节点
+     */
+    private BstNode<E> predecessor(BstNode<E> node){
+        if(null == node){
+            return null;
+        }
+        if(node.left != null){
+            // 左子树不为空, 就一直找到左子树的最右节点, 直至为null
+            BstNode<E> p = node.left;
+            while(p.right != null){
+                p = p.right;
+            }
+            return p;
+        }
+        // 如果代码能来到这, 说明左子树为空, 所以要从它的父节点和祖父节点向上找, 直到找到处于祖父节点的右子树部分
+        BstNode<E> p = node;
+        while(p.parent != null && p == p.parent.left){
+            p = p.parent;
+        }
+        // 循环终止有两个条件：
+        // 其一：父节点或者祖父节点已经为null
+        // 其二：节点p位于其父节点的右子树部分
+        // 两种情况都返回p.parent, 假设第一种情况, 那就说明它没有前驱节点, 所以返回null; 假设第二种, 那父节点就是node的前驱节点, 返回它即可
+        return p.parent;
+    }
+
+    /**
+     * 获取指定节点的后继节点, 所谓后继节点, 即一颗二叉树通过中序遍历后当前节点的后一个节点, 它的定位方式跟前驱节点相反,
+     * 在二叉搜索树中, 节点的后继节点就是下一个比它大的那个节点, 有3种情况查询后继节点：
+     * 1)、若指定节点的右子树不为空, 则右子树的最左边的节点就是它的后继节点, 即node.right.left.left.left...(因为中序遍历是根节点访问完才遍历右子树的, 仔细想一下就对了)
+     * 2)、若指定节点的右子树为空, 但是父节点不为空, 则要找最大的祖父节点, 换句话说就是找到当前节点在其父节点的左子树中, 即node.parent.parent.parent...直至node = parent.left
+     * 3)、若指定节点的右子树为空, 并且父节点也为空, 则当前节点就没有后继节点, 其实当前节点也是根节点
+     *
+     * @param node 指定节点
+     * @return 指定节点的前驱节点
+     */
+    private BstNode<E> successor(BstNode<E> node){
+        if(node == null){
+            return null;
+        }
+        if(node.right != null){
+            // 右子树不为null, 就找右子树当中的最小的一个, 就是跟node相邻的并且大于它的节点, 即后继节点
+            BstNode<E> s = node.right;
+            while(s.left != null){
+                s = s.left;
+            }
+            return s;
+        }
+        // 如果右子树为null, 就从它的父节点h和祖父节点开始找, 直至找到处于祖父节点的左子树部分
+        BstNode<E> s = node;
+        while(s.parent != null && s == s.parent.right){
+            s = s.parent;
+        }
+        return s.parent;
     }
 
     /* 借助外部工具类, 打印二叉树的结构图 - start*/
