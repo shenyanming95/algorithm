@@ -43,6 +43,21 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
             this.parent = p;
         }
 
+        /**
+         * 获取节点的度
+         * @return 0 or 1 or 2
+         */
+        public int degree(){
+            int result = 0;
+            if(left != null){
+                result++;
+            }
+            if(right != null){
+                result++;
+            }
+            return result;
+        }
+
         @Override
         public BstNode<E> root() {
             return this;
@@ -140,26 +155,22 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
     }
 
     /**
-     * 找到对应的元素, 将它删除, 然后取它的左节点来替换它：
-     * 1.叶子节点直接删除
-     * 2.删除度为1的节点, 用子节点替换它
+     * 找到对应的元素, 删除它, 一个删除涉及到3种不同的节点：
+     * 1)、删除度为0的节点, 由于没有左右子树, 直接删除即可(若该节点为根节点, 直接将根节点置为null);
+     * 2)、删除度为1的节点, 说明要么只有左子树, 要么只有右子树, 就让它的子节点来替代它的位置;
+     * 3)、删除度为2的节点, 可以取它的前驱节点或后继节点的值来替换它的值, 然后将前驱节点或后继节点删除掉.
      *
      * @param e 待删除元素
      */
     @Override
     public void remove(E e) {
-        if (isEmpty()) {
+        // 定位到对应的节点
+        BstNode<E> target = doSearch(e);
+        if(target == null){
             return;
         }
-        BstNode<E> target = doSearch(e);
-        if (null != target) {
-            // 若删除的是根节点
-            if (target == root) {
-
-            } else {
-                // 删除非根节点
-            }
-        }
+        // 获取节点的度
+        int degree = target.degree();
     }
 
     /**
@@ -244,10 +255,13 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
         }
         IQueue<BstNode<E>> queue = new LinkedQueue<>();
         queue.offer(root);
+        // 表示每层需要访问的个数
         int levelCount = 1;
+        // 树的高度
         int height = 0;
         while (!queue.isEmpty()) {
             BstNode<E> node = queue.poll();
+            // 没访问一个节点, 就将它所在的层次的总访问个数减一
             levelCount--;
             if (null != node.left) {
                 queue.offer(node.left);
@@ -256,6 +270,7 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
                 queue.offer(node.right);
             }
             if (levelCount == 0) {
+                // 如果一层都访问完了, 将高度加一, 并且队列中元素的个数就是下一层需要访问的个数
                 height++;
                 levelCount = queue.size();
             }
@@ -274,13 +289,14 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
             return 0;
         }
         // 一旦能递归调用, 说明这一层的节点存在, 说明树的高度就要加1;
+        // 一棵树的高度就由它的左子树和右子树高度的最大值来决定
         return 1 + Math.max(doComputeHeightV2(root.left), doComputeHeightV2(root.right));
     }
 
     /**
-     * 获取指定节点的前驱节点, 所谓前驱节点, 即一颗二叉树通过中序遍历后当前节点的前一个节点.
+     * 获取指定节点的前驱节点, 所谓前驱节点, 即一颗二叉树通过中序遍历(先左再根后右)后指定节点的前一个节点.
      * 在二叉搜索树中, 节点的前驱节点就是比它小的那个节点, 有3种情况查询前驱节点：
-     * 1)、若指定节点的左子树不为空, 则左子树的最右边的节点就是它的前驱节点, 即node.left.right.right.right...(因为中序遍历是左子树遍历完以后才访问根节点, 仔细想一下就对了)
+     * 1)、若指定节点的左子树不为空, 则左子树的最右边的节点就是它的前驱节点, 即node.left.right.right.right...(把当前节点当做根节点, 要等左子树遍历完后才能轮到它, 而左子树遍历完就是它的最右节点访问完)
      * 2)、若指定节点的左子树为空, 但是父节点不为空, 则要找最小的祖父节点, 换句话说就是找到当前节点在其父节点的右子树中, 即node.parent.parent.parent...直至node = parent.right
      * 3)、若指定节点的左子树为空, 并且父节点也为空, 则当前节点就没有前驱节点, 其实当前节点也是根节点
      *
@@ -314,7 +330,7 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
     /**
      * 获取指定节点的后继节点, 所谓后继节点, 即一颗二叉树通过中序遍历后当前节点的后一个节点, 它的定位方式跟前驱节点相反,
      * 在二叉搜索树中, 节点的后继节点就是下一个比它大的那个节点, 有3种情况查询后继节点：
-     * 1)、若指定节点的右子树不为空, 则右子树的最左边的节点就是它的后继节点, 即node.right.left.left.left...(因为中序遍历是根节点访问完才遍历右子树的, 仔细想一下就对了)
+     * 1)、若指定节点的右子树不为空, 则右子树的最左边的节点就是它的后继节点, 即node.right.left.left.left...(当前节点作为根节点, 下一个临近它的节点必是右子树的第一个访问节点, 这个节点就是左子树最左的那个接)
      * 2)、若指定节点的右子树为空, 但是父节点不为空, 则要找最大的祖父节点, 换句话说就是找到当前节点在其父节点的左子树中, 即node.parent.parent.parent...直至node = parent.left
      * 3)、若指定节点的右子树为空, 并且父节点也为空, 则当前节点就没有后继节点, 其实当前节点也是根节点
      *
