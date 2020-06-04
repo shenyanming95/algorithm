@@ -169,8 +169,28 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
         if(target == null){
             return;
         }
-        // 获取节点的度
+        // 获取节点的度, 处理思路是这样：
+        // 如果是度为0的节点, 直接删掉; 如果是度为1的节点, 用它的子节点替代它; 如果是度为2的节点, 用它的前驱节点或后继节点的值替换它的值, 然后删除前驱节点或后继节点.
+        // 由于删除度为2的节点, 需要删除一个节点(前驱 or 后继), 跟度为0和1的节点处理方式一样, 所说义先处理度为2的节点
         int degree = target.degree();
+        if(degree == ITree.DEGREE_TWO){
+            // 处理度为2的节点, 使用它的前驱节点的值来替换它的值, 然后将它的前驱节点删除
+            BstNode<E> predecessor = predecessor(target);
+            target.element = predecessor.element;
+            target = predecessor;
+        }
+        // 如果是根节点, 那就直接删除
+        if(degree == ITree.DEGREE_ZERO && root == target){
+            root = null;
+        }
+        // 不管是度为0还是度为1, 都需要将父节点的左右指针清空, 所以可以放到一个逻辑一起操作
+        BstNode<E> child = target.left == null ? target.right : target.left;
+        if(target.parent.left == target){
+            target.parent.left = child;
+        }else{
+            target.parent.right = child;
+        }
+        size --;
     }
 
     /**
@@ -349,7 +369,7 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
             }
             return s;
         }
-        // 如果右子树为null, 就从它的父节点h和祖父节点开始找, 直至找到处于祖父节点的左子树部分
+        // 如果右子树为null, 就从它的父节点和祖父节点开始找, 直至找到处于祖父节点的左子树部分
         BstNode<E> s = node;
         while(s.parent != null && s == s.parent.right){
             s = s.parent;

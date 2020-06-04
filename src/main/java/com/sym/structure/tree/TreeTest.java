@@ -17,7 +17,7 @@ import java.util.Random;
 public class TreeTest {
 
     /**
-     * 二叉搜索树测试
+     * 二叉搜索树遍历测试
      */
     @Test
     public void test01(){
@@ -46,7 +46,7 @@ public class TreeTest {
 
 
     /**
-     * 二叉搜索树测试
+     * 二叉搜索树节点分布测试
      */
     @Test
     public void test02(){
@@ -57,5 +57,31 @@ public class TreeTest {
 
         // 计算二叉树的高度
         System.out.println(bst.height());
+    }
+
+    /**
+     * 二叉搜索树删除测试
+     */
+    @Test
+    public void test03(){
+        String nodeValues = "56,12,4,6,32,787,110,23,120,89,543,778,15,19,3,9";
+        BinarySearchTree<Integer> bst = BinaryTreeUtil.newBinarySearchTree(nodeValues);
+        // 初始化二叉搜索树的节点分布情况
+        BinaryTrees.println(bst);
+
+        // 删除度为0的节点：19
+        bst.remove(19);
+        System.out.println("删除度为0的节点-19：");
+        BinaryTrees.println(bst);
+
+        // 删除度为1的节点：787
+        bst.remove(787);
+        System.out.println("删除度为1的节点-787：");
+        BinaryTrees.println(bst);
+
+        // 删除度为2的节点：12
+        bst.remove(12);
+        System.out.println("删除度为2的节点-12：");
+        BinaryTrees.println(bst);
     }
 }

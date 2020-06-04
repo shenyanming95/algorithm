@@ -11,6 +11,13 @@ import com.sym.util.printer.BinaryTreeInfo;
 public interface ITree<E> extends BinaryTreeInfo {
 
     /**
+     * 节点的度
+     */
+    Integer DEGREE_ZERO = 0;
+    Integer DEGREE_ONE = 1;
+    Integer DEGREE_TWO = 2;
+
+    /**
      * 元素的数量
      *
      * @return 数量
