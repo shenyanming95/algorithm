@@ -75,7 +75,14 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
 
         @Override
         public String toString() {
-            return element.toString();
+            StringBuilder sb = new StringBuilder();
+            sb.append(element.toString());
+            if(parent == null){
+                sb.append("(null)");
+            }else{
+                sb.append("(").append(parent.element.toString()).append(")");
+            }
+            return sb.toString();
         }
     }
 
@@ -183,8 +190,11 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
         if(degree == ITree.DEGREE_ZERO && root == target){
             root = null;
         }
-        // 不管是度为0还是度为1, 都需要将父节点的左右指针清空, 所以可以放到一个逻辑一起操作
+        // 不管是度为0还是度为1, 都需要将父节点的左指针或者右指针清空, 所以可以放到一个逻辑一起操作
         BstNode<E> child = target.left == null ? target.right : target.left;
+        if(child != null){
+            child.parent = target.parent;
+        }
         if(target.parent.left == target){
             target.parent.left = child;
         }else{
@@ -395,7 +405,7 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
 
     @Override
     public Object string(Object node) {
-        return ((BstNode<E>) node).element;
+        return ((BstNode<E>) node).toString();
     }
     /* 借助外部工具类, 打印二叉树的结构图 - end*/
 }

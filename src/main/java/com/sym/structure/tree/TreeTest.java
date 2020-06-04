@@ -71,17 +71,22 @@ public class TreeTest {
 
         // 删除度为0的节点：19
         bst.remove(19);
-        System.out.println("删除度为0的节点-19：");
+        System.out.println("删除度为0的节点【19】：");
         BinaryTrees.println(bst);
 
         // 删除度为1的节点：787
         bst.remove(787);
-        System.out.println("删除度为1的节点-787：");
+        System.out.println("删除度为1的节点【787】：");
         BinaryTrees.println(bst);
 
         // 删除度为2的节点：12
         bst.remove(12);
-        System.out.println("删除度为2的节点-12：");
+        System.out.println("删除度为2的节点【12】：");
+        BinaryTrees.println(bst);
+
+        // 删除根节点：56
+        bst.remove(56);
+        System.out.println("删除根节点【56】：");
         BinaryTrees.println(bst);
     }
 }
