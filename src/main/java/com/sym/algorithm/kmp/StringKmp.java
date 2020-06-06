@@ -1,5 +1,7 @@
 package com.sym.algorithm.kmp;
 
+import com.sym.util.TimeUtil;
+
 /**
  * KMP算法的实现, KMP与BF在比较字符串时大体上方式一样, 毕竟字符串需要一个字符一个字符比较. 但是KMP不同于
  * BF的关键在于, 当某个主串和模式串某个字符不匹配时, BF会回溯模式串的指针到0, 再将主串指针回溯到下一个字符,
@@ -31,10 +33,10 @@ public class StringKmp {
         String s2 = "abcdf";
 
         // kmp求解
-        System.out.println(kmp(s1, s2));
+        TimeUtil.execute("kmp", () -> kmp(s1, s2));
 
         // 暴力求解
-        System.out.println(bruteForce(s1, s2));
+        TimeUtil.execute("kmp", () -> bruteForce(s1, s2));
     }
 
     /**
