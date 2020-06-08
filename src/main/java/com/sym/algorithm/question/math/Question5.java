@@ -25,6 +25,11 @@ public class Question5 {
             int sum = Question5.getFibonacci1(i);
             System.out.println("结果值：" + sum);
         });
+        // 特征方程求解
+        TimeUtil.execute("特征方程", () -> {
+            int sum = Question5.getFibonacci2(i);
+            System.out.println("结果值：" + sum);
+        });
     }
 
 
@@ -66,5 +71,13 @@ public class Question5 {
             end = sum;
         }
         return end;
+    }
+
+    /**
+     * 斐波那契额数的线性代数解法-特征方程
+     */
+    private static int getFibonacci2(int n){
+        double c = Math.sqrt(5);
+        return (int)((Math.pow((1 + c) / 2, n) - Math.pow((1 - c) / 2, n)) / c);
     }
 }
