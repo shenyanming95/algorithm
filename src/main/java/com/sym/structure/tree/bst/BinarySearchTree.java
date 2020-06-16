@@ -3,7 +3,7 @@ package com.sym.structure.tree.bst;
 import com.sym.structure.queue.IQueue;
 import com.sym.structure.queue.linked.LinkedQueue;
 import com.sym.structure.tree.ITree;
-
+import com.sym.structure.tree.traversal.Visitor;
 import java.util.Comparator;
 import java.util.Objects;
 
@@ -32,7 +32,7 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
      *
      * @param <E> 类型
      */
-    private static class BstNode<E> implements ITree.TreeTraversal {
+    private static class BstNode<E>{
         E element;
         BstNode<E> left;
         BstNode<E> right;
@@ -59,21 +59,6 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
         }
 
         @Override
-        public BstNode<E> root() {
-            return this;
-        }
-
-        @Override
-        public BstNode<E> left() {
-            return left;
-        }
-
-        @Override
-        public BstNode<E> right() {
-            return right;
-        }
-
-        @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
             sb.append(element.toString());
@@ -95,11 +80,6 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
      * 数量大小
      */
     private int size;
-
-    /**
-     * true-当元素值一样, 新元素会替代旧元素
-     */
-    private boolean replaceIfEquals;
 
     /**
      * 元素比较器
@@ -219,16 +199,6 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
     }
 
     /**
-     * 二叉搜索树的遍历
-     *
-     * @return {@link TreeTraversal}
-     */
-    @Override
-    public TreeTraversal traversal() {
-        return root;
-    }
-
-    /**
      * 返回二叉搜索树的高度
      *
      * @return 高度
@@ -243,6 +213,113 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
     }
 
     /**
+     * 前序遍历, 可以有两种方式实现：栈或递归
+     * @param visitor 访问者
+     */
+    @Override
+    public void preorder(Visitor<E> visitor) {
+        if(Objects.isNull(root) || Objects.isNull(visitor)){
+            return;
+        }
+        // 通过递归的方式
+        this.preorder(root, visitor);
+    }
+
+    private void preorder(BstNode<E> node, Visitor<E> visitor) {
+        // 递归终止条件, 节点为null
+        if(Objects.isNull(node)){
+            return;
+        }
+        // 先访问根节点
+        visitor.visit(node.element);
+        // 再访问左子树
+        preorder(node.left, visitor);
+        // 最后访问右子树
+        preorder(node.right, visitor);
+    }
+
+    /**
+     * 中序遍历, 可以有两种方式实现：栈或递归
+     * @param visitor 访问者
+     */
+    @Override
+    public void inorder(Visitor<E> visitor) {
+        if(Objects.isNull(root) || Objects.isNull(visitor)){
+            return;
+        }
+        // 通过递归的方式
+        this.inorder(root, visitor);
+    }
+
+    private void inorder(BstNode<E> node, Visitor<E> visitor) {
+        // 递归终止条件, 节点为null
+        if(Objects.isNull(node)){
+            return;
+        }
+        // 先访问左子树
+        inorder(node.left, visitor);
+        // 再访问根节点
+        visitor.visit(node.element);
+        // 最后访问右子树
+        inorder(node.right, visitor);
+    }
+
+    /**
+     * 后序遍历, 可以有两种方式实现：栈或递归
+     * @param visitor 访问者
+     */
+    @Override
+    public void postorder(Visitor<E> visitor) {
+        if(Objects.isNull(root) || Objects.isNull(visitor)){
+            return;
+        }
+        // 通过递归的方式
+        this.postorder(root, visitor);
+    }
+
+    private void postorder(BstNode<E> node, Visitor<E> visitor) {
+        // 递归终止条件, 节点为null
+        if(Objects.isNull(node)){
+            return;
+        }
+        // 先访问左子树
+        postorder(node.left, visitor);
+        // 再访问右子树
+        postorder(node.right, visitor);
+        // 最后访问根节点
+        visitor.visit(node.element);
+    }
+
+    /**
+     * 层次遍历, 通过循环+队列的方式
+     * @param visitor 访问者
+     */
+    @Override
+    public void levelorder(Visitor<E> visitor) {
+        if(Objects.isNull(root)){
+            return;
+        }
+        // 创建一个队列, 没访问到一个节点, 就将它的左右非空子节点入队,
+        // 然后遍历这个队列, 直至队列为空, 整个循环过程就是一棵树的层序遍历！
+        IQueue<BstNode<E>> queue = new LinkedQueue<>();
+        queue.offer(root);
+        while(!queue.isEmpty()){
+            // 当前访问节点
+            BstNode<E> curNode = queue.poll();
+            visitor.visit(curNode.element);
+            // 依次获取当前节点的左右子节点, 非空时入队
+            BstNode<E> left;
+            BstNode<E> right;
+            if(Objects.nonNull((left = curNode.left))){
+                queue.offer(left);
+            }
+            if(Objects.nonNull((right = curNode.right))){
+                queue.offer(right);
+            }
+        }
+    }
+
+    /**
      * 二叉搜索树的元素比较
      *
      * @param first  元素1
@@ -250,7 +327,8 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
      * @return 返回1, 0,-1分别表示元素1大于元素2, 元素1等于元素2, 元素1小于元素2
      */
     private int doCompare(E first, E second) {
-        return null != this.comparator ? comparator.compare(first, second) : ((Comparable<E>) first).compareTo(second);
+        return null != this.comparator ?
+                comparator.compare(first, second) : ((Comparable<E>) first).compareTo(second);
     }
 
     /**
