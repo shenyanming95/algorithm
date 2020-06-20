@@ -1,5 +1,6 @@
 package com.sym.util;
 
+import com.sym.structure.tree.avl.AvlTree;
 import com.sym.structure.tree.bst.BinarySearchTree;
 
 /**
@@ -9,15 +10,27 @@ import com.sym.structure.tree.bst.BinarySearchTree;
 
 public class BinaryTreeUtil {
 
-    public static BinarySearchTree<Integer> newBinarySearchTree(String nodeString){
+    public static BinarySearchTree<Integer> newBinarySearchTree(String nodeString) {
         BinarySearchTree<Integer> bst = new BinarySearchTree<>();
         String[] nodeArray = nodeString.split(",");
         for (String nodeValue : nodeArray) {
-            if("".equals(nodeValue)){
+            if ("".equals(nodeValue)) {
                 continue;
             }
             bst.add(Integer.parseInt(nodeValue));
         }
         return bst;
+    }
+
+    public static AvlTree<Integer> newAvlTree(String nodeString) {
+        AvlTree<Integer> avl = new AvlTree<>();
+        String[] nodeArray = nodeString.split(",");
+        for (String nodeValue : nodeArray) {
+            if ("".equals(nodeValue)) {
+                continue;
+            }
+            avl.add(Integer.parseInt(nodeValue));
+        }
+        return avl;
     }
 }
