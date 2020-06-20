@@ -3,18 +3,18 @@ package com.sym.structure.tree.bst;
 import com.sym.structure.queue.IQueue;
 import com.sym.structure.queue.linked.LinkedQueue;
 import com.sym.structure.tree.ITree;
-import com.sym.structure.tree.traversal.Visitor;
+import com.sym.structure.tree.traversal.IVisitor;
+
 import java.util.Comparator;
 import java.util.Objects;
 
 /**
- * 二叉搜索树的链表实现
+ * 二叉搜索树 ( Binary Search Tee) 的链表实现, 它是实现AVL树和红黑树的基础数据结构.
  *
  * @param <E> 要么通过{@link java.util.Comparator}比较, 要么E需要实现{@link Comparable}
  * @author shenyanming
  * @date 2020/5/21 22:51.
  */
-@SuppressWarnings("unchecked")
 public class BinarySearchTree<E> implements IBinarySearchTree<E> {
 
     /**
@@ -32,7 +32,7 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
      *
      * @param <E> 类型
      */
-    private static class BstNode<E>{
+    private static class BstNode<E> {
         E element;
         BstNode<E> left;
         BstNode<E> right;
@@ -45,14 +45,15 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
 
         /**
          * 获取节点的度
+         *
          * @return 0 or 1 or 2
          */
-        public int degree(){
+        public int degree() {
             int result = 0;
-            if(left != null){
+            if (left != null) {
                 result++;
             }
-            if(right != null){
+            if (right != null) {
                 result++;
             }
             return result;
@@ -62,9 +63,9 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
         public String toString() {
             StringBuilder sb = new StringBuilder();
             sb.append(element.toString());
-            if(parent == null){
+            if (parent == null) {
                 sb.append("(null)");
-            }else{
+            } else {
                 sb.append("(").append(parent.element.toString()).append(")");
             }
             return sb.toString();
@@ -153,34 +154,34 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
     public void remove(E e) {
         // 定位到对应的节点
         BstNode<E> target = doSearch(e);
-        if(target == null){
+        if (target == null) {
             return;
         }
         // 获取节点的度, 处理思路是这样：
         // 如果是度为0的节点, 直接删掉; 如果是度为1的节点, 用它的子节点替代它; 如果是度为2的节点, 用它的前驱节点或后继节点的值替换它的值, 然后删除前驱节点或后继节点.
         // 由于删除度为2的节点, 需要删除一个节点(前驱 or 后继), 跟度为0和1的节点处理方式一样, 所说义先处理度为2的节点
         int degree = target.degree();
-        if(degree == ITree.DEGREE_TWO){
+        if (degree == ITree.DEGREE_TWO) {
             // 处理度为2的节点, 使用它的前驱节点的值来替换它的值, 然后将它的前驱节点删除
             BstNode<E> predecessor = predecessor(target);
             target.element = predecessor.element;
             target = predecessor;
         }
         // 如果是根节点, 那就直接删除
-        if(degree == ITree.DEGREE_ZERO && root == target){
+        if (degree == ITree.DEGREE_ZERO && root == target) {
             root = null;
         }
         // 不管是度为0还是度为1, 都需要将父节点的左指针或者右指针清空, 所以可以放到一个逻辑一起操作
         BstNode<E> child = target.left == null ? target.right : target.left;
-        if(child != null){
+        if (child != null) {
             child.parent = target.parent;
         }
-        if(target.parent.left == target){
+        if (target.parent.left == target) {
             target.parent.left = child;
-        }else{
+        } else {
             target.parent.right = child;
         }
-        size --;
+        size--;
     }
 
     /**
@@ -214,20 +215,86 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
 
     /**
      * 前序遍历, 可以有两种方式实现：栈或递归
+     *
      * @param visitor 访问者
      */
     @Override
-    public void preorder(Visitor<E> visitor) {
-        if(Objects.isNull(root) || Objects.isNull(visitor)){
+    public void preorder(IVisitor<E> visitor) {
+        if (Objects.isNull(root) || Objects.isNull(visitor)) {
             return;
         }
         // 通过递归的方式
         this.preorder(root, visitor);
     }
 
-    private void preorder(BstNode<E> node, Visitor<E> visitor) {
+
+    /**
+     * 中序遍历, 可以有两种方式实现：栈或递归
+     *
+     * @param visitor 访问者
+     */
+    @Override
+    public void inorder(IVisitor<E> visitor) {
+        if (Objects.isNull(root) || Objects.isNull(visitor)) {
+            return;
+        }
+        // 通过递归的方式
+        this.inorder(root, visitor);
+    }
+
+    /**
+     * 后序遍历, 可以有两种方式实现：栈或递归
+     *
+     * @param visitor 访问者
+     */
+    @Override
+    public void postorder(IVisitor<E> visitor) {
+        if (Objects.isNull(root) || Objects.isNull(visitor)) {
+            return;
+        }
+        // 通过递归的方式
+        this.postorder(root, visitor);
+    }
+
+    /**
+     * 层次遍历, 通过循环+队列的方式
+     *
+     * @param visitor 访问者
+     */
+    @Override
+    public void levelorder(IVisitor<E> visitor) {
+        if (Objects.isNull(root)) {
+            return;
+        }
+        // 创建一个队列, 没访问到一个节点, 就将它的左右非空子节点入队,
+        // 然后遍历这个队列, 直至队列为空, 整个循环过程就是一棵树的层序遍历！
+        IQueue<BstNode<E>> queue = new LinkedQueue<>();
+        queue.offer(root);
+        while (!queue.isEmpty()) {
+            // 当前访问节点
+            BstNode<E> curNode = queue.poll();
+            visitor.visit(curNode.element);
+            // 依次获取当前节点的左右子节点, 非空时入队
+            BstNode<E> left;
+            BstNode<E> right;
+            if (Objects.nonNull((left = curNode.left))) {
+                queue.offer(left);
+            }
+            if (Objects.nonNull((right = curNode.right))) {
+                queue.offer(right);
+            }
+        }
+    }
+
+    /**
+     * 递归实现的前序遍历
+     *
+     * @param node    节点
+     * @param visitor 访问者
+     */
+    private void preorder(BstNode<E> node, IVisitor<E> visitor) {
         // 递归终止条件, 节点为null
-        if(Objects.isNull(node)){
+        if (Objects.isNull(node)) {
             return;
         }
         // 先访问根节点
@@ -239,21 +306,14 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
     }
 
     /**
-     * 中序遍历, 可以有两种方式实现：栈或递归
+     * 递归实现的中序遍历
+     *
+     * @param node    节点
      * @param visitor 访问者
      */
-    @Override
-    public void inorder(Visitor<E> visitor) {
-        if(Objects.isNull(root) || Objects.isNull(visitor)){
-            return;
-        }
-        // 通过递归的方式
-        this.inorder(root, visitor);
-    }
-
-    private void inorder(BstNode<E> node, Visitor<E> visitor) {
+    private void inorder(BstNode<E> node, IVisitor<E> visitor) {
         // 递归终止条件, 节点为null
-        if(Objects.isNull(node)){
+        if (Objects.isNull(node)) {
             return;
         }
         // 先访问左子树
@@ -265,21 +325,14 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
     }
 
     /**
-     * 后序遍历, 可以有两种方式实现：栈或递归
+     * 递归实现的后序遍历
+     *
+     * @param node    节点
      * @param visitor 访问者
      */
-    @Override
-    public void postorder(Visitor<E> visitor) {
-        if(Objects.isNull(root) || Objects.isNull(visitor)){
-            return;
-        }
-        // 通过递归的方式
-        this.postorder(root, visitor);
-    }
-
-    private void postorder(BstNode<E> node, Visitor<E> visitor) {
+    private void postorder(BstNode<E> node, IVisitor<E> visitor) {
         // 递归终止条件, 节点为null
-        if(Objects.isNull(node)){
+        if (Objects.isNull(node)) {
             return;
         }
         // 先访问左子树
@@ -291,35 +344,6 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
     }
 
     /**
-     * 层次遍历, 通过循环+队列的方式
-     * @param visitor 访问者
-     */
-    @Override
-    public void levelorder(Visitor<E> visitor) {
-        if(Objects.isNull(root)){
-            return;
-        }
-        // 创建一个队列, 没访问到一个节点, 就将它的左右非空子节点入队,
-        // 然后遍历这个队列, 直至队列为空, 整个循环过程就是一棵树的层序遍历！
-        IQueue<BstNode<E>> queue = new LinkedQueue<>();
-        queue.offer(root);
-        while(!queue.isEmpty()){
-            // 当前访问节点
-            BstNode<E> curNode = queue.poll();
-            visitor.visit(curNode.element);
-            // 依次获取当前节点的左右子节点, 非空时入队
-            BstNode<E> left;
-            BstNode<E> right;
-            if(Objects.nonNull((left = curNode.left))){
-                queue.offer(left);
-            }
-            if(Objects.nonNull((right = curNode.right))){
-                queue.offer(right);
-            }
-        }
-    }
-
-    /**
      * 二叉搜索树的元素比较
      *
      * @param first  元素1
@@ -327,8 +351,7 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
      * @return 返回1, 0,-1分别表示元素1大于元素2, 元素1等于元素2, 元素1小于元素2
      */
     private int doCompare(E first, E second) {
-        return null != this.comparator ?
-                comparator.compare(first, second) : ((Comparable<E>) first).compareTo(second);
+        return null != this.comparator ? comparator.compare(first, second) : ((Comparable<E>) first).compareTo(second);
     }
 
     /**
@@ -411,21 +434,21 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
      * @param node 指定节点
      * @return 指定节点的前驱节点
      */
-    private BstNode<E> predecessor(BstNode<E> node){
-        if(null == node){
+    private BstNode<E> predecessor(BstNode<E> node) {
+        if (null == node) {
             return null;
         }
-        if(node.left != null){
+        if (node.left != null) {
             // 左子树不为空, 就一直找到左子树的最右节点, 直至为null
             BstNode<E> p = node.left;
-            while(p.right != null){
+            while (p.right != null) {
                 p = p.right;
             }
             return p;
         }
         // 如果代码能来到这, 说明左子树为空, 所以要从它的父节点和祖父节点向上找, 直到找到处于祖父节点的右子树部分
         BstNode<E> p = node;
-        while(p.parent != null && p == p.parent.left){
+        while (p.parent != null && p == p.parent.left) {
             p = p.parent;
         }
         // 循环终止有两个条件：
@@ -445,21 +468,21 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
      * @param node 指定节点
      * @return 指定节点的前驱节点
      */
-    private BstNode<E> successor(BstNode<E> node){
-        if(node == null){
+    private BstNode<E> successor(BstNode<E> node) {
+        if (node == null) {
             return null;
         }
-        if(node.right != null){
+        if (node.right != null) {
             // 右子树不为null, 就找右子树当中的最小的一个, 就是跟node相邻的并且大于它的节点, 即后继节点
             BstNode<E> s = node.right;
-            while(s.left != null){
+            while (s.left != null) {
                 s = s.left;
             }
             return s;
         }
         // 如果右子树为null, 就从它的父节点和祖父节点开始找, 直至找到处于祖父节点的左子树部分
         BstNode<E> s = node;
-        while(s.parent != null && s == s.parent.right){
+        while (s.parent != null && s == s.parent.right) {
             s = s.parent;
         }
         return s.parent;
@@ -472,16 +495,19 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Object left(Object node) {
         return ((BstNode<E>) node).left;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Object right(Object node) {
         return ((BstNode<E>) node).right;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Object string(Object node) {
         return ((BstNode<E>) node).toString();
     }
