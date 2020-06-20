@@ -1,5 +1,6 @@
 package com.sym.structure.tree;
 
+import com.sym.structure.tree.avl.AvlTree;
 import com.sym.structure.tree.bst.BinarySearchTree;
 import com.sym.structure.tree.bst.IBinarySearchTree;
 import com.sym.util.BinaryTreeUtil;
@@ -113,5 +114,20 @@ public class TreeTest {
         bst.remove(56);
         System.out.println("删除根节点【56】：");
         BinaryTrees.println(bst);
+    }
+
+    /**
+     * AVL树与二叉搜索树在极端情况下的元素分布情况
+     */
+    @Test
+    public void test04(){
+        String nodeString = "10,20,30,40,50,60";
+        // 极端情况下, 二叉搜索树变为链表
+        BinarySearchTree<Integer> bst = BinaryTreeUtil.newBinarySearchTree(nodeString);
+        BinaryTrees.println(bst);
+
+        // 即使极端情况下, avl也能通过自平衡操作维持二叉树特性
+        AvlTree<Integer> avl = BinaryTreeUtil.newAvlTree(nodeString);
+        BinaryTrees.println(avl);
     }
 }

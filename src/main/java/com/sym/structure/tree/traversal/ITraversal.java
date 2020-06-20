@@ -16,26 +16,26 @@ public interface ITraversal<E> {
      *
      * @param visitor 访问者
      */
-    void preorder(Visitor<E> visitor);
+    void preorder(IVisitor<E> visitor);
 
     /**
      * 中序遍历
      *
      * @param visitor 访问者
      */
-    void inorder(Visitor<E> visitor);
+    void inorder(IVisitor<E> visitor);
 
     /**
      * 后序遍历
      *
      * @param visitor 访问者
      */
-    void postorder(Visitor<E> visitor);
+    void postorder(IVisitor<E> visitor);
 
     /**
      * 层序遍历
      *
      * @param visitor 访问者
      */
-    void levelorder(Visitor<E> visitor);
+    void levelorder(IVisitor<E> visitor);
 }

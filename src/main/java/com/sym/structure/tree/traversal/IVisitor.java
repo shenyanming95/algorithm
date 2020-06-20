@@ -7,7 +7,7 @@ package com.sym.structure.tree.traversal;
  * @date 2020/6/16 21:34.
  */
 @FunctionalInterface
-public interface Visitor<E> {
+public interface IVisitor<E> {
     /**
      * 访问一个元素
      *
