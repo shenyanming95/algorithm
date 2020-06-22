@@ -5,9 +5,10 @@ import com.sym.structure.tree.bst.BinarySearchTree;
 import com.sym.structure.tree.traversal.IVisitor;
 
 import java.util.Comparator;
+import java.util.Objects;
 
 /**
- * AVL树的实现, 理论上可以继承二叉搜索树{@link BinarySearchTree}实现, 这边没有继承, 直接重新完整地码一遍实现逻辑.
+ * AVL树的实现, 理论上可以继承二叉搜索树{@link BinarySearchTree}实现, 这边没用继承, 直接重新完整地码一遍实现逻辑.
  * AVL树在 Binary Search Tree的基础上多出了另一个平衡因子的概念, 即任意一个节点, 它的平衡因子等于它的【左子树高度 - 右子树高度】.
  * 如果一颗二叉搜索树的任意一个节点其平衡因子p, 满足【-1 <= p <= 1】, 则这棵二叉搜索树就称为AVL树.
  *
@@ -155,6 +156,7 @@ public class AvlTree<E> implements IAvlTree<E> {
 
     @Override
     public int height() {
+        // TODO 通过层序遍历来实现
         return 0;
     }
 
@@ -176,7 +178,7 @@ public class AvlTree<E> implements IAvlTree<E> {
 
     /**
      * 添加逻辑, 明确一点, AVL的自平衡操作是在添加新节点后,
-     * 才来判断是否有使父节点或祖父节点失衡, 有的话做旋转调整.
+     * 才来判断是否有使父节点或祖先节点失衡, 有的话做旋转调整.
      * 所以它还是需要先完成二叉搜索树的添加逻辑.
      *
      * @param e 元素
@@ -223,12 +225,20 @@ public class AvlTree<E> implements IAvlTree<E> {
                 p.left = newNode;
             }
             // AVL树区别于Binary Tree的地方, 这里需要做平衡调整
-            this.determineBalance(newNode);
+            this.determineBalance(newNode, true);
         }
         // 元素数量加1
         size++;
     }
 
+    /**
+     * 删除节点, 分为三种情况：
+     * 1.度为0, 直接删除;
+     * 2.度为1, 取它的子节点替代它的位置;
+     * 3.度为2, 将它前驱节点或者后继节点的值替换它现在的值, 然后将前驱节点或者后继节点删除
+     *
+     * @param e 待删除元素
+     */
     @Override
     public void remove(E e) {
         // 若元素不存在于当前AVL树中, 则直接返回
@@ -236,8 +246,35 @@ public class AvlTree<E> implements IAvlTree<E> {
         if ((node = doSearch(e)) == null) {
             return;
         }
-        // 否则根据找到的节点node的度进行不同的删除策略
-        this.doRemove(node);
+        // 获取节点的度
+        int degree = node.degree();
+
+        if (degree == ITree.DEGREE_TWO) {
+            // 节点的度为2, 用它的后继节点的值来替换当前节点的值, 然后再后继节点删掉！
+            AvlNode<E> successor = successor(node);
+            node.element = successor.element;
+            node = successor;
+        }
+        // 整棵AVL只剩根节点, 并且删除的元素就是根节点
+        if (degree == 0 && node == root) {
+            this.clear();
+            return;
+        }
+        // 剩下的情况, 只有度为0或1的普通节点(必定有父节点). 它们都需要将自己从父节点的引用剔除掉,
+        // 然后如果度为1的节点, 将它的子节点的父引用指针指向它的父节点.
+        AvlNode<E> child = Objects.nonNull(node.left) ? node.left : node.right;
+        if (node.isParentLeft()) {
+            node.parent.left = child;
+        } else {
+            node.parent.right = child;
+        }
+        if (Objects.nonNull(child)) {
+            child.parent = node.parent;
+        }
+        size--;
+        // 自平衡处理. 删除节点与添加节点不同, 添加节点遇到不平衡的节点将其重新旋转后, 其祖先节点也随之平衡;
+        // 但是删除节点, 如果旋转后子树高度变化了, 可能会导致其上的祖先节点全都失衡, 所以需要一个一个判断.
+        this.determineBalance(node, false);
     }
 
     @Override
@@ -262,14 +299,17 @@ public class AvlTree<E> implements IAvlTree<E> {
     }
 
     /**
-     * 判断再新节点添加后, 整棵AVL树是否还处于平衡
+     * 从指定节点的父节点开始, 判断其是否平衡, 如果有节点不平衡, 对其执行旋转操作.
+     * 添加导致的失衡：只要处理掉失衡节点, 其上的祖先节点必定平衡;
+     * 删除导致的失衡：处理掉失衡节点后, 有可能导致其所在的子树高度发生变化, 进而导致其上的祖先节点失衡, 所以需要一直循环向上判断
      *
-     * @param node 新添加的节点
+     * @param node        从这个节点开始判断
+     * @param shouldBreak 当处理完一个失衡节点后, 是否需要跳出循环
      */
-    private void determineBalance(AvlNode<E> node) {
-        // 当添加一个节点后, 如果导致了AVL失衡, 即存在若干个平衡因子绝对值大于1的节点
-        // (注意：这些失衡节点只可能是新添加节点的父节点或祖父节点), 只要解决了最近的父节点
-        // 的失衡问题, 往上的祖父节点也就重新平衡了; 同时, 还需要在这个循环中维护节点的高度,
+    private void determineBalance(AvlNode<E> node, boolean shouldBreak) {
+        // 当(添加 or 删除)一个节点后, 如果导致了AVL失衡, 即存在若干个平衡因子绝对值大于1的节点
+        // (注意：这些失衡节点只可能是该节点的父节点或祖先节点)。对于添加导致的失衡, 只要解决了最近的父节点
+        // 的失衡问题, 往上的祖先节点也就重新平衡了; 对于删除导致的失衡, 需要一直向上判断。同时, 还需要在这个循环中维护节点的高度,
         // 否则每次判断一个节点是否平衡, 都需要使用递归, 效率反而变低！
         while ((node = (node.parent)) != null) {
             if (node.isBalance()) {
@@ -278,7 +318,9 @@ public class AvlTree<E> implements IAvlTree<E> {
             } else {
                 // 当前节点不平衡, 重新维护平衡, 即【旋转】操作
                 this.reBalance(node);
-                break;
+                if (shouldBreak) {
+                    break;
+                }
             }
         }
     }
@@ -318,65 +360,83 @@ public class AvlTree<E> implements IAvlTree<E> {
 
     /**
      * 将节点进行左旋转. 这边最好画图理清, 不然容易犯错
-     *
+     *        |
+     *        o  <----失衡节点
+     *      /   \
+     *     o     o
+     *         /   \
+     *        o     o
+     *               \
+     *                o
      * @param node 失衡节点
      */
     private void rotateLeft(AvlNode<E> node) {
         // 失衡节点的父节点、右子节点
         AvlNode<E> nodeParent = node.parent, nodeRightChild = node.right;
 
-        // node右子节点的左子树, 移动到node的右子树
+        // nodeRightChild的左子树, 移动到node的右子树
         node.right = nodeRightChild.left;
-        // node作为原先右子节点的左子树
+        // node作为nodeRightChild的左子树
         nodeRightChild.left = node;
 
-        // 修改父节点引用
+        // 由于nodeRightChild现在作为该子树的新根节点, 所以它要作为nodeParent的左子树或右子树
         if (node.isParentLeft()) {
-            // 失衡节点是原先父节点的左子树
+            // 失衡节点node是原先父节点nodeParent的左子树, 同理nodeRightChild也作为nodeParent的左子树
             nodeParent.left = nodeRightChild;
         } else if (node.isParentRight()) {
-            // 失衡节点是原先父节点的右子树
+            // 失衡节点node是原先父节点nodeParent的右子树， 同理nodeRightChild也作为nodeParent的右子树
             nodeParent.right = nodeRightChild;
         } else {
-            // 失衡节点就是根节点
+            // 失衡节点就是根节点, 则nodeRightChild作为新的根节点
             root = nodeRightChild;
         }
-        // 原先的node的父节点就变为而nodeRightChild就作为node的父节点的父节点, 而nodeRightChild就作为node的父节点
+
+        // node和nodeRightChild的父引用指针各发生了变化, nodeRightChild的父引用指针变为nodeParent;
+        // 而node就作为nodeRightChild的子树, 所以它的父引用指针变为nodeRightChild
         nodeRightChild.parent = nodeParent;
         node.parent = nodeRightChild;
+        // 同时, 父引用指针变化的还有之前从nodeRightChild移到node右子树位置的子树, 它的父引用指针原先是nodeRightChild,
+        // 现在要变为node, 前提是这个子树不为null才需要修改.
         if (node.right != null) {
             // 这边容易忘记导致npe异常, 有可能原先的而nodeRightChild就作为node的父节点的左子树就是空的;
             // 只有在它不为空的情况才需要维护父引用
             node.right.parent = node;
         }
-        // 更新节点高度
+        // 移动过子树的node和nodeRightChild, 都需要更新高度
         node.updateHeight();
         nodeRightChild.updateHeight();
     }
 
     /**
      * 将节点进行右旋转. 这边最好画图理清, 不然容易犯错
-     *
+     *          |
+     *          o  <--- 失衡节点
+     *        /   \
+     *       o     o
+     *      / \
+     *     o   o
+     *    /
+     *   o
      * @param node 失衡节点
      */
     private void rotateRight(AvlNode<E> node) {
-        // 失衡节点的父节点、右子节点
+        // 失衡节点的父节点、左子节点
         AvlNode<E> nodeParent = node.parent, nodeLeftChild = node.left;
 
-        // node左子节点left的右子树, 移到node的左子树
+        // nodeLeftChild的右子树, 移动到node的左子树
         node.left = nodeLeftChild.right;
-        // node作为原先右子节点的左子树
+        // node作为nodeLeftChild的左子树
         nodeLeftChild.right = node;
 
-        // 维护父节点引用
+        // 由于nodeLeftChild现在作为该子树的新根节点, 所以它要作为nodeParent的左子树或右子树
         if (node.isParentLeft()) {
-            // 失衡节点是原先父节点的左子树
+            // 失衡节点node是原先父节点nodeParent的左子树, 同理nodeLeftChild也作为nodeParent的左子树
             nodeParent.left = nodeLeftChild;
         } else if (node.isParentRight()) {
-            // 失衡节点是原先父节点的右子树
+            // 失衡节点node是原先父节点nodeParent的右子树， 同理nodeLeftChild也作为nodeParent的右子树
             nodeParent.right = nodeLeftChild;
         } else {
-            // 失衡节点就是根节点
+            // 失衡节点就是根节点, 则nodeLeftChild作为新的根节点
             root = nodeLeftChild;
         }
         // 原先的node的父节点就变为nodeLeftChild的父节点, 而nodeLeftChild就作为node的父节点
@@ -407,7 +467,7 @@ public class AvlTree<E> implements IAvlTree<E> {
         AvlNode<E> cur = root;
         while (cur != null) {
             int result = doCompare(e, cur.element);
-            if (result > 1) {
+            if (result > 0) {
                 // 比当前节点大, 则从右子树再找
                 cur = cur.right;
             } else if (result < 0) {
@@ -420,27 +480,6 @@ public class AvlTree<E> implements IAvlTree<E> {
         }
         // 循环完了还没有找到, 就是avl树不存在当前这个元素
         return null;
-    }
-
-    /**
-     * 删除节点, 分为三种情况：
-     * 1.度为0, 直接删除;
-     * 2.度为1, 取它的子节点替代它的位置;
-     * 3.度为2, 将它前驱节点或者后继节点的值替换它现在的值, 然后将前驱节点或者后继节点删除
-     *
-     * @param node 删除元素所在的节点
-     */
-    private void doRemove(AvlNode<E> node) {
-        // 获取节点的度
-        int degree = node.degree();
-        if (degree == ITree.DEGREE_ZERO) {
-            // 度为0, 那么这个节点直接删除
-
-        } else if (degree == ITree.DEGREE_ONE) {
-            // 子节点来替代它
-        } else {
-            // 度为2, 用前驱节点的值来更新它的值, 然后它保持不变, 将前驱节点删掉
-        }
     }
 
     /**
@@ -458,25 +497,25 @@ public class AvlTree<E> implements IAvlTree<E> {
     /**
      * 获取指定节点的前驱节点, 因为是中序遍历的前一个节点, 所以：
      * 1.左子树不为空, 就取左子树的最右节点 (只有等到最右节点访问完了, 左子树才访问完, 才会轮到根节点)
-     * 2.左子树为空, 那就要找它最小的父节点或者祖父节点, 换句话说就是找到当前节点在其父节点的右子树中;
+     * 2.左子树为空, 那就要找它最小的父节点或者祖先节点, 换句话说就是找到当前节点在其父节点的右子树中;
      * 3.左子树为空, 父节点也为空, 那就是根节点
      *
      * @param node 节点
      * @return 可能为null
      */
-    private AvlNode<E> predecessor(AvlNode<E> node){
-        if(node.left != null){
+    private AvlNode<E> predecessor(AvlNode<E> node) {
+        if (node.left != null) {
             // 找到左子树的最右边(也即最大)的节点
             AvlNode<E> cur = node.left;
-            while(cur.right != null){
+            while (cur.right != null) {
                 cur = cur.right;
             }
             return cur;
         }
         // 如果左子树为空, 但是父节点不为空,
-        // 找到最小的父节点或祖父节点, 也就是能位于它的右部分
+        // 找到最小的父节点或祖先节点, 也就是能位于它的右部分
         AvlNode<E> cur = node;
-        while(cur.parent != null && cur.parent.left == cur){
+        while (cur.parent != null && cur.parent.left == cur) {
             // 当处于左部分时, 就一直找
             cur = cur.parent;
         }
@@ -486,21 +525,22 @@ public class AvlTree<E> implements IAvlTree<E> {
     /**
      * 获取指定节点的后继节点, 因为是中序遍历的后一个节点, 所以：
      * 1.右子树不为空, 就取右子树的最左节点 (访问完根节点后, 就会访问右子树, 而右子树第一个访问的就是最左那个节点)
-     * 2.右子树为空, 那就要找它最大的父节点或者祖父节点, 换句话说就是找到当前节点在其父节点的左子树中;
+     * 2.右子树为空, 那就要找它最大的父节点或者祖先节点, 换句话说就是找到当前节点在其父节点的左子树中;
      * 3.右子树为空, 父节点也为空, 那就是根节点
+     *
      * @param node 指定节点
      * @return 指定节点的后继节点
      */
-    private AvlNode<E> successor(AvlNode<E> node){
-        if(node.right != null){
+    private AvlNode<E> successor(AvlNode<E> node) {
+        if (node.right != null) {
             AvlNode<E> cur = node;
-            while(cur.left != null){
+            while (cur.left != null) {
                 cur = cur.left;
             }
             return cur;
         }
         AvlNode<E> cur = node;
-        while(cur.parent != null && cur.parent.right == cur){
+        while (cur.parent != null && cur.parent.right == cur) {
             // 当处于左部分时, 就一直找
             cur = cur.parent;
         }

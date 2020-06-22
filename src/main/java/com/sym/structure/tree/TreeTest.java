@@ -4,10 +4,14 @@ import com.sym.structure.tree.avl.AvlTree;
 import com.sym.structure.tree.bst.BinarySearchTree;
 import com.sym.structure.tree.bst.IBinarySearchTree;
 import com.sym.util.BinaryTreeUtil;
+import com.sym.util.TimeUtil;
 import com.sym.util.printer.BinaryTrees;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -121,7 +125,7 @@ public class TreeTest {
      */
     @Test
     public void test04(){
-        String nodeString = "10,20,30,40,50,60";
+        String nodeString = "10,20,30,40,50,60,70";
         // 极端情况下, 二叉搜索树变为链表
         BinarySearchTree<Integer> bst = BinaryTreeUtil.newBinarySearchTree(nodeString);
         BinaryTrees.println(bst);
@@ -129,5 +133,52 @@ public class TreeTest {
         // 即使极端情况下, avl也能通过自平衡操作维持二叉树特性
         AvlTree<Integer> avl = BinaryTreeUtil.newAvlTree(nodeString);
         BinaryTrees.println(avl);
+    }
+
+    /**
+     *  AVL树的删除逻辑测试
+     */
+    @Test
+    public void test05(){
+        String nodeValues = "56,12,4,6,32,787,110,23,120,89,543,778,15,19,3,9";
+        AvlTree<Integer> avlTree = BinaryTreeUtil.newAvlTree(nodeValues);
+        // 初始化二叉搜索树的节点分布情况
+        BinaryTrees.println(avlTree);
+
+        // 删除【节点3】, 让节点【4】失衡
+        avlTree.remove(3);
+        System.out.println("删除节点【3】：");
+        BinaryTrees.println(avlTree);
+
+        // 删除【节点110】, AVL树仍处于平衡
+        avlTree.remove(110);
+        System.out.println("删除节点【110】：");
+        BinaryTrees.println(avlTree);
+
+        // 删除【节点89】，导致节点【120】失衡
+        avlTree.remove(89);
+        System.out.println("删除节点【89】：");
+        BinaryTrees.println(avlTree);
+    }
+
+    /**
+     * 二叉搜索树和AVL树在极端情况下的查询性能
+     */
+    @Test
+    public void test06(){
+        List<Integer> list = new ArrayList<>(100000);
+        for(int i = 0; i < 100000; i++){
+            list.add(i);
+        }
+        String nodeString = list.toString().replace("[", "").replace("]", "").replaceAll(" ","");
+        // 创建二叉搜索树
+        BinarySearchTree<Integer> bst = BinaryTreeUtil.newBinarySearchTree(nodeString);
+        // 创建AVL数
+        AvlTree<Integer> avl = BinaryTreeUtil.newAvlTree(nodeString);
+
+        // 查找999999是否存在
+        int i = 99999;
+        TimeUtil.execute("二叉搜索树", () -> bst.contains(i));
+        TimeUtil.execute("avl树", () -> avl.contains(i));
     }
 }
