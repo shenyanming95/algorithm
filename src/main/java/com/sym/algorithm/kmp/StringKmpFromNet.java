@@ -14,11 +14,27 @@ public class StringKmpFromNet {
     public static void main(String[] args) {
         String s1 = "dashhcjkbjdfhasdbnsakjdbaskhdioasbdjwbejsah";
         String s2 = "dbaskhdi";
-        TimeUtil.execute("kmp", () -> kmp(s1, s2));
+        TimeUtil.execute("kmp版本1", () -> kmpV1(s1, s2));
+        TimeUtil.execute("kmp版本2", () -> kmpV2(s1, s2));
     }
 
-    public static int kmp(String mainString, String modelString) {
-        int[] next = getNext(modelString);
+    public static int kmpV1(String mainString, String modelString) {
+        // 获取next数组
+        int[] next = new int[100];
+        next[0] = -1;
+        int x = 0;
+        int y = -1;
+        while (x < modelString.length()) {
+            if (y == -1 || modelString.charAt(x) == modelString.charAt(y)) {
+                //相等的情况
+                x++;
+                y++;
+                next[x] = y;
+            } else {
+                y = next[y];
+            }
+        }
+        // kmp算法逻辑
         int i = 0;
         int j = 0;
         while (i < mainString.length() && j < modelString.length()) {
@@ -39,26 +55,42 @@ public class StringKmpFromNet {
     }
 
 
-    /**
-     * @param modelString 模式字符串
-     *                    求next数组
-     */
-    public static int[] getNext(String modelString) {
-        int[] next = new int[100];
-        next[0] = -1;
-        int i = 0;
-        int j = -1;
-        while (i < modelString.length()) {
-            if (j == -1 || modelString.charAt(i) == modelString.charAt(j)) {
-                //相等的情况
+    public static int kmpV2(String text, String pattern) {
+        if ("".equals(pattern)) {
+            return 0;
+        }
+        int[] table = new int[pattern.length()];
+        int i = 0, j = 1;
+        while (j < table.length) {
+            if (pattern.charAt(i) == pattern.charAt(j)) {
+                table[j++] = i + 1;
                 i++;
-                j++;
-                next[i] = j;
             } else {
-                j = next[j];
+                if (i == 0) {
+                    j++;
+                } else {
+                    i = table[i - 1];
+                }
             }
         }
 
-        return next;
+        i = 0;
+        j = 0;
+        while (i < text.length()) {
+            if (text.charAt(i) == pattern.charAt(j)) {
+                i++;
+                j++;
+            } else {
+                if (j == 0) {
+                    i++;
+                } else {
+                    j = table[j - 1];
+                }
+            }
+            if (j == pattern.length()) {
+                return i - j;
+            }
+        }
+        return -1;
     }
 }
