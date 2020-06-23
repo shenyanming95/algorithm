@@ -1,5 +1,7 @@
 package com.sym.structure.tree.avl;
 
+import com.sym.structure.queue.IQueue;
+import com.sym.structure.queue.linked.LinkedQueue;
 import com.sym.structure.tree.ITree;
 import com.sym.structure.tree.bst.BinarySearchTree;
 import com.sym.structure.tree.traversal.IVisitor;
@@ -155,12 +157,6 @@ public class AvlTree<E> implements IAvlTree<E> {
     private Comparator<E> comparator;
 
     @Override
-    public int height() {
-        // TODO 通过层序遍历来实现
-        return 0;
-    }
-
-    @Override
     public int size() {
         return size;
     }
@@ -283,19 +279,96 @@ public class AvlTree<E> implements IAvlTree<E> {
     }
 
     @Override
+    public int height() {
+        if(Objects.isNull(root)){
+            return 0;
+        }
+        // 通过类似层序遍历的方式, 统计一颗AVL树的高度, 创建一个队列, 先将根节点入队
+        IQueue<AvlNode<E>> queue = new LinkedQueue<>();
+        queue.offer(root);
+
+        // 每一层需要访问到的节点个数, 当然根节点所在层, 只需要访问根节点它自己, 所以只需要访问1个
+        int needVisitEveryLevel = 1;
+        // 最终的高度
+        int height = 0;
+
+        while(!queue.isEmpty()){
+            // 取出队列中的节点, 同时将这一层需要访问的次数-1
+            AvlNode<E> cur = queue.poll();
+            needVisitEveryLevel--;
+
+            // 放入不为空的左子节点
+            if(cur.left != null){
+                queue.offer(cur.left);
+            }
+            // 放入不为空的右子节点
+            if(cur.right != null){
+                queue.offer(cur.right);
+            }
+            // 当needVisitEveryLevel等于0, 说明这一层的节点访问完了, 将height加1,
+            // 同时队列内的元素, 便是下一层需要访问的节点个数
+            if(needVisitEveryLevel == 0){
+                height++;
+                needVisitEveryLevel = queue.size();
+            }
+        }
+
+        return height;
+    }
+
+    @Override
     public void preorder(IVisitor<E> visitor) {
+        if(Objects.isNull(root) || Objects.isNull(visitor)){
+            return;
+        }
+        this.preorder(root, visitor);
     }
 
     @Override
     public void inorder(IVisitor<E> visitor) {
+        if(Objects.isNull(root) || Objects.isNull(visitor)){
+            return;
+        }
+        this.inorder(root, visitor);
     }
 
     @Override
     public void postorder(IVisitor<E> visitor) {
+        if(Objects.isNull(root) || Objects.isNull(visitor)){
+            return;
+        }
+        this.postorder(root, visitor);
     }
 
+    /**
+     * 通过队列的方式, 实现AVL树的层序访问
+     *
+     * @param visitor 访问者
+     */
     @Override
     public void levelorder(IVisitor<E> visitor) {
+        if(Objects.isNull(root) || Objects.isNull(visitor)){
+            return;
+        }
+        // 创建一个队列, 每当这个节点访问完, 就将它的非空子节点按序添加到队列中.
+        // 首先先将根节点入队
+        IQueue<AvlNode<E>> queue = new LinkedQueue<>();
+        queue.offer(root);
+
+        // 如果队列不为空, 那就一直循环
+        while(!queue.isEmpty()){
+            // 取出队列的元素, 访问它
+            AvlNode<E> cur = queue.poll();
+            visitor.visit(cur.element);
+            // 非空左子节点入队
+            if(Objects.nonNull(cur.left)){
+                queue.offer(cur.left);
+            }
+            // 非空右子节点入队
+            if(Objects.nonNull(cur.right)){
+                queue.offer(cur.right);
+            }
+        }
     }
 
     /**
@@ -546,6 +619,64 @@ public class AvlTree<E> implements IAvlTree<E> {
         }
         return cur.parent;
     }
+
+    /**
+     * 递归实现的前序遍历
+     *
+     * @param node    节点
+     * @param visitor 访问者
+     */
+    private void preorder(AvlNode<E> node, IVisitor<E> visitor) {
+        // 递归终止条件, 节点为null
+        if (Objects.isNull(node)) {
+            return;
+        }
+        // 先访问根节点
+        visitor.visit(node.element);
+        // 再访问左子树
+        preorder(node.left, visitor);
+        // 最后访问右子树
+        preorder(node.right, visitor);
+    }
+
+    /**
+     * 递归实现的中序遍历
+     *
+     * @param node    节点
+     * @param visitor 访问者
+     */
+    private void inorder(AvlNode<E> node, IVisitor<E> visitor) {
+        // 递归终止条件, 节点为null
+        if (Objects.isNull(node)) {
+            return;
+        }
+        // 先访问左子树
+        inorder(node.left, visitor);
+        // 再访问根节点
+        visitor.visit(node.element);
+        // 最后访问右子树
+        inorder(node.right, visitor);
+    }
+
+    /**
+     * 递归实现的后序遍历
+     *
+     * @param node    节点
+     * @param visitor 访问者
+     */
+    private void postorder(AvlNode<E> node, IVisitor<E> visitor) {
+        // 递归终止条件, 节点为null
+        if (Objects.isNull(node)) {
+            return;
+        }
+        // 先访问左子树
+        postorder(node.left, visitor);
+        // 再访问右子树
+        postorder(node.right, visitor);
+        // 最后访问根节点
+        visitor.visit(node.element);
+    }
+
 
     /* 借助外部工具类, 打印二叉树的结构图 - start*/
     @Override
