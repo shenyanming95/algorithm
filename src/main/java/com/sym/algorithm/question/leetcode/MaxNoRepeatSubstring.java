@@ -1,6 +1,6 @@
 package com.sym.algorithm.question.leetcode;
 
-import com.sym.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.HashSet;
 import java.util.Set;
