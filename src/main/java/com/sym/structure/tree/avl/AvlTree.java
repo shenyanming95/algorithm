@@ -5,7 +5,6 @@ import com.sym.structure.queue.linked.LinkedQueue;
 import com.sym.structure.tree.ITree;
 import com.sym.structure.tree.bst.BinarySearchTree;
 import com.sym.structure.tree.traversal.IVisitor;
-
 import java.util.Comparator;
 import java.util.Objects;
 
@@ -131,7 +130,7 @@ public class AvlTree<E> implements IAvlTree<E> {
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
-            sb.append(element.toString());
+            sb.append(element.toString()).append("[").append(balanceFactor()).append("]");
             if (parent == null) {
                 sb.append("(null)");
             } else {
