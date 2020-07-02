@@ -166,17 +166,18 @@ public class TreeTest {
      */
     @Test
     public void test06(){
-        List<Integer> list = new ArrayList<>(100000);
-        for(int i = 0; i < 100000; i++){
+        int size = 100000;
+        List<Integer> list = new ArrayList<>(size);
+        for(int i = 0; i < size; i++){
             list.add(i);
         }
         String nodeString = list.toString().replace("[", "").replace("]", "").replaceAll(" ","");
         // 创建二叉搜索树
         BinarySearchTree<Integer> bst = BinaryTreeUtil.newBinarySearchTree(nodeString);
-        // 创建AVL数
+        // 创建AVL树
         AvlTree<Integer> avl = BinaryTreeUtil.newAvlTree(nodeString);
 
-        // 查找999999是否存在
+        // 查找99999是否存在
         int i = 99999;
         TimeUtil.execute("二叉搜索树", () -> bst.contains(i));
         TimeUtil.execute("avl树", () -> avl.contains(i));
