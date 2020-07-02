@@ -1,6 +1,5 @@
-package com.sym;
+package com.sym.algorithm.snowflake;
 
-import com.sym.algorithm.snowflake.SymSnowFlake;
 import org.junit.Test;
 
 import java.util.HashSet;
@@ -10,9 +9,10 @@ import java.util.concurrent.CountDownLatch;
 /**
  * 1、请记住：-1的二进制为：11111111111111111111111111111111,任何跟-1做异或运算(^),都相当于对其取非(~)
  * 2、请记住：正数取非(~)相当于原值+1后取负数，如 ~10 = -11
- *           负数取非(~)这对于原值取绝对值后-1，如 ~ -10 = 9
+ * 负数取非(~)这对于原值取绝对值后-1，如 ~ -10 = 9
  *
- * Created by 沈燕明 on 2019/6/4 15:41.
+ * @author shenyanming
+ * @date 2019/6/4 15:41
  */
 public class SnowFlakeTest {
 
@@ -20,7 +20,7 @@ public class SnowFlakeTest {
      * java位运算测试
      */
     @Test
-    public void testOne(){
+    public void testOne() {
         /*
          *  如果原值为正数，正数的二进制，高位在左边，低位在右边，所以左移是往高位移动，原值会变大：
          *
@@ -28,28 +28,33 @@ public class SnowFlakeTest {
          *  >> 右移运算法，将原值（负数）缩小 2的n次幂
          */
         int i1 = 0b1000;
-        System.out.println("i1="+i1);
-        i1 = i1 << 2;//相当于将 8 扩大4倍
-        System.out.println("i1="+i1);
-        i1 = i1 >> 4;//相当于将 32 缩小16倍
-        System.out.println("i1="+i1);
+        System.out.println("i1=" + i1);
+        //相当于将 8 扩大4倍
+        i1 = i1 << 2;
+        System.out.println("i1=" + i1);
+        //相当于将 32 缩小16倍
+        i1 = i1 >> 4;
+        System.out.println("i1=" + i1);
     }
 
     /**
      * java位运算测试
      */
     @Test
-    public void testTwo(){
+    public void testTwo() {
         /*
          *  如果原值为负数，负数的二进制，由于要取倒数，所以原本高位变为低位，低位变为高位，导致左移是往低位移动，原值会变小：
          *
          *  << 左移运算符，将原值（负数）缩小 2的n次幂
          *  >> 右移运算法，将原值（负数）扩大 2的n次幂
          */
-        int i1 = -8; // -8的二进制为 11111111111111111111111111111000
-        int i2 = i1 << 2;//相当于将 -8 缩小4倍，-8*4=-32
+        // -8的二进制为 11111111111111111111111111111000
+        int i1 = -8;
+        //相当于将 -8 缩小4倍，-8*4=-32
+        int i2 = i1 << 2;
         System.out.println(i2);
-        i2 = i1 >> 2;//相当于将 -8 扩大4倍，-8/4=-2
+        //相当于将 -8 扩大4倍，-8/4=-2
+        i2 = i1 >> 2;
         System.out.println(i2);
     }
 
@@ -57,10 +62,12 @@ public class SnowFlakeTest {
      * java位运算测试
      */
     @Test
-    public void testThree(){
-        int i1 = 0b1010; //十进制为10
-        int i2 = 0b1100; //十进制为12
-        System.out.println("i1="+i1+",i2="+i2);
+    public void testThree() {
+        //十进制为10
+        int i1 = 0b1010;
+        //十进制为12
+        int i2 = 0b1100;
+        System.out.println("i1=" + i1 + ",i2=" + i2);
         /*
          * | 或运算，两数取二进制值进行位运算，只要有1个位为1，其结果值就为1
          */
@@ -89,14 +96,14 @@ public class SnowFlakeTest {
      * 单线程环境下测试雪花算法
      */
     @Test
-    public void testFour(){
-        SymSnowFlake symSnowFlake = new SymSnowFlake(0,0);
+    public void testFour() {
+        SymSnowFlake symSnowFlake = new SymSnowFlake(0, 0);
         Set<Long> set = new HashSet<>(1000);
-        for( int i=0;i<1000;i++ ){
+        for (int i = 0; i < 1000; i++) {
             long id = symSnowFlake.nextID();
-            if( set.contains( id ) ){
-                throw new RuntimeException("代码有bug，生成重复ID了,id="+id);
-            }else{
+            if (set.contains(id)) {
+                throw new RuntimeException("代码有bug，生成重复ID了,id=" + id);
+            } else {
                 set.add(id);
                 System.out.println(id);
             }
@@ -109,37 +116,36 @@ public class SnowFlakeTest {
     @Test
     public void testFive() throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(3);
-        SymSnowFlake symSnowFlake = new SymSnowFlake(05,0);
+        SymSnowFlake symSnowFlake = new SymSnowFlake(05, 0);
         Set<Long> set = new HashSet<>(3000);
-        for( int i=1;i<4;i++ ){
-            final int idx = i;
-            new Thread(()->{
-                try{
-                    for( int j=0;j<1000;j++ ){
+        for (int i = 1; i < 4; i++) {
+            new Thread(() -> {
+                try {
+                    for (int j = 0; j < 1000; j++) {
                         long id = symSnowFlake.nextID();
-                        if( set.contains( id ) ){
-                            throw new RuntimeException("多线程环境下，生成重复ID了,id="+id+"，thread="+Thread.currentThread().getName());
-                        }else{
+                        if (set.contains(id)) {
+                            throw new RuntimeException("多线程环境下，生成重复ID了,id=" + id + "，thread=" + Thread.currentThread().getName());
+                        } else {
                             set.add(id);
-                            System.out.println(Thread.currentThread().getName()+"："+id);
+                            System.out.println(Thread.currentThread().getName() + "：" + id);
                         }
                     }
-                }finally {
+                } finally {
                     latch.countDown();
                 }
 
-            },"线程"+i).start();
+            }, "线程" + i).start();
         }
         latch.await();
     }
 
 
     @Test
-    public void testSix(){
-        System.out.println(2&4);
+    public void testSix() {
+        System.out.println(2 & 4);
     }
 
-    private void printBinaryString(int val){
+    private void printBinaryString(int val) {
         System.out.println(Integer.toBinaryString(val));
     }
 
