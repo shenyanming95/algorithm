@@ -3,6 +3,7 @@ package com.sym.structure.tree;
 import com.sym.structure.tree.avl.AvlTree;
 import com.sym.structure.tree.bst.BinarySearchTree;
 import com.sym.structure.tree.bst.IBinarySearchTree;
+import com.sym.structure.tree.rbt.RedBlackTree;
 import com.sym.util.BinaryTreeUtil;
 import com.sym.util.TimeUtil;
 import com.sym.util.printer.BinaryTrees;
@@ -181,5 +182,15 @@ public class TreeTest {
         int i = 99999;
         TimeUtil.execute("二叉搜索树", () -> bst.contains(i));
         TimeUtil.execute("avl树", () -> avl.contains(i));
+    }
+
+    /**
+     * 创建一颗红黑树
+     */
+    @Test
+    public void test07(){
+        String nodeString = "1,2,3,4,5,6,7,8,9";
+        RedBlackTree<Integer> redBlackTree = BinaryTreeUtil.newRedBlackTree(nodeString);
+        BinaryTrees.println(redBlackTree);
     }
 }
