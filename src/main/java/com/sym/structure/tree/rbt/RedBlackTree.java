@@ -2,7 +2,9 @@ package com.sym.structure.tree.rbt;
 
 import com.sym.structure.queue.IQueue;
 import com.sym.structure.queue.linked.LinkedQueue;
+import com.sym.structure.tree.ITree;
 import com.sym.structure.tree.traversal.IVisitor;
+import javafx.util.Pair;
 
 import java.util.Comparator;
 
@@ -66,6 +68,15 @@ public class RedBlackTree<E> implements IRedBlackTree<E> {
         }
 
         /**
+         * 判断节点是否为红色
+         *
+         * @return true-红色
+         */
+        public boolean isRed() {
+            return color == RED;
+        }
+
+        /**
          * 将当前节点标志为黑色
          *
          * @return 被标志的节点
@@ -126,14 +137,14 @@ public class RedBlackTree<E> implements IRedBlackTree<E> {
             StringBuilder sb = new StringBuilder();
             // 节点自身的信息
             sb.append(element.toString());
-            if (color == RED) {
-                sb.append("_R");
-            }
             // 父节点的信息
             if (parent == null) {
                 sb.append("(null)");
             } else {
                 sb.append("(").append(parent.element.toString()).append(")");
+            }
+            if (color == RED) {
+                sb.append("_R");
             }
             return sb.toString();
         }
@@ -243,6 +254,40 @@ public class RedBlackTree<E> implements IRedBlackTree<E> {
 
     @Override
     public void remove(E e) {
+        // 先找到该元素对应的节点
+        RbtNode<E> rbtNode = this.doSearch(e);
+        if(rbtNode == null){
+            return;
+        }
+        // 真正要被删除的节点
+        RbtNode<E> deleteNode = rbtNode;
+        // 如果节点的度为2, 那就找到它的后继节点的值来取代它, 然后删除它的后继节点就行
+        if(rbtNode.degree() == ITree.DEGREE_TWO){
+            RbtNode<E> successor = this.successor(rbtNode);
+            rbtNode.element = successor.element;
+            deleteNode = successor;
+        }
+        // 节点的度1, 拿它子节点的值来替换, 然后删除它的子节点即可
+        if(rbtNode.degree() == ITree.DEGREE_ONE){
+            RbtNode<E> child = rbtNode.left == null ? rbtNode.right : rbtNode.left;
+            rbtNode.element = child.element;
+            deleteNode = child;
+        }
+        // 节点的度为0, 或者是真正要被删除的节点, 因为红黑树的删除逻辑需要借助兄弟来判断, 所以先获取它的兄弟结点
+        RbtNode<E> sibling = deleteNode.sibling();
+        if(deleteNode.isParentRightChild()){
+            deleteNode.parent.right = null;
+        }else if(deleteNode.isParentLeftChild()){
+            deleteNode.parent.left = null;
+        }else{
+            // 根节点
+            root = null;
+        }
+        // 数量减一
+        size--;
+        // 自平衡处理, 红黑树的删除逻辑绝对是超级复杂的一种, 但是它相比较于AVL树, 删除导致的旋转操作
+        // 不会达到O(logn)级别, 有学者统计红黑树删除节点导致的旋转操作, 最多不超过3次, 所以是O(1)复杂度
+        this.reBalanceAfterRemove(deleteNode, sibling);
     }
 
     @Override
@@ -308,11 +353,11 @@ public class RedBlackTree<E> implements IRedBlackTree<E> {
             par.left = newNode;
         }
         // 红黑树自平衡处理, 传入新添加的节点
-        this.doReBalance(newNode);
+        this.reBalanceAfterAdd(newNode);
     }
 
     /**
-     * 红黑树的自平衡处理.
+     * 红黑树添加节点后的自平衡处理.
      * 红黑树可以等价于一颗4阶B树, 变换逻辑是：红黑树的一个黑色节点连同它的左右红色节点(如果有), 可以组成一个4阶B树节点.
      * 因此再判断红黑树添加失衡情况时结合4阶B树的性质, 节点有4种排列分布式：红黑红、黑红、红黑、黑, 这样新节点插入的时候
      * 就会有12种情况(具体要画图演示), 在这12种情况中：
@@ -322,7 +367,7 @@ public class RedBlackTree<E> implements IRedBlackTree<E> {
      *
      * @param newNode 新加入的节点
      */
-    private void doReBalance(RbtNode<E> newNode) {
+    private void reBalanceAfterAdd(RbtNode<E> newNode) {
         if (newNode.parent == null) {
             // 说明红黑树上溢持续到根节点, 将其染成黑色即可
             newNode.markBlack();
@@ -364,7 +409,109 @@ public class RedBlackTree<E> implements IRedBlackTree<E> {
             // 让父节点和叔父节点变为黑色, 独立为一个4阶B树节点
             newNode.parent.markBlack().sibling().markBlack();
             // 让祖父节点变红, 然后向上层父节点合并, 即把祖父节点重新当成一个新添加的节点, 再调用一次doReBalance()方法
-            this.doReBalance(newNode.parent.parent.markRed());
+            this.reBalanceAfterAdd(newNode.parent.parent.markRed());
+        }
+    }
+
+    /**
+     * 红黑树删除节点后的自平衡处理.
+     * 删除度为2或者度为1的节点, 实际上会拿其它节点的值来替换它的值, 然后把其它节点删除, 因此红黑树节点删除也是发生在叶子节点上, 所以删除逻辑先分为两种：
+     * - 如果删除的是红色节点, 直接删除, 红黑树的性质可以得到保证;
+     * - 如果删除的是黑色节点, 那就复杂了, 因为黑色节点一删除, 红黑树"任意节点到其子节点路径上的黑色节点个数一致"这条性质无法保证,
+     *   若以B树角度来看, 黑色节点被删除, 意味着B树节点被删除, 那就会发生"下溢", 所以黑色节点删除又分为三种：
+     *   ◦ 如果兄弟结点为黑色, 并且有红色子节点, 那可以向兄弟结点借元素;
+     *   ◦ 如果兄弟结点为黑色, 但没有红色子节点, 那只能父节点向下合并;
+     *   ◦ 如果兄弟结点为红色, 那说明必有黑色侄子结点, 让黑色侄子节点变为兄弟结点, 然后重复上面两个判断逻辑.
+     *
+     * @param deleteNode 实际被删除的节点
+     */
+    private void reBalanceAfterRemove(RbtNode<E> deleteNode, RbtNode<E> sibling) {
+        if(deleteNode.isRed()){
+            // 节点为红色, 直接删除即可, 不需要再做平衡
+            return;
+        }
+        if(deleteNode == root) {
+            return;
+        }
+        boolean isRight = deleteNode.isParentRightChild();
+        if(isRight){
+            // 节点为黑色的情况, 通过兄弟结点来判断
+            // 兄弟结点为黑色
+            if(sibling.isBlack()){
+                if(sibling.degree() == ITree.DEGREE_ZERO){
+                    // 兄弟结点没有子节点. 那么只能让父节点下来合并, 这种情况又分为两种情况：
+                    // 如果父节点为红色, 那么父节点下来以后, 父节点原先那一层还有节点, 就不会发生下溢
+                    // 如果父节点为黑色, 那么父节点下来以后, 父节点原先那一层没有节点了, 就会发生下溢
+                    if(deleteNode.parent.isRed()){
+                        deleteNode.parent.markBlack();
+                        sibling.markRed();
+                    }else{
+                        sibling.markRed();
+                        this.reBalanceAfterRemove(deleteNode.parent, deleteNode.parent.sibling());
+                    }
+                }else{
+                    // 兄弟结点存在子节点(这个节点必为红色)
+                    if(sibling.left != null){
+                        // 左子树, 让父节点右旋转
+                        rotateRight(deleteNode.parent);
+                        sibling.color = deleteNode.parent.color;
+                        sibling.left.markBlack();
+                        deleteNode.parent.markBlack();
+                    }else{
+                        // 右子树, 让兄弟结点先左旋, 父节点再右旋
+                        rotateLeft(sibling);
+                        rotateRight(deleteNode.parent);
+                        sibling.right.color = deleteNode.parent.color;
+                        sibling.markBlack();
+                        deleteNode.parent.markBlack();
+                    }
+                }
+            }else{
+                // 兄弟结点为红色, 要让侄子节点变为兄弟结点, 所以需要对父节点右旋转
+                deleteNode.parent.markRed();
+                sibling.markBlack();
+                rotateRight(deleteNode.parent);
+                this.reBalanceAfterRemove(deleteNode.parent, deleteNode.parent.sibling());
+            }
+        }else{
+            // 节点为黑色的情况, 通过兄弟结点来判断
+            // 兄弟结点为黑色
+            if(sibling.isBlack()){
+                if(sibling.degree() == ITree.DEGREE_ZERO){
+                    // 兄弟结点没有子节点. 那么只能让父节点下来合并, 这种情况又分为两种情况：
+                    // 如果父节点为红色, 那么父节点下来以后, 父节点原先那一层还有节点, 就不会发生下溢
+                    // 如果父节点为黑色, 那么父节点下来以后, 父节点原先那一层没有节点了, 就会发生下溢
+                    if(deleteNode.parent.isRed()){
+                        deleteNode.parent.markBlack();
+                        sibling.markRed();
+                    }else{
+                        sibling.markRed();
+                        this.reBalanceAfterRemove(deleteNode.parent, deleteNode.parent.sibling());
+                    }
+                }else{
+                    // 兄弟结点存在子节点(这个节点必为红色)
+                    if(sibling.left != null){
+                        // 左子树, 让父节点右旋转
+                        rotateLeft(deleteNode.parent);
+                        sibling.color = deleteNode.parent.color;
+                        sibling.left.markBlack();
+                        deleteNode.parent.markBlack();
+                    }else{
+                        // 右子树, 让兄弟结点先左旋, 父节点再右旋
+                        rotateRight(sibling);
+                        rotateLeft(deleteNode.parent);
+                        sibling.right.color = deleteNode.parent.color;
+                        sibling.markBlack();
+                        deleteNode.parent.markBlack();
+                    }
+                }
+            }else{
+                // 兄弟结点为红色, 要让侄子节点变为兄弟结点, 所以需要对父节点右旋转
+                deleteNode.parent.markRed();
+                sibling.markBlack();
+                rotateLeft(deleteNode.parent);
+                this.reBalanceAfterRemove(deleteNode.parent, deleteNode.parent.sibling());
+            }
         }
     }
 
@@ -473,6 +620,27 @@ public class RedBlackTree<E> implements IRedBlackTree<E> {
     private int doCompare(E e1, E e2) {
         return comparator != null ? comparator.compare(e1, e2) :
                 ((Comparable<E>) e1).compareTo(e2);
+    }
+
+    /**
+     * 查找某个节点的后继节点
+     */
+    private RbtNode<E> successor(RbtNode<E> node){
+        // 如果节点的右子树不为空, 则找到它右子树的最左边的节点
+        if(node.right != null){
+            RbtNode<E> successor = node.right;
+            while(successor.left != null){
+                successor = successor.left;
+            }
+            return successor;
+        }
+        // 如果节点的右子树为空, 那就要往祖先节点找, 直到找到位于祖先节点的左边
+        RbtNode<E> n = node;
+        while(n.isParentRightChild()){
+            // 如果父节点不为null, 并且一直位于父节点的右边, 就继续循环
+            n = n.parent;
+        }
+        return n.parent;
     }
 
     /* 借助外部工具类, 打印二叉树的结构图 - start*/
