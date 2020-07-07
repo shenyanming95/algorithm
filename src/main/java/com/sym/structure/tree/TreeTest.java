@@ -192,5 +192,22 @@ public class TreeTest {
         String nodeString = "1,2,3,4,5,6,7,8,9";
         RedBlackTree<Integer> redBlackTree = BinaryTreeUtil.newRedBlackTree(nodeString);
         BinaryTrees.println(redBlackTree);
+
+        // 删除
+        redBlackTree.remove(5);
+        System.out.println();
+        BinaryTrees.println(redBlackTree);
+
+        redBlackTree.remove(1);
+        System.out.println();
+        BinaryTrees.println(redBlackTree);
+
+        redBlackTree.remove(2);
+        System.out.println();
+        BinaryTrees.println(redBlackTree);
+
+        redBlackTree.remove(3);
+        System.out.println();
+        BinaryTrees.println(redBlackTree);
     }
 }

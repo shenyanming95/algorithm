@@ -427,16 +427,16 @@ public class RedBlackTree<E> implements IRedBlackTree<E> {
      */
     private void reBalanceAfterRemove(RbtNode<E> deleteNode, RbtNode<E> sibling) {
         if(deleteNode.isRed()){
-            // 节点为红色, 直接删除即可, 不需要再做平衡
+            // 如果即将删除的节点为红色, 直接删除即可, 不需要再做平衡
             return;
         }
         if(deleteNode == root) {
+            // 如果删除的是根节点, 或者下溢持续到根节点, 直接返回即可.
             return;
         }
-        boolean isRight = deleteNode.isParentRightChild();
-        if(isRight){
-            // 节点为黑色的情况, 通过兄弟结点来判断
-            // 兄弟结点为黑色
+        // 节点为黑色的情况, 通过兄弟结点来判断
+        // 兄弟结点为黑色
+        if(deleteNode.isParentRightChild()){
             if(sibling.isBlack()){
                 if(sibling.degree() == ITree.DEGREE_ZERO){
                     // 兄弟结点没有子节点. 那么只能让父节点下来合并, 这种情况又分为两种情况：
@@ -453,29 +453,23 @@ public class RedBlackTree<E> implements IRedBlackTree<E> {
                     // 兄弟结点存在子节点(这个节点必为红色)
                     if(sibling.left != null){
                         // 左子树, 让父节点右旋转
-                        rotateRight(deleteNode.parent);
                         sibling.color = deleteNode.parent.color;
                         sibling.left.markBlack();
-                        deleteNode.parent.markBlack();
+                        rotateRight(deleteNode.parent.markBlack());
                     }else{
                         // 右子树, 让兄弟结点先左旋, 父节点再右旋
-                        rotateLeft(sibling);
-                        rotateRight(deleteNode.parent);
                         sibling.right.color = deleteNode.parent.color;
-                        sibling.markBlack();
-                        deleteNode.parent.markBlack();
+                        rotateLeft(sibling.markBlack());
+                        rotateRight(deleteNode.parent.markBlack());
                     }
                 }
             }else{
                 // 兄弟结点为红色, 要让侄子节点变为兄弟结点, 所以需要对父节点右旋转
-                deleteNode.parent.markRed();
                 sibling.markBlack();
-                rotateRight(deleteNode.parent);
-                this.reBalanceAfterRemove(deleteNode.parent, deleteNode.parent.sibling());
+                rotateRight(deleteNode.parent.markRed());
+                this.reBalanceAfterRemove(deleteNode, deleteNode.parent.left == null ? deleteNode.parent.right : deleteNode.parent.left);
             }
         }else{
-            // 节点为黑色的情况, 通过兄弟结点来判断
-            // 兄弟结点为黑色
             if(sibling.isBlack()){
                 if(sibling.degree() == ITree.DEGREE_ZERO){
                     // 兄弟结点没有子节点. 那么只能让父节点下来合并, 这种情况又分为两种情况：
@@ -490,27 +484,23 @@ public class RedBlackTree<E> implements IRedBlackTree<E> {
                     }
                 }else{
                     // 兄弟结点存在子节点(这个节点必为红色)
-                    if(sibling.left != null){
+                    if(sibling.right != null){
                         // 左子树, 让父节点右旋转
-                        rotateLeft(deleteNode.parent);
                         sibling.color = deleteNode.parent.color;
-                        sibling.left.markBlack();
-                        deleteNode.parent.markBlack();
+                        sibling.right.markBlack();
+                        rotateLeft(deleteNode.parent.markBlack());
                     }else{
                         // 右子树, 让兄弟结点先左旋, 父节点再右旋
-                        rotateRight(sibling);
-                        rotateLeft(deleteNode.parent);
-                        sibling.right.color = deleteNode.parent.color;
-                        sibling.markBlack();
-                        deleteNode.parent.markBlack();
+                        sibling.left.color = deleteNode.parent.color;
+                        rotateRight(sibling.markBlack());
+                        rotateLeft(deleteNode.parent.markBlack());
                     }
                 }
             }else{
                 // 兄弟结点为红色, 要让侄子节点变为兄弟结点, 所以需要对父节点右旋转
-                deleteNode.parent.markRed();
                 sibling.markBlack();
-                rotateLeft(deleteNode.parent);
-                this.reBalanceAfterRemove(deleteNode.parent, deleteNode.parent.sibling());
+                rotateLeft(deleteNode.parent.markRed());
+                this.reBalanceAfterRemove(deleteNode, deleteNode.parent.left == null ? deleteNode.parent.right : deleteNode.parent.left);
             }
         }
     }
