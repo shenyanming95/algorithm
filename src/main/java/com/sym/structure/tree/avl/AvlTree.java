@@ -613,7 +613,7 @@ public class AvlTree<E> implements IAvlTree<E> {
         }
         AvlNode<E> cur = node;
         while (cur.parent != null && cur.parent.right == cur) {
-            // 当处于左部分时, 就一直找
+            // 当处于右部分时, 就一直找
             cur = cur.parent;
         }
         return cur.parent;
