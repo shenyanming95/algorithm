@@ -22,13 +22,14 @@ import java.util.Random;
 @Slf4j
 public class TreeTest {
 
+    private Random random = new Random();
+
     /**
      * 创建一颗二叉搜索树
      */
     @Test
-    public void test01() {
+    public void newBinarySearchTree() {
         IBinarySearchTree<Integer> tree = new BinarySearchTree<>();
-        Random random = new Random();
         for (int i = 0; i < 10; i++) {
             tree.add(random.nextInt(1000));
         }
@@ -53,7 +54,7 @@ public class TreeTest {
      * 二叉搜索树遍历测试
      */
     @Test
-    public void test02() {
+    public void binarySearchTraverse() {
         String nodeValues = "56,12,4,6,32,787,110,23,120,89,543,778,15,19,3,9";
         BinarySearchTree<Integer> bst = BinaryTreeUtil.newBinarySearchTree(nodeValues);
 
@@ -94,7 +95,7 @@ public class TreeTest {
      * 二叉搜索树删除测试
      */
     @Test
-    public void test03() {
+    public void deleteBinarySearch() {
         String nodeValues = "56,12,4,6,32,787,110,23,120,89,543,778,15,19,3,9";
         BinarySearchTree<Integer> bst = BinaryTreeUtil.newBinarySearchTree(nodeValues);
         // 初始化二叉搜索树的节点分布情况
@@ -122,11 +123,11 @@ public class TreeTest {
     }
 
     /**
-     * AVL树与二叉搜索树在极端情况下的元素分布情况
+     * 创建一颗AVL树, 并且比较AVL树与二叉搜索树在极端情况下的元素分布情况
      */
     @Test
-    public void test04(){
-        String nodeString = "10,20,30,40,50,60,70";
+    public void newAvlTree(){
+        String nodeString = "10,20,30,40,50,60,70,80,90,100";
         // 极端情况下, 二叉搜索树变为链表
         BinarySearchTree<Integer> bst = BinaryTreeUtil.newBinarySearchTree(nodeString);
         BinaryTrees.println(bst);
@@ -140,7 +141,7 @@ public class TreeTest {
      *  AVL树的删除逻辑测试
      */
     @Test
-    public void test05(){
+    public void deleteAvlTree(){
         String nodeValues = "56,12,4,6,32,787,110,23,120,89,543,778,15,19,3,9";
         AvlTree<Integer> avlTree = BinaryTreeUtil.newAvlTree(nodeValues);
         // 初始化二叉搜索树的节点分布情况
@@ -166,8 +167,8 @@ public class TreeTest {
      * 二叉搜索树和AVL树在极端情况下的查询性能
      */
     @Test
-    public void test06(){
-        int size = 100000;
+    public void queryPerformance(){
+        int size = 50000;
         List<Integer> list = new ArrayList<>(size);
         for(int i = 0; i < size; i++){
             list.add(i);
@@ -178,8 +179,8 @@ public class TreeTest {
         // 创建AVL树
         AvlTree<Integer> avl = BinaryTreeUtil.newAvlTree(nodeString);
 
-        // 查找99999是否存在
-        int i = 99999;
+        // 查找49999是否存在
+        int i = 49999;
         TimeUtil.execute("二叉搜索树", () -> bst.contains(i));
         TimeUtil.execute("avl树", () -> avl.contains(i));
     }
@@ -188,26 +189,19 @@ public class TreeTest {
      * 创建一颗红黑树
      */
     @Test
-    public void test07(){
-        String nodeString = "1,2,3,4,5,6,7,8,9";
-        RedBlackTree<Integer> redBlackTree = BinaryTreeUtil.newRedBlackTree(nodeString);
+    public void newRedBlackTree(){
+        RedBlackTree<Integer> redBlackTree = new RedBlackTree<>();
+        for (int i = 0; i < 20; i++) {
+            redBlackTree.add(random.nextInt(1000));
+        }
+
+        // 打印二叉树
         BinaryTrees.println(redBlackTree);
 
-        // 删除
-        redBlackTree.remove(5);
-        System.out.println();
-        BinaryTrees.println(redBlackTree);
+        log.info("非空判断：{}", redBlackTree.isEmpty());
+        log.info("树的高度：{}", redBlackTree.height());
+        log.info("树的大小：{}", redBlackTree.size());
+        log.info("是否包含520：{}", redBlackTree.contains(520));
 
-        redBlackTree.remove(1);
-        System.out.println();
-        BinaryTrees.println(redBlackTree);
-
-        redBlackTree.remove(2);
-        System.out.println();
-        BinaryTrees.println(redBlackTree);
-
-        redBlackTree.remove(3);
-        System.out.println();
-        BinaryTrees.println(redBlackTree);
     }
 }

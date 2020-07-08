@@ -17,6 +17,7 @@ public class BinaryTreeUtil {
 
     /**
      * 创建二叉搜索树
+     *
      * @param nodeString 节点串
      */
     public static BinarySearchTree<Integer> newBinarySearchTree(String nodeString) {
@@ -33,6 +34,7 @@ public class BinaryTreeUtil {
 
     /**
      * 创建AVL树
+     *
      * @param nodeString 节点串
      */
     public static AvlTree<Integer> newAvlTree(String nodeString) {
@@ -49,10 +51,11 @@ public class BinaryTreeUtil {
 
     /**
      * 创建红黑树
+     *
      * @param nodeString 节点值串
      */
-    public static RedBlackTree<Integer> newRedBlackTree(String nodeString){
-        RedBlackTree<Integer> rbt = new RedBlackTree<Integer>();
+    public static RedBlackTree<Integer> newRedBlackTree(String nodeString) {
+        RedBlackTree<Integer> rbt = new RedBlackTree<>();
         String[] nodeArray = nodeString.split(SPLIT_CHARACTER);
         for (String nodeValue : nodeArray) {
             if ("".equals(nodeValue.replace(" ", ""))) {
