@@ -4,6 +4,7 @@ import com.sym.structure.queue.IQueue;
 import com.sym.structure.queue.linked.LinkedQueue;
 import com.sym.structure.tree.ITree;
 import com.sym.structure.tree.traversal.IVisitor;
+
 import java.util.Comparator;
 
 /**
@@ -411,8 +412,9 @@ public class RedBlackTree<E> implements IRedBlackTree<E> {
         }
         /*
          * 先考虑被删除节点位于其父节点的右子树中.
+         * 注意不要通过deleteNode.isParentRight()来判断, 此时父引用指针已经断了
          */
-        if(deleteNode.isParentRightChild()){
+        if(parent.right == null){
             // 兄弟节点为黑色 (注意因为当前被删节点已经保证是黑色了, 所以它必定会有兄弟节点, 不然红黑树性质保证不了!!! )
             if(isBlack(sibling)){
                 if(sibling.degree() == ITree.DEGREE_ZERO){
@@ -652,6 +654,28 @@ public class RedBlackTree<E> implements IRedBlackTree<E> {
             node.color = color;
         }
         return node;
+    }
+
+    /**
+     * 查找某个节点的前驱节点
+     */
+    private RbtNode<E> predecessor(RbtNode<E> node) {
+        if (node.left != null) {
+            // 找到左子树的最右边(也即最大)的节点
+            RbtNode<E> cur = node.left;
+            while (cur.right != null) {
+                cur = cur.right;
+            }
+            return cur;
+        }
+        // 如果左子树为空, 但是父节点不为空,
+        // 找到最小的父节点或祖先节点, 也就是能位于它的右部分
+        RbtNode<E> cur = node;
+        while (cur.parent != null && cur.parent.left == cur) {
+            // 当处于左部分时, 就一直找
+            cur = cur.parent;
+        }
+        return cur.parent;
     }
 
     /**

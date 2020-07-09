@@ -163,28 +163,6 @@ public class TreeTest {
     }
 
     /**
-     * 二叉搜索树和AVL树在极端情况下的查询性能
-     */
-    @Test
-    public void queryPerformance(){
-        int size = 50000;
-        List<Integer> list = new ArrayList<>(size);
-        for(int i = 0; i < size; i++){
-            list.add(i);
-        }
-        String nodeString = list.toString().replace("[", "").replace("]", "").replaceAll(" ","");
-        // 创建二叉搜索树
-        BinarySearchTree<Integer> bst = BinaryTreeUtil.newBinarySearchTree(nodeString);
-        // 创建AVL树
-        AvlTree<Integer> avl = BinaryTreeUtil.newAvlTree(nodeString);
-
-        // 查找49999是否存在
-        int i = 49999;
-        TimeUtil.execute("二叉搜索树", () -> bst.contains(i));
-        TimeUtil.execute("avl树", () -> avl.contains(i));
-    }
-
-    /**
      * 创建一颗红黑树
      */
     @Test
@@ -231,5 +209,42 @@ public class TreeTest {
         System.out.println("删除节点【535】：");
         BinaryTrees.println(rbt);
 
+    }
+
+    /**
+     * 二叉搜索树、AVL树、红黑树在极端情况下的查询性能
+     */
+    @Test
+    public void queryPerformance(){
+        int size = 50000;
+        List<Integer> list = new ArrayList<>(size);
+        for(int i = 0; i < size; i++){
+            list.add(i);
+        }
+        String nodeString = list.toString().replace("[", "").replace("]", "").replaceAll(" ","");
+        // 创建二叉搜索树
+        long start = System.currentTimeMillis();
+        BinarySearchTree<Integer> bst = BinaryTreeUtil.newBinarySearchTree(nodeString);
+        long end = System.currentTimeMillis();
+        System.out.println("[创建]二叉搜索树：" + (end - start) + " ms");
+
+        // 创建AVL树
+        start = System.currentTimeMillis();
+        AvlTree<Integer> avl = BinaryTreeUtil.newAvlTree(nodeString);
+        end = System.currentTimeMillis();
+        System.out.println("[创建]AVL树：" + (end - start) + " ms");
+
+        // 创建红黑树
+        start = System.currentTimeMillis();
+        RedBlackTree<Integer> rbt = BinaryTreeUtil.newRedBlackTree(nodeString);
+        end = System.currentTimeMillis();
+        System.out.println("[创建]红黑树树：" + (end - start) + " ms");
+        System.out.println();
+
+        // 查找49999是否存在
+        int i = 49999;
+        TimeUtil.execute("二叉搜索树", () -> bst.contains(i));
+        TimeUtil.execute("AVL树", () -> avl.contains(i));
+        TimeUtil.execute("红黑树", () -> rbt.contains(i));
     }
 }
