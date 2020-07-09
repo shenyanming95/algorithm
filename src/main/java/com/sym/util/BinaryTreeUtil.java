@@ -4,6 +4,8 @@ import com.sym.structure.tree.avl.AvlTree;
 import com.sym.structure.tree.bst.BinarySearchTree;
 import com.sym.structure.tree.rbt.RedBlackTree;
 
+import java.util.List;
+
 /**
  * 二叉树工具类
  *
@@ -58,10 +60,24 @@ public class BinaryTreeUtil {
         RedBlackTree<Integer> rbt = new RedBlackTree<>();
         String[] nodeArray = nodeString.split(SPLIT_CHARACTER);
         for (String nodeValue : nodeArray) {
-            if ("".equals(nodeValue.replace(" ", ""))) {
+            nodeValue = nodeValue.replaceAll(" ", "");
+            if ("".equals(nodeValue)) {
                 continue;
             }
             rbt.add(Integer.parseInt(nodeValue));
+        }
+        return rbt;
+    }
+
+    /**
+     * 创建红黑树
+     *
+     * @param list 节点值集合
+     */
+    public static RedBlackTree<Integer> newRedBlackTree(List<Integer> list) {
+        RedBlackTree<Integer> rbt = new RedBlackTree<>();
+        for (Integer nodeValue : list) {
+            rbt.add(nodeValue);
         }
         return rbt;
     }

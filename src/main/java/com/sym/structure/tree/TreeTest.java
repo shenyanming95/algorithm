@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -190,18 +189,47 @@ public class TreeTest {
      */
     @Test
     public void newRedBlackTree(){
-        RedBlackTree<Integer> redBlackTree = new RedBlackTree<>();
+        List<Integer> list = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
-            redBlackTree.add(random.nextInt(1000));
+            list.add(random.nextInt(1000));
         }
+        System.out.println(list);
+        RedBlackTree<Integer> redBlackTree = BinaryTreeUtil.newRedBlackTree(list);
 
         // 打印二叉树
         BinaryTrees.println(redBlackTree);
+        System.out.println();
 
         log.info("非空判断：{}", redBlackTree.isEmpty());
         log.info("树的高度：{}", redBlackTree.height());
         log.info("树的大小：{}", redBlackTree.size());
         log.info("是否包含520：{}", redBlackTree.contains(520));
+    }
+
+    /**
+     * 删除红黑树
+     */
+    @Test
+    public void deleteRedBlackTree(){
+        // 先创建红黑树
+        String nodeString = "781, 996, 271, 718, 132, 535, 715, 816, 567, 228, 754, 115, 442, 582, 560, 435, 558, 535, 522, 294";
+        RedBlackTree<Integer> rbt = BinaryTreeUtil.newRedBlackTree(nodeString);
+        BinaryTrees.println(rbt);
+
+        // 删除【816】
+        rbt.remove(816);
+        System.out.println("删除节点【816】：");
+        BinaryTrees.println(rbt);
+
+        // 删除【271】
+        rbt.remove(271);
+        System.out.println("删除节点【271】：");
+        BinaryTrees.println(rbt);
+
+        // 删除【535】
+        rbt.remove(535);
+        System.out.println("删除节点【535】：");
+        BinaryTrees.println(rbt);
 
     }
 }
