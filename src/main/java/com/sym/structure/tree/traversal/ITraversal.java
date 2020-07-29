@@ -16,26 +16,43 @@ public interface ITraversal<E> {
      *
      * @param visitor 访问者
      */
-    void preorder(IVisitor<E> visitor);
+    void preOrder(IVisitor<E> visitor);
 
     /**
      * 中序遍历
      *
      * @param visitor 访问者
      */
-    void inorder(IVisitor<E> visitor);
+    void inOrder(IVisitor<E> visitor);
 
     /**
      * 后序遍历
      *
      * @param visitor 访问者
      */
-    void postorder(IVisitor<E> visitor);
+    void postOrder(IVisitor<E> visitor);
 
     /**
      * 层序遍历
      *
      * @param visitor 访问者
      */
-    void levelorder(IVisitor<E> visitor);
+    void levelOrder(IVisitor<E> visitor);
+
+
+    /**
+     * 通过【访问者模式】设计树{@link com.sym.structure.tree.ITree}的遍历方式
+     *
+     * @author shenyanming
+     * @date 2020/6/16 21:34.
+     */
+    @FunctionalInterface
+    interface IVisitor<E> {
+        /**
+         * 访问一个元素
+         *
+         * @param element 具体元素
+         */
+        void visit(E element);
+    }
 }
