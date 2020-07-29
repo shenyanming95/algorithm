@@ -178,6 +178,8 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
         if (target == null) {
             return;
         }
+        // 总数量减一
+        size--;
         // 获取节点的度, 处理思路是这样：
         // - 如果是度为0的节点, 直接删掉;
         // - 如果是度为1的节点, 用它的子节点替代它;
@@ -190,23 +192,37 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
             target.element = predecessor.element;
             target = predecessor;
         }
-        // 如果是根节点, 那就直接删除
+        // 如果删除的是根节点, 且根节点没有任何子节点(表示这棵树只剩一个节点)
         if (degree == ITree.DEGREE_ZERO && root == target) {
             root = null;
+            return;
         }
         // 不管是度为0还是度为1, 都需要将父节点的左指针或者右指针清空, 所以可以放到一个逻辑一起操作
         BstNode<E> child = target.left == null ? target.right : target.left;
-        if (child != null) {
+        if(child != null){
+            // 说明是度为1的节点
             child.parent = target.parent;
-        }
-        if (target.parent.left == target) {
-            target.parent.left = child;
-        } else {
-            target.parent.right = child;
+            if(child.parent == null){
+                // 说明删除的target, 就是根节点, 所以child成为新的根节点
+                root = child;
+            } else if(target.parent.left == target) {
+                // 让子节点成为父节点的左子树
+                target.parent.left = child;
+            } else {
+                // 让子节点成为父节点的右子树
+                target.parent.right = child;
+            }
+        }else{
+            // 说明是度为0的节点, 隔断父节点到子节点的引用即可
+            if (target == target.parent.left) {
+                target.parent.left = null;
+            } else { // node == node.parent.right
+                target.parent.right = null;
+            }
         }
         // 删除节点的后置处理
         afterRemove(target);
-        size--;
+
     }
 
     /**
@@ -555,7 +571,7 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
     }
 
     /**
-     * 调用{@link #add(Object)}添加新节点的后置处理, 用于：
+     * 调用{@link #add(Object)}添加新节点的后置处理, 用于
      * AVL树和红黑树的重平衡.
      * @param newNode 新添加节点
      */
@@ -570,6 +586,5 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
      */
     protected void afterRemove(BstNode<E> deleteNode){
         // 二叉搜索树没有平衡操作
-
     }
 }
