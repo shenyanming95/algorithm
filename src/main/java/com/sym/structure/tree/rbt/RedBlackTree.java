@@ -166,8 +166,14 @@ public class RedBlackTree<E> extends BinarySearchTree<E> {
         // 因为红黑树的删除逻辑需要借助兄弟来判断, 所以先获取它的兄弟结点.
         // 但是这时父节点跟deleteNode的线已经断了(父引用指针还在), 所以要判断父节点的左右子节点哪个为空
         RbtNode<E> parent = deleteNode.parent();
+        if(parent == null){
+            // 如果被删除的节点父节点为null, 说明这个节点之前是根节点, 而且度为1或0,
+            // 但是度为0的情况在二叉搜索树上层已经处理, 所以这边只剩删除的是原先度为1的根节点,
+            // 意味着此时的红黑树只剩一个节点了, 那么将其染黑即可.
+            black((RbtNode<E>) root);
+            return;
+        }
         RbtNode<E> sibling = parent.left() == null ? parent.right() : parent.left();
-
         // 自平衡处理, 红黑树的删除逻辑绝对是超级复杂的一种, 但是它相比较于AVL树, 删除导致的旋转操作
         // 不会达到O(logn)级别, 有学者统计红黑树删除节点导致的旋转操作, 最多不超过3次, 所以是O(1)复杂度
         this.reBalanceAfterRemove(deleteNode, sibling);
