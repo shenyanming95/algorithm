@@ -3,13 +3,13 @@ package com.sym.structure.tree.bst;
 import com.sym.structure.queue.IQueue;
 import com.sym.structure.queue.linked.LinkedQueue;
 import com.sym.structure.tree.ITree;
-import com.sym.structure.tree.traversal.IVisitor;
 
 import java.util.Comparator;
 import java.util.Objects;
 
 /**
- * 二叉搜索树 ( Binary Search Tee) 的链表实现, 它是实现AVL树和红黑树的基础数据结构.
+ * 二叉搜索树 ( Binary Search Tee) 的链表实现,
+ * 它是实现AVL树和红黑树的基础数据结构.
  *
  * @param <E> 要么通过{@link java.util.Comparator}比较, 要么E需要实现{@link Comparable}
  * @author shenyanming
@@ -32,11 +32,23 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
      *
      * @param <E> 类型
      */
-    private static class BstNode<E> {
-        E element;
-        BstNode<E> left;
-        BstNode<E> right;
-        BstNode<E> parent;
+    protected static class BstNode<E> {
+        protected E element;
+        protected BstNode<E> left;
+        protected BstNode<E> right;
+        protected BstNode<E> parent;
+
+        protected BstNode<E> left(){
+            return this.left;
+        }
+
+        protected BstNode<E> right(){
+            return this.right;
+        }
+
+        protected BstNode<E> parent(){
+            return this.parent;
+        }
 
         public BstNode(E e, BstNode<E> p) {
             this.element = e;
@@ -75,17 +87,17 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
     /**
      * 根结点
      */
-    private BstNode<E> root;
+    protected BstNode<E> root;
 
     /**
-     * 数量大小
+     * 元素总数量
      */
-    private int size;
+    protected int size;
 
     /**
      * 元素比较器
      */
-    private Comparator<E> comparator;
+    protected Comparator<E> comparator;
 
     @Override
     public int size() {
@@ -103,15 +115,21 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
         size = 0;
     }
 
+    /**
+     * 添加新元素, 其实就是二分查找过程, 定位到元素实际需要添加的位置(是位于父节点的左?还是右?)
+     * @param e 元素
+     */
     @Override
     public void add(E e) {
-        Objects.requireNonNull(e);
+        // 待添加的新节点
+        BstNode<E> newNode;
         if (null == root) {
-            // 优先初始化根节点
-            root = new BstNode<>(e, null);
+            // 初始化根节点
+            newNode = node(e, null);
+            root = newNode;
         } else {
             // 当比较结束后, 需要知道节点e放在父节点的左边还是右边, 所以需要记录最后一次比较的值
-            int result = 0;
+            int compareResult = 0;
             // 原二叉树的当前比较节点, 由它从root开始, 一层一层地比较
             BstNode<E> temp = root;
             // 当比较结束后, 需要知道节点e的父节点是谁, 所以需要记录当前比较节点temp的父节点
@@ -120,11 +138,12 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
                 // 每次循环开启, 就记录父节点
                 currentParentNode = temp;
                 // 进行比较
-                result = doCompare(e, temp.element);
-                // 根据二叉搜索树性质, 若比根节点值大, 则取右节点比较; 若比根节点值小, 则取左节点比较; 若相等, 则覆盖原节点的值
-                if (result > 0) {
+                compareResult = doCompare(e, temp.element);
+                // 根据二叉搜索树性质, 若比根节点值大, 则取右节点比较; 若比根节点值小, 则取左节点比较;
+                // 若相等, 则覆盖原节点的值, 方法返回.
+                if (compareResult > 0) {
                     temp = temp.right;
-                } else if (result < 0) {
+                } else if (compareResult < 0) {
                     temp = temp.left;
                 } else {
                     temp.element = e;
@@ -132,13 +151,15 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
                 }
             }
             // 当循环退出, 表示已经找到一个合适的位置, 通过判断result正负形, 来决定位于 父节点 的左边还是右边
-            BstNode<E> newNode = new BstNode<>(e, currentParentNode);
-            if (result > 0) {
+            newNode = node(e, currentParentNode);
+            if (compareResult > 0) {
                 currentParentNode.right = newNode;
             } else {
                 currentParentNode.left = newNode;
             }
         }
+        // 添加新节点的后置处理
+        afterAdd(newNode);
         size++;
     }
 
@@ -158,8 +179,10 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
             return;
         }
         // 获取节点的度, 处理思路是这样：
-        // 如果是度为0的节点, 直接删掉; 如果是度为1的节点, 用它的子节点替代它; 如果是度为2的节点, 用它的前驱节点或后继节点的值替换它的值, 然后删除前驱节点或后继节点.
-        // 由于删除度为2的节点, 需要删除一个节点(前驱 or 后继), 跟度为0和1的节点处理方式一样, 所说义先处理度为2的节点
+        // - 如果是度为0的节点, 直接删掉;
+        // - 如果是度为1的节点, 用它的子节点替代它;
+        // - 如果是度为2的节点, 用它的前驱节点(或后继节点)的值替换它的值, 然后删除前驱节点(或后继节点);
+        // 由于删除度为2的节点, 需要删除一个节点(前驱 or 后继), 跟度为0和1的节点处理方式一样, 所说优先处理度为2的节点.
         int degree = target.degree();
         if (degree == ITree.DEGREE_TWO) {
             // 处理度为2的节点, 使用它的前驱节点的值来替换它的值, 然后将它的前驱节点删除
@@ -181,6 +204,8 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
         } else {
             target.parent.right = child;
         }
+        // 删除节点的后置处理
+        afterRemove(target);
         size--;
     }
 
@@ -192,8 +217,7 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
      */
     @Override
     public boolean contains(E e) {
-        Objects.requireNonNull(e);
-        if (isEmpty()) {
+        if (isEmpty() || e == null) {
             return false;
         }
         return null != doSearch(e);
@@ -219,12 +243,12 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
      * @param visitor 访问者
      */
     @Override
-    public void preorder(IVisitor<E> visitor) {
+    public void preOrder(IVisitor<E> visitor) {
         if (Objects.isNull(root) || Objects.isNull(visitor)) {
             return;
         }
         // 通过递归的方式
-        this.preorder(root, visitor);
+        this.preOrder(root, visitor);
     }
 
 
@@ -234,12 +258,12 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
      * @param visitor 访问者
      */
     @Override
-    public void inorder(IVisitor<E> visitor) {
+    public void inOrder(IVisitor<E> visitor) {
         if (Objects.isNull(root) || Objects.isNull(visitor)) {
             return;
         }
         // 通过递归的方式
-        this.inorder(root, visitor);
+        this.inOrder(root, visitor);
     }
 
     /**
@@ -248,12 +272,12 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
      * @param visitor 访问者
      */
     @Override
-    public void postorder(IVisitor<E> visitor) {
+    public void postOrder(IVisitor<E> visitor) {
         if (Objects.isNull(root) || Objects.isNull(visitor)) {
             return;
         }
         // 通过递归的方式
-        this.postorder(root, visitor);
+        this.postOrder(root, visitor);
     }
 
     /**
@@ -262,7 +286,7 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
      * @param visitor 访问者
      */
     @Override
-    public void levelorder(IVisitor<E> visitor) {
+    public void levelOrder(IVisitor<E> visitor) {
         if (Objects.isNull(root)) {
             return;
         }
@@ -286,23 +310,50 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
         }
     }
 
+    /* 借助外部工具类, 打印二叉树的结构图 - start*/
+
+    @Override
+    public Object printRoot() {
+        return root;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Object printLeft(Object node) {
+        return ((BstNode<E>) node).left;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Object printRight(Object node) {
+        return ((BstNode<E>) node).right;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Object printNodeString(Object node) {
+        return ((BstNode<E>) node).toString();
+    }
+
+    /* 借助外部工具类, 打印二叉树的结构图 - end*/
+
     /**
      * 递归实现的前序遍历
      *
      * @param node    节点
      * @param visitor 访问者
      */
-    private void preorder(BstNode<E> node, IVisitor<E> visitor) {
+    private void preOrder(BstNode<E> node, IVisitor<E> visitor) {
         // 递归终止条件, 节点为null
-        if (Objects.isNull(node)) {
+        if (node == null) {
             return;
         }
         // 先访问根节点
         visitor.visit(node.element);
         // 再访问左子树
-        preorder(node.left, visitor);
+        preOrder(node.left, visitor);
         // 最后访问右子树
-        preorder(node.right, visitor);
+        preOrder(node.right, visitor);
     }
 
     /**
@@ -311,17 +362,17 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
      * @param node    节点
      * @param visitor 访问者
      */
-    private void inorder(BstNode<E> node, IVisitor<E> visitor) {
+    private void inOrder(BstNode<E> node, IVisitor<E> visitor) {
         // 递归终止条件, 节点为null
-        if (Objects.isNull(node)) {
+        if (node == null) {
             return;
         }
         // 先访问左子树
-        inorder(node.left, visitor);
+        inOrder(node.left, visitor);
         // 再访问根节点
         visitor.visit(node.element);
         // 最后访问右子树
-        inorder(node.right, visitor);
+        inOrder(node.right, visitor);
     }
 
     /**
@@ -330,15 +381,15 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
      * @param node    节点
      * @param visitor 访问者
      */
-    private void postorder(BstNode<E> node, IVisitor<E> visitor) {
+    private void postOrder(BstNode<E> node, IVisitor<E> visitor) {
         // 递归终止条件, 节点为null
-        if (Objects.isNull(node)) {
+        if (node == null) {
             return;
         }
         // 先访问左子树
-        postorder(node.left, visitor);
+        postOrder(node.left, visitor);
         // 再访问右子树
-        postorder(node.right, visitor);
+        postOrder(node.right, visitor);
         // 最后访问根节点
         visitor.visit(node.element);
     }
@@ -350,12 +401,16 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
      * @param second 元素2
      * @return 返回1, 0,-1分别表示元素1大于元素2, 元素1等于元素2, 元素1小于元素2
      */
+    @SuppressWarnings("unchecked")
     private int doCompare(E first, E second) {
-        return null != this.comparator ? comparator.compare(first, second) : ((Comparable<E>) first).compareTo(second);
+        // 如果有指定比较器, 通过比较器比较大小;
+        // 如果没有指定比较器, 默认E可比较(即实现Comparable接口)
+        return null != this.comparator ? comparator.compare(first, second) :
+                ((Comparable<E>) first).compareTo(second);
     }
 
     /**
-     * 二叉搜素树的搜索逻辑
+     * 二叉搜素树的搜索逻辑, 一个简单的二分查找算法
      *
      * @param e 元素
      * @return null-不存在, 反之返回元素所在的节点
@@ -488,28 +543,33 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
         return s.parent;
     }
 
-    /* 借助外部工具类, 打印二叉树的结构图 - start*/
-    @Override
-    public Object root() {
-        return root;
+
+    /**
+     * 创建一个节点实体, 子类覆盖它, 以便创建子类自己定义的节点实体
+     * @param e 元素
+     * @param pNode 父节点
+     * @return 新节点
+     */
+    protected BstNode<E> node(E e, BstNode<E> pNode){
+        return new BstNode<>(Objects.requireNonNull(e), pNode);
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public Object left(Object node) {
-        return ((BstNode<E>) node).left;
+    /**
+     * 调用{@link #add(Object)}添加新节点的后置处理, 用于：
+     * AVL树和红黑树的重平衡.
+     * @param newNode 新添加节点
+     */
+    protected void afterAdd(BstNode<E> newNode){
+        // 二叉搜索树没有平衡操作
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public Object right(Object node) {
-        return ((BstNode<E>) node).right;
-    }
+    /**
+     * 调用{@link #remove(Object)}删除节点的后置处理, 用于
+     * AVL树和红黑树的重平衡
+     * @param deleteNode 被删除节点
+     */
+    protected void afterRemove(BstNode<E> deleteNode){
+        // 二叉搜索树没有平衡操作
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public Object string(Object node) {
-        return ((BstNode<E>) node).toString();
     }
-    /* 借助外部工具类, 打印二叉树的结构图 - end*/
 }
