@@ -4,6 +4,10 @@ import com.sym.util.HashcodeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
+
 /**
  * 测试类
  *
@@ -54,5 +58,33 @@ public class MainTest {
         String s = "abc";
         System.out.println(s.hashCode());
         System.out.println(HashcodeUtil.hashcode(s));
+    }
+
+    /**
+     * {@link HashMap}是乱序, {@link TreeMap}是有序(默认按照key升序)
+     */
+    @Test
+    public void test03(){
+        Map<String, String> map = new HashMap<>(4);
+        map.put("a213", "111");
+        map.put("213c", "111");
+        map.put("e321", "111");
+        map.put("3fb", "111");
+        map.put("dasdd", "111");
+        System.out.println(map);
+
+
+        map = new TreeMap<>();
+        map.put("a213", "111");
+        map.put("213c", "111");
+        map.put("e321", "111");
+        map.put("3fb", "111");
+        map.put("dasdd", "111");
+        System.out.println(map);
+    }
+
+    @Test
+    public void test04(){
+
     }
 }
