@@ -44,7 +44,7 @@ public class InorderPrinter extends AbstractPrinter {
 	@Override
 	public String printString() {
 		StringBuilder string = new StringBuilder(
-				printString(tree.root(), "", "", ""));
+				printString(tree.printRoot(), "", "", ""));
 		string.deleteCharAt(string.length() - 1);
 		return string.toString();
 	}
@@ -61,9 +61,9 @@ public class InorderPrinter extends AbstractPrinter {
 			String nodePrefix,
 			String leftPrefix, 
 			String rightPrefix) {
-		Object left = tree.left(node);
-		Object right = tree.right(node);
-		String string = tree.string(node).toString();
+		Object left = tree.printLeft(node);
+		Object right = tree.printRight(node);
+		String string = tree.printNodeString(node).toString();
 		
 		int length = string.length();
 		if (length % 2 == 0) {

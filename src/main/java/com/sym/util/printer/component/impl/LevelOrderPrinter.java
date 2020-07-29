@@ -37,7 +37,7 @@ public class LevelOrderPrinter extends AbstractPrinter {
 	public LevelOrderPrinter(BinaryTreeInfo tree) {
 		super(tree);
 
-		root = new Node(tree.root(), tree);
+		root = new Node(tree.printRoot(), tree);
 		maxWidth = root.width;
 	}
 
@@ -109,14 +109,14 @@ public class LevelOrderPrinter extends AbstractPrinter {
 					rowNodes.add(null);
 					rowNodes.add(null);
 				} else {
-					Node left = addNode(rowNodes, tree.left(node.btNode));
+					Node left = addNode(rowNodes, tree.printLeft(node.btNode));
 					if (left != null) {
 						node.left = left;
 						left.parent = node;
 						notNull = true;
 					}
 
-					Node right = addNode(rowNodes, tree.right(node.btNode));
+					Node right = addNode(rowNodes, tree.printRight(node.btNode));
 					if (right != null) {
 						node.right = right;
 						right.parent = node;
@@ -348,7 +348,7 @@ public class LevelOrderPrinter extends AbstractPrinter {
 		}
 
 		public Node(Object btNode, BinaryTreeInfo opetaion) {
-			init(opetaion.string(btNode).toString());
+			init(opetaion.printNodeString(btNode).toString());
 
 			this.btNode = btNode;
 		}
