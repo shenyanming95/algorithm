@@ -63,28 +63,28 @@ public class TreeTest {
 
         // 前序遍历
         System.out.print("前序遍历：");
-        bst.preorder((e) -> {
+        bst.preOrder((e) -> {
             System.out.print(e + " ");
         });
         System.out.println();
 
         // 中序遍历
         System.out.print("中序遍历：");
-        bst.inorder((e) -> {
+        bst.inOrder((e) -> {
             System.out.print(e + " ");
         });
         System.out.println();
 
         // 后序遍历
         System.out.print("后序遍历：");
-        bst.postorder((e) -> {
+        bst.postOrder((e) -> {
             System.out.print(e + " ");
         });
         System.out.println();
 
         // 层序遍历
         System.out.print("层序遍历：");
-        bst.levelorder((e) -> {
+        bst.levelOrder((e) -> {
             System.out.print(e + " ");
         });
         System.out.println();
