@@ -274,7 +274,7 @@ public class RedBlackTree<E> extends BinarySearchTree<E> {
             return;
         }
         /*
-         * 先考虑被删除节点位于其父节点的右子树中.
+         * 先考虑被删除节点位于其父节点的右子树中.(因为父节点 → 删除节点之间的引用已经断开了, 所以父节点右边为空, 说明被删除节点原先就位于父节点右子树中)
          * 注意不要通过deleteNode.isParentRight()来判断, 此时父引用指针已经断了
          */
         if(parent.right() == null){
