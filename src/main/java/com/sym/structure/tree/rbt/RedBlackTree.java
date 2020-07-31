@@ -270,7 +270,7 @@ public class RedBlackTree<E> extends BinarySearchTree<E> {
         // 获取父节点信息
         RbtNode<E> parent = deleteNode.parent();
         if(parent == null) {
-            // 如果删除的是根节点, 那肯定是整棵树删除到只剩根节点了, 直接返回.
+            // 红黑树删除节点的下溢持续到了根节点, 直接返回
             return;
         }
         /*
