@@ -4,7 +4,6 @@ import com.sym.structure.map.IMap;
 import com.sym.structure.queue.IQueue;
 import com.sym.structure.queue.linked.LinkedQueue;
 import com.sym.structure.tree.ITree;
-
 import java.util.Comparator;
 import java.util.Objects;
 
@@ -127,7 +126,6 @@ public class TreeMap<K, V> implements IMap<K, V> {
     public V put(K key, V value) {
         if(root == null){
             root = new Node<>(key, value, null, BLACK);
-            return null;
         }else{
             int compare = 0;
             Node<K, V> n = root;
@@ -249,6 +247,28 @@ public class TreeMap<K, V> implements IMap<K, V> {
         return false;
     }
 
+    @Override
+    public String toString() {
+        if(isEmpty()){
+            return "{}";
+        }
+        StringBuilder sb = new StringBuilder("{");
+        inOrder(root, sb);
+        return sb.substring(0, sb.length() - 1) + "}";
+    }
+
+    private void inOrder(Node<K, V> node, StringBuilder sb){
+        if(node == null){
+            return;
+        }
+        // 访问左子树
+        inOrder(node.left, sb);
+        // 处理根节点
+        sb.append(node.key).append("=").append(node.value).append(",");
+        // 访问右子树
+        inOrder(node.right, sb);
+    }
+
     private void afterAdd(Node<K,V> newNode) {
         Node<K, V> parentNode = newNode.parent;
         if(parentNode == null){
@@ -316,6 +336,10 @@ public class TreeMap<K, V> implements IMap<K, V> {
             return;
         }
         Node<K, V> parent = deleteNode.parent;
+        if(parent == null){
+            // 下溢持续到根节点
+            return;
+        }
         if(parent.right == null){
             // 先考虑被删除节点位于父节点右子树部分
             if(isBlack(sibling)){
@@ -412,7 +436,7 @@ public class TreeMap<K, V> implements IMap<K, V> {
         }else if(node.isParentRightChild()){
             pNode.right = rightChildNode;
         }else{
-            root = node;
+            root = rightChildNode;
         }
 
         node.parent = rightChildNode;
