@@ -63,9 +63,6 @@ public class HeapTest {
 
         log.info("删除堆顶：{}", heap.remove());
         BinaryTrees.println(heap);
-
-        log.info("删除堆顶：{}", heap.remove());
-        BinaryTrees.println(heap);
     }
 
     private List<Integer> getIntArray(int size){

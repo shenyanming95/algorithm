@@ -1,5 +1,7 @@
 package com.sym.structure.heap;
 
+import com.sym.util.printer.BinaryTreeInfo;
+
 /**
  * 如果一棵树, 它的任意节点总是 ≥ 或者 ≤ 它的子节点, 那么称这种数据结构为：堆（Heap）
  * 任意节点的值都 ≥ 它的子节点, 称为最大堆;
@@ -9,7 +11,7 @@ package com.sym.structure.heap;
  * @author shenyanming
  * @date 2020/7/26 21:54.
  */
-public interface IHeap<E> {
+public interface IHeap<E> extends BinaryTreeInfo {
 
     /**
      * 元素的数量
