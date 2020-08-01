@@ -31,6 +31,9 @@ public class HeapTest {
         BinaryTrees.println(heap);
     }
 
+    /**
+     * 二叉堆的其它api
+     */
     @Test
     public void useBinaryHeap(){
         List<Integer> list = getIntArray(50);
@@ -47,6 +50,9 @@ public class HeapTest {
         BinaryTrees.println(heap);
     }
 
+    /**
+     * 二叉堆删除测试
+     */
     @Test
     public void removeBinaryHeap(){
         BinaryHeap<Integer> heap = new BinaryHeap<>();
@@ -64,6 +70,21 @@ public class HeapTest {
         log.info("删除堆顶：{}", heap.remove());
         BinaryTrees.println(heap);
     }
+
+    /**
+     * 批量建堆测试
+     */
+    @Test
+    public void heapify(){
+        List<Integer> list = getIntArray(25);
+        log.info("构造整数：{}", list);
+
+        // 建堆
+        IHeap<Integer> heap = new BinaryHeap<>(list.toArray(new Integer[]{}));
+        // 打印堆信息
+        BinaryTrees.println(heap);
+    }
+
 
     private List<Integer> getIntArray(int size){
         List<Integer> retList = new ArrayList<>(size);

@@ -1,8 +1,8 @@
 package com.sym.structure.heap.impl;
 
 import com.sym.structure.heap.IHeap;
-
 import java.util.Comparator;
+import java.util.Objects;
 
 /**
  * 二叉堆, 是属于完全二叉树结构, 所以可以使用数组作为它的底层存储结构.
@@ -53,6 +53,18 @@ public class BinaryHeap<E> implements IHeap<E> {
         this.elements = (E[]) new Object[capacity];
         this.comparator = comparator;
         this.threshold = (int) (capacity * DEFAULT_LOAD_FACTORY);
+    }
+
+    public BinaryHeap(E[] elements) {
+        // 拷贝原数组
+        this.elements = (E[]) new Object[Objects.requireNonNull(elements).length];
+        System.arraycopy(elements, 0, this.elements, 0, elements.length);
+        // 计算容量
+        this.size = this.elements.length;
+        // 在下一次add()的时候, 扩容
+        this.threshold = (int) (size * DEFAULT_LOAD_FACTORY);
+        // 修复堆的性质
+        heapify();
     }
 
     @Override
@@ -190,6 +202,29 @@ public class BinaryHeap<E> implements IHeap<E> {
         // int half = size >> 1;
         // 只要保证 index < half, 那么保证index位置是非叶子元素, 就变成只需要判断是否有右子元素,
         // 若没有, 则直接与左子元素比较; 若有, 则从左右子元素中选取最大的一个与其比较.
+    }
+
+    /**
+     * 给定一个乱序的对象数组, 对其进行批量建堆, 做法：
+     * 1.先将乱序数组赋值给底层存储数组;
+     * 2.对数组选择上滤或下滤处理
+     * 对于第2步, 有两种处理方式；
+     * - 自上而下的上滤, 每进行一次上滤, 上面就有一小部分满足堆的性质(靠想象), 所以经过n次上滤以后, 整个数组就满足堆的性质;
+     * - 自下而上的下滤, 每进行一次下滤, 下面就由一小部分满足堆的性质(靠想象), 所以经过n次下滤以后, 整个数组就满足堆的性质;
+     */
+    private void heapify() {
+        // 自上而下的上滤, 因为堆顶元素没有父元素与其比较, 所以直接是从数组[1]开始上滤,
+        // 这个操作的时间复杂度为O(logn)
+        // for(int i = 1; i < size; i++){
+        //     siftUp(i);
+        // }
+
+        // 自下而上的下滤, 如果元素没有子元素, 那么就必要进行下滤, 所以循环是从数组非叶子元素开始比较.
+        // 根据完全二叉树的性质, 若节点总数量为n, 则非叶子节点的数量为floor(n/2)
+        // 这个操作的时间复杂度为O(n), 所以在批量建堆的时候, 一般我们采用自下而上的下滤.
+        for (int i = (size >> 1); i >= 0; i--) {
+            siftDown(i);
+        }
     }
 
     /**
