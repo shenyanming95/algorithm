@@ -10,7 +10,7 @@ import java.util.Comparator;
  * 优先级队列,队首弹出元素,不仅仅限制在队尾添加元素,
  * 现在需要按照优先数的大小来排列,谁先出
  *
- * @author ym.shen
+ * @author shenyanming
  */
 public class PriorityQueue<E> implements IQueue<E> {
 
