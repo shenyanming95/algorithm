@@ -43,17 +43,17 @@ public class AvlTree<E> extends BinarySearchTree<E>{
         }
 
         @Override
-        protected AvlNode<E> left() {
+        public AvlNode<E> left() {
             return (AvlNode<E>)super.left();
         }
 
         @Override
-        protected AvlNode<E> right() {
+        public AvlNode<E> right() {
             return (AvlNode<E>)super.right();
         }
 
         @Override
-        protected AvlNode<E> parent() {
+        public AvlNode<E> parent() {
             return (AvlNode<E>)super.parent();
         }
 
