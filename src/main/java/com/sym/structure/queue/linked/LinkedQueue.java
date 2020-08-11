@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 链式队列
  *
- * @author ym.shen
+ * @author shenyanming
  */
 public class LinkedQueue<E> implements IQueue<E> {
 
