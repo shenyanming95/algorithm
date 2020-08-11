@@ -1,5 +1,7 @@
 package com.sym.structure.queue.array;
 
+import com.sym.structure.queue.IQueue;
+
 /**
  * 顺序队列,底层还是以数组来储存元素,但是为了防止假溢出,逻辑上处理成循环队列（可以通过取模实现）
  * front 表示队首,指向队列的首元素
@@ -7,14 +9,13 @@ package com.sym.structure.queue.array;
  *
  * 顺序循环队列有一个问题：就是队列满和队列空的判断条件是一样的，所以需要额外处理：
  * 1.队列保留一个空位不保存数据,这样front和rear就不会在同一位置上;
- * 2.增加一个字段,用来标注队列是否为空;
- * 这个类采用第2种方式.
+ * 2.增加一个字段,用来标注队列是否为空;(本类采用方式)
  *
  * @author ym.shen
  * @see  CircleArrayQueue
  */
 @SuppressWarnings("unchecked")
-public class CircleArrayQueueV2<E> implements IArrayQueue<E> {
+public class CircleArrayQueueV2<E> implements IQueue<E> {
 
     private final static int DEFAULT_CAPACITY = 10;
 
@@ -33,7 +34,6 @@ public class CircleArrayQueueV2<E> implements IArrayQueue<E> {
         elements = new Object[maxLength];
     }
 
-
     @Override
     public void clear() {
         front = rear = concurrentSize = 0;
@@ -42,11 +42,6 @@ public class CircleArrayQueueV2<E> implements IArrayQueue<E> {
     @Override
     public boolean isEmpty() {
         return concurrentSize == 0;
-    }
-
-    @Override
-    public boolean isFull() {
-        return front == rear && concurrentSize > 0;
     }
 
     @Override
@@ -65,7 +60,7 @@ public class CircleArrayQueueV2<E> implements IArrayQueue<E> {
     @Override
     public void offer(E e) {
         //首先判断队列是否满了
-        if (isFull()) {
+        if (checkSize()) {
             throw new IllegalArgumentException("queue is full");
         }
         // 将新元素放在队尾指标rear指向的位置
@@ -103,5 +98,13 @@ public class CircleArrayQueueV2<E> implements IArrayQueue<E> {
             index = (index + 1) % maxLength;
         }
         return sb.append("]").toString();
+    }
+
+    /**
+     * 判断队列是否已满, 后期考虑自动扩容
+     * @return true-已满
+     */
+    private boolean checkSize() {
+        return front == rear && concurrentSize > 0;
     }
 }
