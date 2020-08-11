@@ -38,16 +38,20 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
         protected BstNode<E> right;
         protected BstNode<E> parent;
 
-        protected BstNode<E> left(){
+        public BstNode<E> left() {
             return this.left;
         }
 
-        protected BstNode<E> right(){
+        public BstNode<E> right() {
             return this.right;
         }
 
-        protected BstNode<E> parent(){
+        public BstNode<E> parent() {
             return this.parent;
+        }
+
+        public E element() {
+            return this.element;
         }
 
         public BstNode(E e, BstNode<E> p) {
@@ -117,6 +121,7 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
 
     /**
      * 添加新元素, 其实就是二分查找过程, 定位到元素实际需要添加的位置(是位于父节点的左?还是右?)
+     *
      * @param e 元素
      */
     @Override
@@ -199,20 +204,20 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
         }
         // 不管是度为0还是度为1, 都需要将父节点的左指针或者右指针清空, 所以可以放到一个逻辑一起操作
         BstNode<E> child = target.left == null ? target.right : target.left;
-        if(child != null){
+        if (child != null) {
             // 说明是度为1的节点
             child.parent = target.parent;
-            if(child.parent == null){
+            if (child.parent == null) {
                 // 说明删除的target, 就是根节点, 所以child成为新的根节点
                 root = child;
-            } else if(target.parent.left == target) {
+            } else if (target.parent.left == target) {
                 // 让子节点成为父节点的左子树
                 target.parent.left = child;
             } else {
                 // 让子节点成为父节点的右子树
                 target.parent.right = child;
             }
-        }else{
+        } else {
             // 说明是度为0的节点, 隔断父节点到子节点的引用即可
             if (target == target.parent.left) {
                 target.parent.left = null;
@@ -562,29 +567,32 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
 
     /**
      * 创建一个节点实体, 子类覆盖它, 以便创建子类自己定义的节点实体
-     * @param e 元素
+     *
+     * @param e     元素
      * @param pNode 父节点
      * @return 新节点
      */
-    protected BstNode<E> node(E e, BstNode<E> pNode){
+    protected BstNode<E> node(E e, BstNode<E> pNode) {
         return new BstNode<>(Objects.requireNonNull(e), pNode);
     }
 
     /**
      * 调用{@link #add(Object)}添加新节点的后置处理, 用于
      * AVL树和红黑树的重平衡.
+     *
      * @param newNode 新添加节点
      */
-    protected void afterAdd(BstNode<E> newNode){
+    protected void afterAdd(BstNode<E> newNode) {
         // 二叉搜索树没有平衡操作
     }
 
     /**
      * 调用{@link #remove(Object)}删除节点的后置处理, 用于
      * AVL树和红黑树的重平衡
+     *
      * @param deleteNode 被删除节点
      */
-    protected void afterRemove(BstNode<E> deleteNode){
+    protected void afterRemove(BstNode<E> deleteNode) {
         // 二叉搜索树没有平衡操作
     }
 }
