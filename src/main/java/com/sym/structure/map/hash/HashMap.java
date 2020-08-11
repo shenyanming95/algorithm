@@ -3,7 +3,7 @@ package com.sym.structure.map.hash;
 import com.sym.structure.map.IMap;
 
 /**
- * 通过数组+红黑树实现的哈希映射. 通过hashcode()求得key在数组中的位置, 若发生hash冲突,
+ * 通过数组+红黑树实现的哈希表. 通过hashcode()求得key在数组中的位置, 若发生hash冲突,
  * 通过红黑树来关联.但由于红黑树要求其节点可以比较, 所以比较大的难题在于怎么将通用的Key换
  * 算可比较的形式.
  *
@@ -42,7 +42,6 @@ public class HashMap<K, V> implements IMap<K, V> {
 
     @Override
     public void remove(K key) {
-
     }
 
     @Override
@@ -57,7 +56,6 @@ public class HashMap<K, V> implements IMap<K, V> {
 
     @Override
     public void clear() {
-
     }
 
     @Override
