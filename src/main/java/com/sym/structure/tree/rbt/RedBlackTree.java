@@ -1,5 +1,7 @@
 package com.sym.structure.tree.rbt;
 
+import com.sym.structure.stack.IStack;
+import com.sym.structure.stack.linked.LinkedStack;
 import com.sym.structure.tree.ITree;
 import com.sym.structure.tree.bst.BinarySearchTree;
 
@@ -54,17 +56,17 @@ public class RedBlackTree<E> extends BinarySearchTree<E> {
         }
 
         @Override
-        protected RbtNode<E> left() {
+        public RbtNode<E> left() {
             return (RbtNode<E>)super.left();
         }
 
         @Override
-        protected RbtNode<E> right() {
+        public RbtNode<E> right() {
             return (RbtNode<E>)super.right();
         }
 
         @Override
-        protected RbtNode<E> parent() {
+        public RbtNode<E> parent() {
             return (RbtNode<E>)super.parent();
         }
 
@@ -484,5 +486,131 @@ public class RedBlackTree<E> extends BinarySearchTree<E> {
             node.color = color;
         }
         return node;
+    }
+
+    /**
+     * 父类{@link BinarySearchTree#preOrder(IVisitor)}是通过递归实现的前序遍历,
+     * 这里采用循环的方式来实现, 思路是：
+     * 首先明确, 前序遍历是, 先访问根节点, 再访问左子树, 后访问右子树.
+     *        o  <-- 根节点
+     *      /  \
+     *     o    o <-- 访问左节点, 右节点入栈
+     *   /  \
+     *  o    o <-- 访问左节点, 右节点入栈
+     *  ↑
+     *  ↑
+     * 从这边开始结束访问, 从栈弹出元素, 继续按照上边逻辑访问
+     * ---------------------------------------------------------------------------------------
+     *  其实有个规律, 我们从根节点开始遍历, 首先一定会先访问根节点, 然后访问左子树, 左子树访问完才会访问右子树;
+     *  左子树又会先访问它的根节点, 然后访问它的左子树...以此类推, 直至一颗子树n, 它的左子节点为null;
+     *  然后就会访问n的右子树, 其中n的右子树也满足上面两行的规律;
+     *  子树n的右子树访问完以后, 整颗子树n就已经访问完, 这样n的父节点p, p的左子树就访问完了, 就访问p的右子树;
+     *  ...以此类推, 可以使用栈, 每访问一个根节点时, 就存入它的右节点, 这样处理后, 栈顶元素最终就是n的右子树.
+     *
+     * @param visitor 访问者
+     */
+    @Override
+    public void preOrder(IVisitor<E> visitor) {
+        if(isEmpty() || visitor == null)  return;
+        IStack<BstNode<E>> stack = new LinkedStack<>();
+        BstNode<E> node = root;
+        for(;;){
+            if(node != null){
+                // 若子树的根节点不为null, 那么根据前序遍历规则, 优先访问根节点
+                visitor.visit(node.element());
+                // 右子树需要等待左子树访问完, 所以将其入栈, 上层的右子树最晚访问, 最早入栈, 越近栈底.
+                if(node.right() != null){
+                    stack.push(node.right());
+                }
+                // 然后一直往左找, 类似递归的思想, 左子树访问完才能访问右子树;
+                // 而左子树也要等它的左子树访问完, 直到没有左子树了, 这就是递归的终止条件~
+                node = node.left();
+            }else if(stack.isEmpty()){
+                // 栈为空, 所有元素都访问完, 跳出循环
+                break;
+            }else{
+                // 这边就找到了上面所说的递归终止条件, 也即左子树为空, 类似这样子：
+                //     o
+                //   /
+                //  o    <-- 向左找的终止条件.
+                //    \
+                //      o <-- 若右子树存在, 那么这里就是栈顶.
+                //
+                // 将栈顶元素取出来, 让它重复前序遍历的操作
+                node = stack.pop();
+            }
+        }
+    }
+
+    /**
+     * 父类{@link BinarySearchTree#inOrder(IVisitor)} 是通过递归实现的中序遍历,
+     * 这里采用循环的方式来实现, 思路是：
+     * 首先明确, 中序遍历是, 先访问左子树, 再访问根节点, 后访问右子树.
+     *        o  <-- 根节点
+     *      /  \
+     *     o    o <-- 根节点入栈, 访问左子树
+     *   /  \
+     *  o    o <-- 根节点入栈, 访问左子树
+     *  ↑
+     *  ↑
+     * 从这边开始结束向左访问(它的左子树为null, 等价于访问完它的左子树), 此时就需要访问它(访问子树根节点),
+     * 最后就访问右子树, 按照上边逻辑对右子树继续中序遍历.
+     *
+     * @param visitor 访问者
+     */
+    @Override
+    public void inOrder(IVisitor<E> visitor) {
+        if(isEmpty() || visitor == null) return;
+        BstNode<E> node = root;
+        IStack<BstNode<E>> stack = new LinkedStack<>();
+        for(;;){
+            if(node != null){
+                // 子树根节点入栈
+                stack.push(node);
+                // 向左一直找
+                node = node.left();
+            }else if(stack.isEmpty()){
+                // 栈为空, 没有任何元素
+                break;
+            }else{
+                // 根节点为空, 意味着找到最左边元素了, 此时它位于栈顶.
+                // 要明白一件事, 栈顶这个元素类似这样子:
+                //        o
+                //      /
+                //     o  <-- 当期栈顶, 整个遍历过程中, 最早访问的节点.
+                //       \
+                //         o <-- 可能有右子树, 也可能么有.
+                //
+                // 所以将它取出来, 访问, 然后取出它的右子树, 如果右子树不为空, 就进入中序遍历的逻辑;
+                // 如果右子树为空, 则再取出上一个根节点
+                BstNode<E> pop = stack.pop();
+                visitor.visit(pop.element());
+                node = pop.right();
+            }
+        }
+    }
+
+    /**
+     * 父类{@link BinarySearchTree#postOrder(IVisitor)} 是通过递归实现的后序遍历,
+     * 这里采用循环的方式来实现, 思路是：
+     * 首先明确, 后序遍历是, 先访问左子树, 再访问右子树, 后访问根节点.
+     *        o  <-- 根节点
+     *      /  \
+     *     o    o <--
+     *   /  \
+     *  o    o <--
+     *  ↑
+     *  ↑
+     *
+     * @param visitor 访问者
+     */
+    @Override
+    public void postOrder(IVisitor<E> visitor) {
+        if(isEmpty() || visitor == null) return;
+        BstNode<E> prev = null;
+        BstNode<E> node = root;
+        IStack<BstNode<E>> stack = new LinkedStack<>();
+        for(;;){
+        }
     }
 }
