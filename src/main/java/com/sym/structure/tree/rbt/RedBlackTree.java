@@ -6,6 +6,7 @@ import com.sym.structure.tree.ITree;
 import com.sym.structure.tree.bst.BinarySearchTree;
 
 import java.util.Comparator;
+import java.util.Stack;
 
 /**
  * 红黑树也是平衡二叉树的一种, 所以它也是在二叉搜索树的基础加了其它限制：
@@ -594,13 +595,15 @@ public class RedBlackTree<E> extends BinarySearchTree<E> {
      * 父类{@link BinarySearchTree#postOrder(IVisitor)} 是通过递归实现的后序遍历,
      * 这里采用循环的方式来实现, 思路是：
      * 首先明确, 后序遍历是, 先访问左子树, 再访问右子树, 后访问根节点.
-     *        o  <-- 根节点
+     *        o  <-- 根节点, 先入栈
      *      /  \
-     *     o    o <--
+     *     o    o <-- 根节点右节点, 再入栈; 根节点左节点, 后入栈
      *   /  \
-     *  o    o <--
+     *  o    o <-- 它的父节点已经入栈, 所以它入栈, 再将它的兄弟节点入栈
      *  ↑
      *  ↑
+     * 从这个节点开始取出来访问, 由于入栈的顺序是 根-右-左, 所以出栈的顺序是：左-右-根, 正好
+     * 满足后序遍历的规则.
      *
      * @param visitor 访问者
      */
@@ -608,9 +611,37 @@ public class RedBlackTree<E> extends BinarySearchTree<E> {
     public void postOrder(IVisitor<E> visitor) {
         if(isEmpty() || visitor == null) return;
         BstNode<E> prev = null;
-        BstNode<E> node = root;
-        IStack<BstNode<E>> stack = new LinkedStack<>();
-        for(;;){
+        Stack<BstNode<E>> stack = new Stack<>();
+        stack.push(root);
+        while(!stack.isEmpty()){
+            // 查看栈顶元素, 注意是查看, 而不是弹出栈顶元素.
+            // 因为最下面的else语句块, 是先将右子节点入栈, 再将左子节点入栈,
+            // 所以peek()得到的栈顶节点, 一般是左子节点, 这就满足需要一直向左找的要求.
+            // 后续遍历跟中序遍历, 需要一直向左找, 直至找到最左边的叶子结点, 然后开始访问.
+            BstNode<E> top = stack.peek();
+            if(top.degree() == ITree.DEGREE_ZERO || (prev != null && prev.parent() == top)){
+                // 若节点是叶子结点(度为0), 那么它可以优先取出来访问
+                prev = stack.pop();
+                visitor.visit(prev.element());
+                // 但是, 还有一个问题要解决, 上层子树的左子节点 == 下层子树的根节点
+                //                  o
+                //                /
+                //对上是左节点 --> o <-- 对下是根节点
+                //              / \
+                //             o   o
+                // 所以每当访问这种节点的时候, 会发现它是非叶子节点, 导致又会将它的
+                // 左右子节点入栈, 但其实它的左右子节点已经访问完了. 所以这种节点
+                // 应该让它直接访问, 而不要进入下面的else块, 让子节点入栈.
+            }else{
+                // 如果当前节点非叶子节点, 则先将它的右子节点入栈,
+                // 再将它的左子节点入栈.
+                if(top.right() != null){
+                    stack.push(top.right());
+                }
+                if(top.left() != null){
+                    stack.push(top.left());
+                }
+            }
         }
     }
 }
