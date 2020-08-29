@@ -8,7 +8,7 @@ import java.util.Arrays;
 /**
  * 冒泡排序, 依次比较相邻两个元素, 若后一个元素比前一个元素大, 则互换位置.
  * 每经过一轮, 数组区间内的最大元素就会被移动到末尾.
- *
+ * <p>
  * 优化a：如果序列已经完全有序, 可以提前终止冒泡排序;
  * 优化b：如果序列末尾已局部有序, 记录最后一次比较的位置, 下一轮直接到该位置即可;
  *
@@ -25,25 +25,10 @@ public class BubbleSort {
         int[] arr3 = Arrays.copyOf(arr1, arr1.length);
         int[] arr4 = Arrays.copyOf(arr1, arr1.length);
 
-        TimeUtil.execute("最简版V1", () -> {
-            BubbleSort.sortV1(arr1);
-            SymArrayUtil.print(arr1);
-        });
-
-        TimeUtil.execute("优化版V2", () -> {
-            BubbleSort.sortV2(arr2);
-            SymArrayUtil.print(arr2);
-        });
-
-        TimeUtil.execute("优化版V3", () -> {
-            BubbleSort.sortV3(arr3);
-            SymArrayUtil.print(arr3);
-        });
-
-        TimeUtil.execute("优化版V4", () -> {
-            BubbleSort.sortV4(arr3);
-            SymArrayUtil.print(arr3);
-        });
+        TimeUtil.execute("最简版V1", () -> SymArrayUtil.print(BubbleSort.sortV1(arr1)));
+        TimeUtil.execute("优化版V2", () -> SymArrayUtil.print(BubbleSort.sortV2(arr2)));
+        TimeUtil.execute("优化版V3", () -> SymArrayUtil.print(BubbleSort.sortV3(arr3)));
+        TimeUtil.execute("优化版V4", () -> SymArrayUtil.print(BubbleSort.sortV4(arr4)));
     }
 
     /**
