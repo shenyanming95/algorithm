@@ -1,41 +1,57 @@
-package com.sym.algorithm.sort;
+package com.sym.algorithm.sort.impl;
 
+import com.sym.algorithm.sort.AbstractIntegerSort;
 import com.sym.util.SymArrayUtil;
 import com.sym.util.TimeUtil;
 
 import java.util.Arrays;
 
 /**
- * 冒泡排序, 依次比较相邻两个元素, 若后一个元素比前一个元素大, 则互换位置.
- * 每经过一轮, 数组区间内的最大元素就会被移动到末尾.
+ * 冒泡排序, 依次比较相邻两个元素, 若后一个元素比前一个元素大, 则互换位置,
+ * 每经过一轮, 数组区间内的最大元素就会被移动到末尾
  * <p>
  * 优化a：如果序列已经完全有序, 可以提前终止冒泡排序;
  * 优化b：如果序列末尾已局部有序, 记录最后一次比较的位置, 下一轮直接到该位置即可;
  *
- * @author ym.shen
+ * @author shenyanming
+ * Created on 2020/9/2 11:08
  */
-public class BubbleSort {
+public class BubbleSort extends AbstractIntegerSort {
 
-    /**
-     * 本地测试
-     */
     public static void main(String[] args) {
         int[] arr1 = SymArrayUtil.getRandomArray(1000);
         int[] arr2 = Arrays.copyOf(arr1, arr1.length);
         int[] arr3 = Arrays.copyOf(arr1, arr1.length);
         int[] arr4 = Arrays.copyOf(arr1, arr1.length);
 
-        TimeUtil.execute("最简版V1", () -> SymArrayUtil.print(BubbleSort.sortV1(arr1)));
-        TimeUtil.execute("优化版V2", () -> SymArrayUtil.print(BubbleSort.sortV2(arr2)));
-        TimeUtil.execute("优化版V3", () -> SymArrayUtil.print(BubbleSort.sortV3(arr3)));
-        TimeUtil.execute("优化版V4", () -> SymArrayUtil.print(BubbleSort.sortV4(arr4)));
+        TimeUtil.execute("最简版V1", () -> SymArrayUtil.print(sortV1(arr1)));
+        TimeUtil.execute("优化版V2", () -> SymArrayUtil.print(sortV2(arr2)));
+        TimeUtil.execute("优化版V3", () -> SymArrayUtil.print(sortV3(arr3)));
+        TimeUtil.execute("优化版V4", () -> SymArrayUtil.print(sortV4(arr4)));
     }
 
-    /**
-     * 最终版冒泡排序, 效率最好, 适应场景多
-     */
-    public static int[] sort(int[] array) {
-        return sortV4(array);
+    public BubbleSort(int[] array) {
+        super(array, "冒泡排序");
+    }
+
+    @Override
+    protected void internalSort(int[] array) {
+        // 这个实现跟sortV4()一样
+        for (int end = array.length - 1; end > 0; end--) {
+            // 记录最后一次交换的位置
+            int lastSwapIndex = 1;
+            for (int i = 0; i < end; i++) {
+                if (compareByIndex(i, i + 1) > 0) {
+                    swap(i, i + 1);
+                    // 发生位置交换了, 记录当前位置
+                    lastSwapIndex = i + 1;
+                }
+            }
+            // 一轮遍历, 重置end的索引, 然后外层for循环就会对end-1, 再进行判断,
+            // 是否要继续循环, 所以将lastSwapIndex的初始值设为1, 这样如果内层循环
+            // 没有执行过, 那就意味着数组已经全有序, 外层for循环将end-1后变为0, 直接退出外层循环
+            end = lastSwapIndex;
+        }
     }
 
     /**
@@ -131,5 +147,4 @@ public class BubbleSort {
         }
         return array;
     }
-
 }

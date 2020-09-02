@@ -1,5 +1,6 @@
-package com.sym.algorithm.sort;
+package com.sym.algorithm.sort.impl;
 
+import com.sym.algorithm.sort.AbstractIntegerSort;
 import com.sym.util.SymArrayUtil;
 import com.sym.util.TimeUtil;
 
@@ -15,26 +16,40 @@ import java.util.Arrays;
  * 5.循环n-1次，遍历数组(n-1~n)，将最小值放在数组下标为n-1的位置上，完成排序
  *
  * @author shenyanming
+ * Created on 2020/9/2 11:31
  */
-public class SelectionSort {
+public class SelectionSort extends AbstractIntegerSort {
 
-    /**
-     * 测试
-     */
     public static void main(String[] args) {
         int[] arr1 = SymArrayUtil.getRandomArray(10);
         int[] arr2 = Arrays.copyOf(arr1, arr1.length);
-        TimeUtil.execute("寻找最小值", () -> SymArrayUtil.print(SelectionSort.minimum(arr1)));
-        TimeUtil.execute("寻找最大值", () -> SymArrayUtil.print(SelectionSort.maximum(arr2)));
+        TimeUtil.execute("寻找最小值", () -> SymArrayUtil.print(minimum(arr1)));
+        TimeUtil.execute("寻找最大值", () -> SymArrayUtil.print(maximum(arr2)));
     }
 
-    /**
-     * 通过比较得出最大值来排序
-     */
-    public static int[] sort(int[] array) {
-        return maximum(array);
+    public SelectionSort(int[] array) {
+        super(array, "选择排序");
     }
 
+    @Override
+    protected void internalSort(int[] array) {
+        // 跟 maximum() 方法逻辑一样
+        // 至少需要比较n-1轮
+        for (int end = array.length - 1; end > 0; end--) {
+            // 记录最小值的下标
+            int maximumIndex = 0;
+            // 1轮比较, 需要遍历[0, end]
+            for (int start = 0; start <= end; start++) {
+                // 这边用 <= 是有讲究的, 假设: [10,30,30,20], 数组内有相等元素, 为了不交换它们的位置,
+                // 用<= 比较, 可以保证原先靠前的元素可以继续靠前排列. 这样可以让选择排除处于稳定状态.
+                if (compareByIndex(maximumIndex, start) <= 0) {
+                    maximumIndex = start;
+                }
+            }
+            // 每轮比较完后, 可以得到一个最大值即array[maximumIndex], 将其与array[end]互换位置
+            swap(maximumIndex, end);
+        }
+    }
 
     /**
      * 每轮比较的是最小元素
@@ -85,5 +100,4 @@ public class SelectionSort {
         }
         return array;
     }
-
 }
