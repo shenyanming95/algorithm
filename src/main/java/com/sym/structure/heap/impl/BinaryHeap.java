@@ -5,8 +5,10 @@ import java.util.Comparator;
 import java.util.Objects;
 
 /**
- * 二叉堆, 是属于完全二叉树结构, 所以可以使用数组作为它的底层存储结构.
- * 二叉堆一般可以用来解决 TopK 问题.
+ * 二叉堆, 逻辑上属于完全二叉树结构, 所以可以使用数组作为它的底层存储结构.
+ * 二叉堆一般可以用来解决 TopK 问题, 学习它记住两个点, 假设一个堆元素的下标为i：
+ * 1.其父节点下标, floor((i-1)/2)
+ * 2.其左子节点下标, 2i+1(如果有); 其右子节点下标, 2i+2(如果有)
  *
  * @author shenyanming
  * Created on 2020/7/29 15:12
@@ -153,13 +155,11 @@ public class BinaryHeap<E> implements IHeap<E> {
             // 求得父元素的索引, 父元素的值
             int pIndex = (index - 1) >> 1;
             E parent = elements[pIndex];
-
             // 与父元素比较
             if (compare(el, parent) <= 0) {
                 // 没有比父元素大, 那就直接退出循环
                 break;
             }
-
             // 比父元素大, 就让父元素下来index这个位置, 然后元素el先不用放到pIndex位置, 继续与上层父元素比较
             elements[index] = parent;
             index = pIndex;
@@ -190,7 +190,6 @@ public class BinaryHeap<E> implements IHeap<E> {
                 // 如果比最大子元素还大, 就不用再下滤了, 跳出循环
                 break;
             }
-
             // 比最大子元素还小, 则与最大子元素互换位置, 然后继续下滤
             elements[index] = elements[cIndex];
             index = cIndex;
