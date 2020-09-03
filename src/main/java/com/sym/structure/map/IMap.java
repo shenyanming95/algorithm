@@ -30,7 +30,7 @@ public interface IMap<K, V> {
      *
      * @param key 键
      */
-    void remove(K key);
+    V remove(K key);
 
     /**
      * 返回Map存放的元素数量
