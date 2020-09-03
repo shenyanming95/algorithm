@@ -163,12 +163,13 @@ public class TreeMap<K, V> implements IMap<K, V> {
     }
 
     @Override
-    public void remove(K key) {
+    public V remove(K key) {
         Node<K, V> node = doSearch(key);
         if(node == null){
-            return;
+            return null;
         }
         size --;
+        V result = node.value;
         int degree = node.degree();
         if(degree == ITree.DEGREE_TWO){
             Node<K, V> successor = successor(node);
@@ -177,7 +178,7 @@ public class TreeMap<K, V> implements IMap<K, V> {
         }
         if(degree == ITree.DEGREE_ZERO && node == root){
             root = null;
-            return;
+            return result;
         }
         Node<K, V> child = node.left != null ? node.left : node.right;
         if(child == null){
@@ -201,6 +202,7 @@ public class TreeMap<K, V> implements IMap<K, V> {
         }
         // re Balance
         afterRemove(node);
+        return result;
     }
 
     @Override
