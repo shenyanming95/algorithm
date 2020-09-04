@@ -1,6 +1,9 @@
 package com.sym.structure.map.hash;
 
 import com.sym.structure.map.IMap;
+import com.sym.structure.map.linked.LinkedHashMap;
+import com.sym.structure.queue.IQueue;
+import com.sym.structure.queue.linked.LinkedQueue;
 
 import java.util.Objects;
 
@@ -75,6 +78,13 @@ public class HashMap<K, V> implements IMap<K, V> {
             return null;
         }
 
+        public void ResetTreeInfo() {
+            this.parent = null;
+            this.left = null;
+            this.right = null;
+            this.color = RED;
+        }
+
         @Override
         public String toString() {
             return "Entry{key=" + key + ", value=" + value + "}";
@@ -108,6 +118,7 @@ public class HashMap<K, V> implements IMap<K, V> {
 
     private int capacity;
     private int size;
+    private int threshold;
     private Entry<K, V>[] entryTable;
 
     public HashMap() {
@@ -119,12 +130,14 @@ public class HashMap<K, V> implements IMap<K, V> {
             throw new IllegalArgumentException("invalid capacity");
         }
         this.capacity = tableSizeFor(capacity);
+        this.threshold = (int) (capacity * DEFAULT_LOAD_FACTORY);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public V put(K key, V value) {
-        initEntryTable();
+        // 延迟加载 + 扩容判断
+        initEntryTableOrResize();
         // 对key取hashcode, 然后找到桶下标
         int index = index(key);
         // 获取Entry数组的元素
@@ -246,6 +259,31 @@ public class HashMap<K, V> implements IMap<K, V> {
 
     @Override
     public boolean containValue(V value) {
+        if (isEmpty()) {
+            return false;
+        }
+        // 根据值来确定Entry, 需要对每个Entry进行判断, 其实际就是对Entry树的遍历.
+        // 通常使用采用层序遍历的方式
+        IQueue<Entry<K, V>> queue = new LinkedQueue<>();
+        for (Entry<K, V> entry : entryTable) {
+            if (entry == null) {
+                continue;
+            }
+            // 当前EntryTable的根节点入队
+            queue.offer(entry);
+            while (!queue.isEmpty()) {
+                Entry<K, V> kvEntry = queue.poll();
+                if (Objects.equals(kvEntry.value, value)) {
+                    return true;
+                }
+                if (kvEntry.left != null) {
+                    queue.offer(kvEntry.left);
+                }
+                if (kvEntry.right != null) {
+                    queue.offer(kvEntry.right);
+                }
+            }
+        }
         return false;
     }
 
@@ -261,13 +299,33 @@ public class HashMap<K, V> implements IMap<K, V> {
     }
 
     /**
-     * 添加新的Entry节点后, 需要对其进行红黑树的平衡处理
+     * 用于{@link LinkedHashMap}, 维持链表关系
      *
-     * @param newEntry 新添加的Entry节点
+     * @param plannedRemovalEntry 计划删除Entry
+     * @param realRemovalEntry    真正删除Entry
      */
-    private void afterAdd(Entry<K, V> newEntry) {
+    protected void EntryAfterRemoval(Entry<K, V> plannedRemovalEntry, Entry<K, V> realRemovalEntry) {
 
     }
+
+    /**
+     * 添加新的Entry节点后, 需要对其进行红黑树的平衡处理
+     *
+     * @param insertionEntry 新添加的Entry节点
+     */
+    private void afterAdd(Entry<K, V> insertionEntry) {
+
+    }
+
+    /**
+     * 删除Entry节点后, 需要对其进行红黑树的平衡处理
+     *
+     * @param removalEntry 真正被删除的Entry节点
+     */
+    private void afterRemove(Entry<K, V> removalEntry) {
+
+    }
+
 
     /**
      * 寻找该key在此HashMap中对应的Entry
@@ -328,18 +386,192 @@ public class HashMap<K, V> implements IMap<K, V> {
 
     /**
      * 删除一个Entry
+     *
      * @param entry 待删除的Entry
      * @return 该Entry的值
      */
-    private V remove(Entry<K, V> entry){
-        return null;
+    private V remove(Entry<K, V> entry) {
+        if (entry == null) {
+            return null;
+        }
+        size--;
+        // 为了子类LinkedHashMap的重新建立关联关系使用
+        Entry<K, V> EntryPlanToRemove = entry;
+        // 待返回的旧值
+        V oldValue = entry.value;
+
+        if (entry.hasTwoChildren()) {
+            // 度为2的节点, 寻找它的前驱节点或后继节点的值, 替换它的值
+            Entry<K, V> successor = successor(entry);
+            entry.key = successor.key;
+            entry.value = successor.value;
+            entry.hash = successor.hash;
+            // 实际删除的的是前驱节点或后继节点
+            entry = successor;
+        }
+
+        // 处理了度为2的Entry, 剩下的只有3种情况：
+        // 度为1的Entry、度为0的Entry且是根节点、度为0的Entry的普通节点
+        Entry<K, V> replaceElement = entry.left != null ? entry.left : entry.right;
+        int index = index(entry.key);
+        if (replaceElement != null) { //度为1
+            replaceElement.parent = entry.parent;
+            if (entry.parent == null) {
+                // entry自身就是根节点, 然后只有一个Entry子节点
+                entryTable[index] = replaceElement;
+            } else if (entry.isLeftChild()) {
+                entry.parent.left = replaceElement;
+            } else {
+                entry.parent.right = replaceElement;
+            }
+        } else if (entry.parent == null) { // 度为0, 但是根节点
+            entryTable[index] = null;
+        } else { // 度为0, 但不是根节点
+            if (entry.isLeftChild()) {
+                entry.parent.left = null;
+            } else {
+                entry.parent.right = null;
+            }
+        }
+        // reBalance
+        afterRemove(entry);
+        // for LinkedHashMap
+        EntryAfterRemoval(EntryPlanToRemove, entry);
+
+        return oldValue;
     }
 
+    /**
+     * 获取Entry节点的后继节点
+     *
+     * @param entry 指定Entry
+     * @return Entry后继节点
+     */
+    private Entry<K, V> successor(Entry<K, V> entry) {
+        // 如果右子树不为空, 寻找右子树的最左节点
+        Entry<K, V> cur = entry.right;
+        if (cur != null) {
+            while (cur.left != null) {
+                cur = cur.left;
+            }
+            return cur;
+        }
+        // 如果右子树为空, 就得寻找最大的父节点, 使其能位于父节点的左子树部分
+        cur = entry;
+        while (cur.isRightChild()) {
+            cur = cur.parent;
+        }
+        return cur.parent;
+    }
+
+    /**
+     * 动态扩容
+     */
     @SuppressWarnings("unchecked")
-    private void initEntryTable() {
+    private void resize() {
+        if (size <= threshold) {
+            // 未达到扩容条件
+            return;
+        }
+        // 新的EntryTable扩容为原先的2倍
+        Entry<K, V>[] oldEntryTable = entryTable;
+        entryTable = new Entry[capacity << 1];
+
+        IQueue<Entry<K, V>> queue = new LinkedQueue<>();
+        for (Entry<K, V> entry : oldEntryTable) {
+            if (entry == null) {
+                continue;
+            }
+            queue.offer(entry);
+            while (!queue.isEmpty()) {
+                Entry<K, V> kvEntry = queue.poll();
+                if (kvEntry.left != null) {
+                    queue.offer(kvEntry.left);
+                }
+                if (kvEntry.right != null) {
+                    queue.offer(kvEntry.right);
+                }
+                // 将原先的Entry的左右子节点入队后, 对该Entry进行移动
+                moveEntry(kvEntry);
+            }
+        }
+    }
+
+    /**
+     * 扩容时移动Entry
+     *
+     * @param entry
+     */
+    @SuppressWarnings("unchecked")
+    private void moveEntry(Entry<K, V> entry) {
+        // 重置Entry的红黑树信息
+        entry.ResetTreeInfo();
+
+        // 判断在EntryTable扩容后, 该entry的新位置,
+        // 如果该位置上的Entry为null, 说明当前这个Entry就是根节点, 直接赋值
+        int index = index(entry.key);
+        Entry<K, V> root = entryTable[index];
+        if (root == null) {
+            root = entry;
+            entryTable[index] = root;
+            // reBalance
+            afterAdd(root);
+            return;
+        }
+        // 如果该位置上已经有元素, 其实就是发生了hash冲突了, 采用链地址法
+        // 将其移动到红黑树上.
+        Entry<K, V> parent = root;
+        Entry<K, V> node = root;
+        int cmp = 0;
+        K k1 = entry.key;
+        int h1 = entry.hash;
+        do {
+            parent = node;
+            K k2 = node.key;
+            int h2 = node.hash;
+            if (h1 > h2) {
+                cmp = 1;
+            } else if (h1 < h2) {
+                cmp = -1;
+            } else if (k2 != null
+                    && k1 instanceof Comparable
+                    && k1.getClass() == k2.getClass()
+                    && (cmp = ((Comparable) k1).compareTo(k2)) != 0) {
+                // 只为了获取比较结果
+            } else {
+                cmp = System.identityHashCode(k1) - System.identityHashCode(k2);
+            }
+
+            // 根据比较结果, 决定向左走, 还是向右走
+            if (cmp > 0) {
+                node = node.right;
+            } else if (cmp < 0) {
+                node = node.left;
+            }
+        } while (node != null);
+
+        // 将新结点重新关联成红黑树
+        entry.parent = parent;
+        if (cmp > 0) {
+            parent.right = entry;
+        } else {
+            parent.left = entry;
+        }
+
+        // reBalance
+        afterAdd(entry);
+    }
+
+    /**
+     * 初始化EntryTable 或者 扩容EntryTable
+     */
+    @SuppressWarnings("unchecked")
+    private void initEntryTableOrResize() {
         if (entryTable == null) {
             entryTable = new Entry[capacity];
+            return;
         }
+        resize();
     }
 
     /**
