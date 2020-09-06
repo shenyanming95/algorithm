@@ -6,7 +6,7 @@ package com.sym.algorithm.sort;
  * @author shenyanming
  * Created on 2020/9/2 09:51
  */
-public interface ISort<E> {
+public interface ISort<E extends Comparable<E>> {
 
     /**
      * 执行排序
