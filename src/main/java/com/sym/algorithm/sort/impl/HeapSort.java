@@ -4,6 +4,12 @@ import com.sym.algorithm.sort.AbstractIntegerSort;
 import com.sym.util.SymArrayUtil;
 
 /**
+ * 堆排序.
+ * 先对原数组进行堆化, 借助堆的性质(假设最大堆), 数组index=0的元素必定为最大值,
+ * 将其与数组末尾元素交换位置, 这就相当于将数组最大值移动到数组末尾; 接着再对堆顶
+ * 元素进行下滤, 重新恢复最大堆的性质, 然后重复之前的操作, 将堆顶元素index=0与
+ * 数组倒数第二的元素交换位置...重复这个步骤, 直到堆的元素为1.
+ *
  * @author shenyanming
  * Created on 2020/9/2 11:40
  */
