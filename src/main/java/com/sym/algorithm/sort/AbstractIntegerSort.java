@@ -75,12 +75,20 @@ public abstract class AbstractIntegerSort implements ISort<Integer> {
     /**
      * 下标位置覆盖
      *
-     * @param index1
-     * @param index2
+     * @param index1 数组下标
+     * @param index2 数组下标
      */
     protected void cover(int index1, int index2) {
         array[index1] = array[index2];
         // 交换计数累加1
+        swapCount++;
+    }
+
+    /**
+     * 一些排序例如归并排序, 并不是直接在原数组上进行交换,
+     * 就直接调用这个方法来实现交换次数的累加
+     */
+    protected void swapCount() {
         swapCount++;
     }
 
@@ -134,11 +142,7 @@ public abstract class AbstractIntegerSort implements ISort<Integer> {
      */
     @Override
     public String toString() {
-        return "[" + algorithm + "]\n" + "比较次数：" + compareCount + "\n" +
-                "交换次数：" + swapCount + "\n" +
-                "耗时：" + toMilliTime() + " ms" + "\n" +
-                "结果：" + buildSortedResult() + "\n" +
-                "======================================================\n";
+        return "[" + algorithm + "]\n" + "比较次数：" + compareCount + "\n" + "交换次数：" + swapCount + "\n" + "耗时：" + toMilliTime() + " ms" + "\n" + "结果：" + buildSortedResult() + "\n" + "======================================================\n";
     }
 
     private double toMilliTime() {
