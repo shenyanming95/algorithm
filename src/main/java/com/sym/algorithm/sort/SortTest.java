@@ -1,10 +1,6 @@
 package com.sym.algorithm.sort;
 
-import com.sym.algorithm.sort.impl.BubbleSort;
-import com.sym.algorithm.sort.impl.HeapSort;
-import com.sym.algorithm.sort.impl.InsertionSort;
-import com.sym.algorithm.sort.impl.QuickSort;
-import com.sym.algorithm.sort.impl.SelectionSort;
+import com.sym.algorithm.sort.impl.*;
 import com.sym.util.SymArrayUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +19,7 @@ public class SortTest {
 
     @Before
     public void init() {
-        int length = 10;
+        int length = 100;
         array = SymArrayUtil.getRandomArray(length);
     }
 
@@ -39,6 +35,8 @@ public class SortTest {
         insertionSort();
         // 快速排序
         quickSort();
+        // 归并排序
+        mergeSort();
     }
 
     /**
@@ -81,8 +79,13 @@ public class SortTest {
         doSort(new QuickSort(copy()));
     }
 
+    @Test
+    public void mergeSort(){
+        doSort(new MergeSort(copy()));
+    }
+
     // 执行排序
-    private void doSort(ISort sort) {
+    private void doSort(ISort<?> sort) {
         sort.sort();
         System.out.println(sort);
     }
