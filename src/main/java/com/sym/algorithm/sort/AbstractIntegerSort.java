@@ -75,11 +75,11 @@ public abstract class AbstractIntegerSort implements ISort<Integer> {
     /**
      * 下标位置覆盖
      *
-     * @param index1 数组下标
-     * @param index2 数组下标
+     * @param oldIndex 被覆盖的索引下标
+     * @param newIndex 覆盖oldIndex的索引下标
      */
-    protected void cover(int index1, int index2) {
-        array[index1] = array[index2];
+    protected void cover(int oldIndex, int newIndex) {
+        array[oldIndex] = array[newIndex];
         // 交换计数累加1
         swapCount++;
     }
