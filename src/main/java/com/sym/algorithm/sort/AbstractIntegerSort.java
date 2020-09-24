@@ -2,6 +2,7 @@ package com.sym.algorithm.sort;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Objects;
 
 /**
@@ -16,6 +17,14 @@ public abstract class AbstractIntegerSort implements ISort<Integer> {
         this.array = Objects.requireNonNull(array);
         this.algorithm = algorithm;
     }
+
+    /**
+     * 排序用的比较器
+     */
+    public static Comparator<AbstractIntegerSort> comparator = ((Comparator<AbstractIntegerSort>)
+            (o1, o2) -> Long.compare(o1.costTime, o2.costTime))
+            .thenComparingInt(o -> o.compareCount)
+            .thenComparingInt(o -> o.swapCount);
 
     /**
      * 1ms = 1,000,000 ns
