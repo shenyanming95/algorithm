@@ -1,11 +1,18 @@
 package com.sym.algorithm.sort;
 
-import com.sym.algorithm.sort.impl.*;
+import com.sym.algorithm.sort.impl.BubbleSort;
+import com.sym.algorithm.sort.impl.HeapSort;
+import com.sym.algorithm.sort.impl.InsertionSort;
+import com.sym.algorithm.sort.impl.MergeSort;
+import com.sym.algorithm.sort.impl.QuickSort;
+import com.sym.algorithm.sort.impl.SelectionSort;
+import com.sym.algorithm.sort.impl.ShellSort;
 import com.sym.util.SymArrayUtil;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * 排序算法测试
@@ -25,18 +32,23 @@ public class SortTest {
 
     @Test
     public void totalTest() {
-        // 冒泡排序
-        bubbleSort();
-        // 选择排序
-        selectionSort();
-        // 堆排序
-        heapSort();
-        // 插入排序
-        insertionSort();
-        // 快速排序
-        quickSort();
-        // 归并排序
-        mergeSort();
+        AbstractIntegerSort[] array = new AbstractIntegerSort[]{
+                new BubbleSort(copy()),
+                new SelectionSort(copy()),
+                new HeapSort(copy()),
+                new InsertionSort(copy()),
+                new QuickSort(copy()),
+                new MergeSort(copy()),
+                new ShellSort(copy())
+        };
+
+        // 执行排序
+        List<AbstractIntegerSort> sortList = Arrays.asList(array);
+        sortList.parallelStream().forEach(ISort::sort);
+
+        // 根据排序时间来打印信息
+        sortList.sort(AbstractIntegerSort.comparator);
+        sortList.forEach(System.out::println);
     }
 
     /**
@@ -67,7 +79,7 @@ public class SortTest {
      * 插入排序
      */
     @Test
-    public void insertionSort(){
+    public void insertionSort() {
         doSort(new InsertionSort(copy()));
     }
 
@@ -75,13 +87,24 @@ public class SortTest {
      * 快速排序
      */
     @Test
-    public void quickSort(){
+    public void quickSort() {
         doSort(new QuickSort(copy()));
     }
 
+    /**
+     * 归并排序
+     */
     @Test
-    public void mergeSort(){
+    public void mergeSort() {
         doSort(new MergeSort(copy()));
+    }
+
+    /**
+     * 希尔排序
+     */
+    @Test
+    public void shellSort() {
+        doSort(new ShellSort(copy()));
     }
 
     // 执行排序
