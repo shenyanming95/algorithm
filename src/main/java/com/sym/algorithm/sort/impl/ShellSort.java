@@ -80,7 +80,8 @@ public class ShellSort extends AbstractIntegerSort {
 
 
     /**
-     * 划分数组的步长序列, 比如17个元素的数组划分为：8-4-2-1.
+     * 划分数组的步长序列, 这个是关键. 希尔排序的发明者给出的
+     * 计算公式是：n/2^k, k=1,2,3..., 换句话说, 17个元素的数组划分为：8-4-2-1.
      *
      * @param array 待排序数组
      * @return 步长序列
