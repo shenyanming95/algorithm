@@ -1,12 +1,6 @@
 package com.sym.algorithm.sort;
 
-import com.sym.algorithm.sort.impl.BubbleSort;
-import com.sym.algorithm.sort.impl.HeapSort;
-import com.sym.algorithm.sort.impl.InsertionSort;
-import com.sym.algorithm.sort.impl.MergeSort;
-import com.sym.algorithm.sort.impl.QuickSort;
-import com.sym.algorithm.sort.impl.SelectionSort;
-import com.sym.algorithm.sort.impl.ShellSort;
+import com.sym.algorithm.sort.impl.*;
 import com.sym.util.SymArrayUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +33,8 @@ public class SortTest {
                 new InsertionSort(copy()),
                 new QuickSort(copy()),
                 new MergeSort(copy()),
-                new ShellSort(copy())
+                new ShellSort(copy()),
+                new CountingSort(copy())
         };
 
         // 执行排序
@@ -105,6 +100,14 @@ public class SortTest {
     @Test
     public void shellSort() {
         doSort(new ShellSort(copy()));
+    }
+
+    /**
+     * 计数排序
+     */
+    @Test
+    public void countingSort(){
+        doSort(new CountingSort(copy()));
     }
 
     // 执行排序
