@@ -34,7 +34,8 @@ public class SortTest {
                 new QuickSort(copy()),
                 new MergeSort(copy()),
                 new ShellSort(copy()),
-                new CountingSort(copy())
+                new CountingSort(copy()),
+                new RadixSort(copy())
         };
 
         // 执行排序
@@ -108,6 +109,14 @@ public class SortTest {
     @Test
     public void countingSort(){
         doSort(new CountingSort(copy()));
+    }
+
+    /**
+     * 基数排序
+     */
+    @Test
+    public void radixSort(){
+        doSort(new RadixSort(copy()));
     }
 
     // 执行排序
