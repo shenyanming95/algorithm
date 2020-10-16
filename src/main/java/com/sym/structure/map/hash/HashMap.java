@@ -4,6 +4,8 @@ import com.sym.structure.map.IMap;
 import com.sym.structure.map.linked.LinkedHashMap;
 import com.sym.structure.queue.IQueue;
 import com.sym.structure.queue.linked.LinkedQueue;
+import lombok.Data;
+
 import java.util.Objects;
 
 /**
@@ -40,7 +42,8 @@ public class HashMap<K, V> implements IMap<K, V> {
      * @param <K> key
      * @param <V> value
      */
-    private static class Entry<K, V> {
+    @Data
+    protected static class Entry<K, V> {
         int hash;
         K key;
         V value;
@@ -48,6 +51,14 @@ public class HashMap<K, V> implements IMap<K, V> {
         Entry<K, V> left;
         Entry<K, V> right;
         Entry<K, V> parent;
+
+        public Entry(K key, V value, Entry<K, V> parent) {
+            this.key = key;
+            int hash = key == null ? 0 : key.hashCode();
+            this.hash = hash ^ (hash >>> 16);
+            this.value = value;
+            this.parent = parent;
+        }
 
         public Entry(K key, V value, int hash, Entry<K, V> parent) {
             this.key = key;
