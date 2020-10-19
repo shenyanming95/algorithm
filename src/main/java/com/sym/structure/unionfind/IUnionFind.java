@@ -1,7 +1,10 @@
 package com.sym.structure.unionfind;
 
 /**
- * 并查集
+ * 并查集。
+ * 并查集, 其核心就是通过一个元素来定义一个集合, 然后借助这个元素,
+ * 可以判断其它元素是否与集合有关, 这就是find; 还可以借助这个元素,
+ * 合并集合, 这就是union.
  *
  * @author shenyanming
  * @date 2020/10/18 11:46.
@@ -20,10 +23,10 @@ public interface IUnionFind {
     /**
      * 合并v1和v2所在的两个集合
      *
-     * @param v1 v1所在集合
-     * @param v2 v2所在集合
+     * @param unionTo   合并到这个集合
+     * @param unionFrom 要被合并的集合
      */
-    void union(int v1, int v2);
+    void union(int unionTo, int unionFrom);
 
     /**
      * 判断v1和v2是否同属于一个集合
