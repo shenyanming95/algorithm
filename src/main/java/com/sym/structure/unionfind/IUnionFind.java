@@ -23,10 +23,10 @@ public interface IUnionFind {
     /**
      * 合并v1和v2所在的两个集合
      *
-     * @param unionTo   合并到这个集合
-     * @param unionFrom 要被合并的集合
+     * @param v1 元素v1
+     * @param v2 元素v2
      */
-    void union(int unionTo, int unionFrom);
+    void union(int v1, int v2);
 
     /**
      * 判断v1和v2是否同属于一个集合

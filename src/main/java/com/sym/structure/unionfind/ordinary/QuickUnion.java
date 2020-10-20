@@ -29,15 +29,14 @@ public class QuickUnion extends AbstractUnionFind {
     }
 
     @Override
-    public void union(int unionTo, int unionFrom) {
-        check(unionFrom, unionTo);
+    public void union(int v1, int v2) {
         // 找出两个集合的根节点
-        int rootUnionTo = find(unionTo);
-        int rootUnionFrom = find(unionFrom);
-        if (rootUnionTo == rootUnionFrom) {
+        int to = find(v1);
+        int from = find(v2);
+        if (to == from) {
             return;
         }
-        // 直接将from嫁接到to
-        array[rootUnionFrom] = rootUnionTo;
+        // 直接将from嫁接到to, 默认v2合并到v1
+        array[from] = to;
     }
 }

@@ -26,11 +26,10 @@ public class QuickFind extends AbstractUnionFind {
     }
 
     @Override
-    public void union(int unionTo, int unionFrom) {
-        check(unionFrom, unionTo);
-        // 找出目标集合的根节点
-        int to = find(unionTo);
-        int from = find(unionFrom);
+    public void union(int v1, int v2) {
+        // 找出目标集合的根节点, 默认v2合并到v1
+        int to = find(v1);
+        int from = find(v2);
         if (from == to) {
             return;
         }
