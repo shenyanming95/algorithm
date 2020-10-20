@@ -27,9 +27,13 @@ public class QuickFind extends AbstractUnionFind {
 
     @Override
     public void union(int unionTo, int unionFrom) {
+        check(unionFrom, unionTo);
         // 找出目标集合的根节点
         int to = find(unionTo);
         int from = find(unionFrom);
+        if (from == to) {
+            return;
+        }
         // 遍历所有元素, 将所有属于 unionFrom 集合的元素, 都嫁接到 unionTo 集合中
         for (int i = 0; i < array.length; i++) {
             if (array[i] == from) {
