@@ -1,7 +1,13 @@
 package com.sym.structure.unionfind;
 
-import com.sym.structure.unionfind.ordinary.QuickFind;
-import com.sym.structure.unionfind.ordinary.QuickUnion;
+import com.sym.structure.unionfind.impl.QuickFind;
+import com.sym.structure.unionfind.impl.QuickUnion;
+import com.sym.structure.unionfind.level1.UnionFindBaseRank;
+import com.sym.structure.unionfind.level1.UnionFindBaseSize;
+import com.sym.structure.unionfind.level2.UnionFindWithPathCompression;
+import com.sym.structure.unionfind.level2.UnionFindWithPathHalving;
+import com.sym.structure.unionfind.level2.UnionFindWithPathSplitting;
+import com.sym.util.TimeUtil;
 import org.junit.Test;
 
 /**
@@ -12,34 +18,67 @@ import org.junit.Test;
  */
 public class IUnionFindTest {
 
-    /**
-     * 10个集合, 关联情况:
-     * 1 ← 5
-     * 5 ← 2
-     * 2 ← 6,7
-     * 9 ← 3,4,8
-     * 那么, 1和7是有关联的吗? 1和3呢?
-     */
+    final int count = 10000;
+
     @Test
     public void test01() {
-        IUnionFind uf1 = new QuickFind(10);
-        doUnion(uf1);
-        System.out.println(uf1.isSame(1, 7));
-        System.out.println(uf1.isSame(1, 3));
-
-        IUnionFind uf2 = new QuickUnion(10);
-        doUnion(uf2);
-        System.out.println(uf2.isSame(1, 7));
-        System.out.println(uf2.isSame(1, 3));
+        testTime(new QuickFind(count));
     }
 
-    private void doUnion(IUnionFind uf) {
-        uf.union(1, 5);
-        uf.union(5, 2);
-        uf.union(2, 6);
-        uf.union(2, 7);
-        uf.union(9, 3);
-        uf.union(9, 4);
-        uf.union(9, 8);
+    @Test
+    public void test02() {
+        testTime(new QuickUnion(count));
+    }
+
+    @Test
+    public void test03() {
+        testTime(new UnionFindBaseSize(count));
+    }
+
+    @Test
+    public void test04() {
+        testTime(new UnionFindBaseRank(count));
+    }
+
+    @Test
+    public void test05() {
+        testTime(new UnionFindWithPathCompression(count));
+    }
+
+    @Test
+    public void test06() {
+        testTime(new UnionFindWithPathHalving(count));
+    }
+
+    @Test
+    public void test07() {
+        testTime(new UnionFindWithPathSplitting(count));
+    }
+
+    private void testTime(IUnionFind uf) {
+        uf.union(0, 1);
+        uf.union(0, 3);
+        uf.union(0, 4);
+        uf.union(2, 3);
+        uf.union(2, 5);
+        uf.union(6, 7);
+        uf.union(8, 10);
+        uf.union(9, 10);
+        uf.union(9, 11);
+        System.out.println(uf.isSame(2, 7));
+        uf.union(4, 6);
+        System.out.println(uf.isSame(2, 7));
+
+        TimeUtil.execute(uf.getClass().getSimpleName(), () -> {
+            for (int i = 0; i < count; i++) {
+                uf.union((int) (Math.random() * count),
+                        (int) (Math.random() * count));
+            }
+
+            for (int i = 0; i < count; i++) {
+                uf.isSame((int) (Math.random() * count),
+                        (int) (Math.random() * count));
+            }
+        });
     }
 }

@@ -1,6 +1,8 @@
-package com.sym.structure.unionfind.ordinary;
+package com.sym.structure.unionfind.impl;
 
 import com.sym.structure.unionfind.AbstractUnionFind;
+import com.sym.structure.unionfind.level1.UnionFindBaseRank;
+import com.sym.structure.unionfind.level1.UnionFindBaseSize;
 
 /**
  * quick union的并查集, 它的union操作, 比如说集合A和集合B, 是将
@@ -10,8 +12,9 @@ import com.sym.structure.unionfind.AbstractUnionFind;
  *
  * @author shenyanming
  * @date 2020/10/19 21:52.
+ * @see UnionFindBaseSize
+ * @see UnionFindBaseRank
  */
-
 public class QuickUnion extends AbstractUnionFind {
 
     public QuickUnion(int capacity) {
