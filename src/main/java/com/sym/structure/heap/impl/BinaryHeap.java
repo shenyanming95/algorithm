@@ -221,7 +221,7 @@ public class BinaryHeap<E> implements IHeap<E> {
         // 自下而上的下滤, 如果元素没有子元素, 那么就必要进行下滤, 所以循环是从数组非叶子元素开始比较.
         // 根据完全二叉树的性质, 若节点总数量为n, 则非叶子节点的数量为floor(n/2)
         // 这个操作的时间复杂度为O(n), 所以在批量建堆的时候, 一般我们采用自下而上的下滤.
-        for (int i = (size >> 1); i >= 0; i--) {
+        for (int i = (size >> 1) - 1; i >= 0; i--) {
             siftDown(i);
         }
     }
