@@ -1,12 +1,18 @@
 package com.sym.structure.graph;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
 /**
- * 图的基本接口
+ * 图接口
  *
+ * @param <T> 顶点值的类型
+ * @param <V> 权重值的类型
  * @author shenyanming
  * @date 2020/11/1 21:14.
  */
-
 public interface IGraph<T, V> {
 
     /**
@@ -66,4 +72,20 @@ public interface IGraph<T, V> {
      * @return 总的边数量
      */
     int edgeSize();
+
+    /**
+     * 对外暴露的描述边的信息
+     *
+     * @param <T> 顶点值的类型
+     * @param <V> 边的权重值的类型
+     */
+    @Data
+    @ToString
+    @NoArgsConstructor
+    @AllArgsConstructor
+    class EdgeInfo<T, V> {
+        T from;
+        T to;
+        V weight;
+    }
 }
