@@ -1,10 +1,11 @@
 package com.sym.structure.unionfind;
 
 /**
- * 并查集抽象父类
+ * 基于数组实现的并查集抽象父类
  *
  * @author shenyanming
  * @date 2020/10/19 21:06.
+ * @see GenericUnionFind
  */
 public abstract class AbstractUnionFind implements IUnionFind {
 
