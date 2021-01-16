@@ -1,5 +1,6 @@
-package com.sym.structure.queue;
+package com.sym;
 
+import com.sym.structure.queue.IQueue;
 import com.sym.structure.queue.array.CircleArrayQueue;
 import com.sym.structure.queue.linked.LinkedQueue;
 import com.sym.structure.queue.priority.PriorityQueue;

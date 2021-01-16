@@ -4,6 +4,7 @@ import com.sym.util.HashcodeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -21,7 +22,7 @@ public class MainTest {
      * long 强转为 int, 会丢失高32位的精度
      */
     @Test
-    public void test01(){
+    public void test01() {
         long l = 0x7fffffff << 1;
         System.out.println(Long.toBinaryString(l));
 
@@ -33,7 +34,7 @@ public class MainTest {
      * hashcode测试
      */
     @Test
-    public void test02(){
+    public void test02() {
         // 整数
         Integer i = 100;
         System.out.println(i.hashCode());
@@ -64,7 +65,7 @@ public class MainTest {
      * {@link HashMap}是乱序, {@link TreeMap}是有序(默认按照key升序)
      */
     @Test
-    public void test03(){
+    public void test03() {
         Map<String, String> map = new HashMap<>(4);
         map.put("a213", "111");
         map.put("213c", "111");
@@ -84,7 +85,7 @@ public class MainTest {
     }
 
     @Test
-    public void test04(){
-
+    public void test04() {
+        
     }
 }

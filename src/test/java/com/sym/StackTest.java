@@ -1,5 +1,6 @@
-package com.sym.structure.stack;
+package com.sym;
 
+import com.sym.structure.stack.IStack;
 import com.sym.structure.stack.array.ArrayStack;
 import com.sym.structure.stack.linked.LinkedStack;
 import org.junit.Test;

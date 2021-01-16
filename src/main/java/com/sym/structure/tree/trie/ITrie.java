@@ -1,4 +1,6 @@
-package com.sym.structure.trie;
+package com.sym.structure.tree.trie;
+
+import com.sym.structure.tree.ITree;
 
 /**
  * 字典树, 也称为前缀树, 它会将字符串按字符分开, 依次保存在内部的节点上,
@@ -9,26 +11,7 @@ package com.sym.structure.trie;
  * @date 2020/8/1 15:57.
  */
 
-public interface ITrie<E> {
-
-    /**
-     * 字典树的元素数量
-     *
-     * @return 元素数量
-     */
-    int size();
-
-    /**
-     * 是否为空
-     *
-     * @return true-为空
-     */
-    boolean isEmpty();
-
-    /**
-     * 清空字典树
-     */
-    void clear();
+public interface ITrie<E> extends ITree<E> {
 
     /**
      * 判断字典树是否包含某个字符串

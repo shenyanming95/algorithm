@@ -1,5 +1,6 @@
-package com.sym.algorithm.snowflake;
+package com.sym;
 
+import com.sym.algorithm.snowflake.SymSnowFlake;
 import org.junit.Test;
 
 import java.util.HashSet;

@@ -1,5 +1,7 @@
-package com.sym.structure.unionfind;
+package com.sym;
 
+import com.sym.structure.unionfind.GenericUnionFind;
+import com.sym.structure.unionfind.IUnionFind;
 import com.sym.structure.unionfind.impl.QuickFind;
 import com.sym.structure.unionfind.impl.QuickUnion;
 import com.sym.structure.unionfind.level1.UnionFindBaseRank;

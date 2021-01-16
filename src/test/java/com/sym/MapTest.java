@@ -1,5 +1,6 @@
-package com.sym.structure.map;
+package com.sym;
 
+import com.sym.structure.map.IMap;
 import com.sym.structure.map.tree.TreeMap;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;

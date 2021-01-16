@@ -1,4 +1,4 @@
-package com.sym.structure.tree;
+package com.sym;
 
 import com.sym.structure.tree.avl.AvlTree;
 import com.sym.structure.tree.bst.BinarySearchTree;

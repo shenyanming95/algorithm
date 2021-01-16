@@ -1,4 +1,4 @@
-package com.sym.algorithm.cache;
+package com.sym;
 
 import com.sym.algorithm.cache.lru.SymLruCache;
 import org.junit.Test;

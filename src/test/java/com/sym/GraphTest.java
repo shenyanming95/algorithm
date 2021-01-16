@@ -1,5 +1,6 @@
-package com.sym.structure.graph;
+package com.sym;
 
+import com.sym.structure.graph.IGraph;
 import org.junit.Test;
 
 /**

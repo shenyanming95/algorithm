@@ -1,5 +1,6 @@
-package com.sym.structure.heap;
+package com.sym;
 
+import com.sym.structure.heap.IHeap;
 import com.sym.structure.heap.impl.BinaryHeap;
 import com.sym.util.printer.BinaryTrees;
 import lombok.extern.slf4j.Slf4j;

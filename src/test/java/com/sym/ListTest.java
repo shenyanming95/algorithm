@@ -1,4 +1,4 @@
-package com.sym.structure.list;
+package com.sym;
 
 import com.sym.structure.list.array.SymArrayList;
 import com.sym.structure.list.linked.DoublyLinkedList;

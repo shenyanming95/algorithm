@@ -1,5 +1,6 @@
-package com.sym.structure.array;
+package com.sym;
 
+import com.sym.structure.array.SparseArray;
 import com.sym.util.SymArrayUtil;
 import org.junit.Test;
 
