@@ -15,7 +15,7 @@ public abstract class AbstractBloomFilter<T> implements IBloomFilter<T> {
     /**
      * 总的二进制位
      */
-    protected long bitCount;
+    protected int bitCount;
 
     /**
      * 哈希函数个数
@@ -25,7 +25,7 @@ public abstract class AbstractBloomFilter<T> implements IBloomFilter<T> {
     /**
      * 预估数据量
      */
-    protected long dataCount;
+    protected int dataCount;
 
     /**
      * 误判率
@@ -38,7 +38,7 @@ public abstract class AbstractBloomFilter<T> implements IBloomFilter<T> {
      * @param dataCount       数据规模
      * @param misjudgmentRate 允许的误判率, (0, 1)
      */
-    protected AbstractBloomFilter(long dataCount, double misjudgmentRate) {
+    protected AbstractBloomFilter(int dataCount, double misjudgmentRate) {
         initialize(dataCount, misjudgmentRate);
         this.dataCount = dataCount;
         this.misjudgmentRate = misjudgmentRate;
@@ -52,7 +52,7 @@ public abstract class AbstractBloomFilter<T> implements IBloomFilter<T> {
         int hash2 = hash1 >>> 16;
         for (int i = 0; i < hashCount; i++) {
             // 根据哈希函数计算二进制位 位置
-            long index = computeIndex(hash1, hash2, i);
+            int index = computeIndex(hash1, hash2, i);
             // 设置位
             setBit(index);
         }
@@ -72,7 +72,7 @@ public abstract class AbstractBloomFilter<T> implements IBloomFilter<T> {
         // 要验证的哈希函数
         for (int i = 0; i < hashCount; i++) {
             // 计算二进制位下标
-            long index = computeIndex(hash1, hash2, i);
+            int index = computeIndex(hash1, hash2, i);
             // 只要有一个位不存在, 那就说明这个元素一定不存在
             if (!existBit(index)) {
                 return false;
@@ -95,7 +95,7 @@ public abstract class AbstractBloomFilter<T> implements IBloomFilter<T> {
         }
         double ln2 = Math.log(2);
         // 计算所需的二进制位数量
-        this.bitCount = (long) ((dataCount * Math.log(misjudgmentRate)) / (ln2 * ln2));
+        this.bitCount = (int) (- (dataCount * Math.log(misjudgmentRate)) / (ln2 * ln2));
         // 计算所需的哈希函数数量
         this.hashCount = (int) (bitCount * ln2 / dataCount);
     }
@@ -108,12 +108,12 @@ public abstract class AbstractBloomFilter<T> implements IBloomFilter<T> {
      * @param salt  盐值
      * @return index
      */
-    private long computeIndex(int hash1, int hash2, int salt) {
+    private int computeIndex(int hash1, int hash2, int salt) {
         // 计算hashCode
         int combinedHash = hash1 + (salt * hash2);
         if (combinedHash < 0) {
             // 越界时, 按位取反
-            combinedHash = ~combinedHash;
+            combinedHash = ~ combinedHash;
         }
         return combinedHash % bitCount;
     }
@@ -123,13 +123,13 @@ public abstract class AbstractBloomFilter<T> implements IBloomFilter<T> {
      *
      * @param index 位置
      */
-    protected abstract void setBit(long index);
+    protected abstract void setBit(int index);
 
     /**
      * 判断指定位置{@code index}是否存在, 即值是否为1
      *
      * @param index 位置
-     * @return true-值为1, 表示存在
+     * @return true, 表示指定二进制位为1
      */
-    protected abstract boolean existBit(long index);
+    protected abstract boolean existBit(int index);
 }

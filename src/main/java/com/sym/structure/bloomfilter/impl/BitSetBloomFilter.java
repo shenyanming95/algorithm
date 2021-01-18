@@ -15,22 +15,19 @@ public class BitSetBloomFilter<T> extends AbstractBloomFilter<T> {
 
     private BitSet bitSet;
 
-    public BitSetBloomFilter(long dataCount, double misjudgmentRate) {
+    public BitSetBloomFilter(int dataCount, double misjudgmentRate) {
         super(dataCount, misjudgmentRate);
-        bitSet = new BitSet(toInt(bitCount));
+        bitSet = new BitSet(bitCount);
     }
 
     @Override
-    protected void setBit(long index) {
-        bitSet.set(toInt(index));
+    protected void setBit(int index) {
+        bitSet.set(index);
     }
 
     @Override
-    protected boolean existBit(long index) {
-        return bitSet.get(toInt(index));
+    protected boolean existBit(int index) {
+        return bitSet.get(index);
     }
 
-    private int toInt(long value) {
-        return Integer.parseInt(Long.toString(value));
-    }
 }
