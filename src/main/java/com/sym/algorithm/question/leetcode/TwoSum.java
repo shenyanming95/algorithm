@@ -1,6 +1,6 @@
 package com.sym.algorithm.question.leetcode;
 
-import com.sym.util.SymArrayUtil;
+import com.sym.util.ArrayUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +21,7 @@ public class TwoSum {
         int[] array = new int[]{2, 10, 40, 14, 67, 55, 21};
         int target = 95;
         int[] ret = twoSum(array, target);
-        SymArrayUtil.print(ret);
+        ArrayUtil.print(ret);
     }
 
     /**

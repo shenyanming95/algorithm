@@ -1,7 +1,7 @@
 package com.sym.algorithm.sort.impl;
 
 import com.sym.algorithm.sort.AbstractIntegerSort;
-import com.sym.util.SymArrayUtil;
+import com.sym.util.ArrayUtil;
 import com.sym.util.TimeUtil;
 
 import java.util.Arrays;
@@ -21,10 +21,10 @@ import java.util.Arrays;
 public class SelectionSort extends AbstractIntegerSort {
 
     public static void main(String[] args) {
-        int[] arr1 = SymArrayUtil.getRandomArray(10);
+        int[] arr1 = ArrayUtil.getRandomArray(10);
         int[] arr2 = Arrays.copyOf(arr1, arr1.length);
-        TimeUtil.execute("寻找最小值", () -> SymArrayUtil.print(minimum(arr1)));
-        TimeUtil.execute("寻找最大值", () -> SymArrayUtil.print(maximum(arr2)));
+        TimeUtil.execute("寻找最小值", () -> ArrayUtil.print(minimum(arr1)));
+        TimeUtil.execute("寻找最大值", () -> ArrayUtil.print(maximum(arr2)));
     }
 
     public SelectionSort(int[] array) {

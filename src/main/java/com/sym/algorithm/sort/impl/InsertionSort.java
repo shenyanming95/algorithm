@@ -1,7 +1,7 @@
 package com.sym.algorithm.sort.impl;
 
 import com.sym.algorithm.sort.AbstractIntegerSort;
-import com.sym.util.SymArrayUtil;
+import com.sym.util.ArrayUtil;
 
 /**
  * 插入排序.
@@ -22,13 +22,13 @@ import com.sym.util.SymArrayUtil;
 public class InsertionSort extends AbstractIntegerSort {
 
     public static void main(String[] args) {
-        int[] array = SymArrayUtil.getRandomArray(11);
-        SymArrayUtil.print(array);
+        int[] array = ArrayUtil.getRandomArray(11);
+        ArrayUtil.print(array);
 
         InsertionSort sort = new InsertionSort(array);
         sort.sort();
 
-        SymArrayUtil.print(array);
+        ArrayUtil.print(array);
     }
 
     public InsertionSort(int[] array) {

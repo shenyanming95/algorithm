@@ -1,7 +1,7 @@
 package com.sym.algorithm.sort.impl;
 
 import com.sym.algorithm.sort.AbstractIntegerSort;
-import com.sym.util.SymArrayUtil;
+import com.sym.util.ArrayUtil;
 
 /**
  * 堆排序.
@@ -16,9 +16,9 @@ import com.sym.util.SymArrayUtil;
 public class HeapSort extends AbstractIntegerSort {
 
     public static void main(String[] args) {
-        int[] arr1 = SymArrayUtil.getRandomArray(50);
-        SymArrayUtil.print(arr1);
-        SymArrayUtil.print(sort(arr1));
+        int[] arr1 = ArrayUtil.getRandomArray(50);
+        ArrayUtil.print(arr1);
+        ArrayUtil.print(sort(arr1));
     }
 
     public HeapSort(int[] array) {

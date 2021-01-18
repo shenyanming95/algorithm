@@ -1,7 +1,7 @@
 package com.sym.algorithm.sort.impl;
 
 import com.sym.algorithm.sort.AbstractIntegerSort;
-import com.sym.util.SymArrayUtil;
+import com.sym.util.ArrayUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,10 +46,10 @@ import java.util.List;
 public class ShellSort extends AbstractIntegerSort {
 
     public static void main(String[] args) {
-        int[] array = SymArrayUtil.getRandomArray(50);
+        int[] array = ArrayUtil.getRandomArray(50);
         ShellSort sort = new ShellSort(array);
         sort.sort();
-        SymArrayUtil.print(array);
+        ArrayUtil.print(array);
     }
 
     public ShellSort(int[] array) {

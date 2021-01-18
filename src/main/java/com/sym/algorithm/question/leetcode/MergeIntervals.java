@@ -1,6 +1,6 @@
 package com.sym.algorithm.question.leetcode;
 
-import com.sym.util.SymArrayUtil;
+import com.sym.util.ArrayUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,6 +71,6 @@ public class MergeIntervals {
         for (int i = 0, size = list.size(); i < size; i++) {
             result[i] = list.get(i);
         }
-        SymArrayUtil.print(result);
+        ArrayUtil.print(result);
     }
 }

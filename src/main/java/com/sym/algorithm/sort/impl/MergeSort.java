@@ -1,7 +1,7 @@
 package com.sym.algorithm.sort.impl;
 
 import com.sym.algorithm.sort.AbstractIntegerSort;
-import com.sym.util.SymArrayUtil;
+import com.sym.util.ArrayUtil;
 
 /**
  * 归并排序.
@@ -16,11 +16,11 @@ public class MergeSort extends AbstractIntegerSort {
 
     public static void main(String[] args) {
         // 本地测试
-        int[] array = SymArrayUtil.getRandomArray(50);
+        int[] array = ArrayUtil.getRandomArray(50);
         MergeSort sort = new MergeSort(array);
-        SymArrayUtil.print(array);
+        ArrayUtil.print(array);
         sort.internalSort(array);
-        SymArrayUtil.print(array);
+        ArrayUtil.print(array);
     }
 
     /**

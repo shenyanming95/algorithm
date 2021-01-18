@@ -1,7 +1,7 @@
 package com.sym.algorithm.sort.impl;
 
 import com.sym.algorithm.sort.AbstractIntegerSort;
-import com.sym.util.SymArrayUtil;
+import com.sym.util.ArrayUtil;
 
 /**
  * 快速排序, 采用分治思想.
@@ -16,11 +16,11 @@ import com.sym.util.SymArrayUtil;
 public class QuickSort extends AbstractIntegerSort {
 
     public static void main(String[] args) {
-        int[] array = SymArrayUtil.getRandomArray(50);
+        int[] array = ArrayUtil.getRandomArray(50);
         QuickSort sort = new QuickSort(array);
-        SymArrayUtil.print(array);
+        ArrayUtil.print(array);
         sort.internalSort(array);
-        SymArrayUtil.print(array);
+        ArrayUtil.print(array);
     }
 
     public QuickSort(int[] array) {

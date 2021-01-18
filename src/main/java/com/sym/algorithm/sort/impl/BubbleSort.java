@@ -1,7 +1,7 @@
 package com.sym.algorithm.sort.impl;
 
 import com.sym.algorithm.sort.AbstractIntegerSort;
-import com.sym.util.SymArrayUtil;
+import com.sym.util.ArrayUtil;
 import com.sym.util.TimeUtil;
 
 import java.util.Arrays;
@@ -19,15 +19,15 @@ import java.util.Arrays;
 public class BubbleSort extends AbstractIntegerSort {
 
     public static void main(String[] args) {
-        int[] arr1 = SymArrayUtil.getRandomArray(1000);
+        int[] arr1 = ArrayUtil.getRandomArray(1000);
         int[] arr2 = Arrays.copyOf(arr1, arr1.length);
         int[] arr3 = Arrays.copyOf(arr1, arr1.length);
         int[] arr4 = Arrays.copyOf(arr1, arr1.length);
 
-        TimeUtil.execute("最简版V1", () -> SymArrayUtil.print(sortV1(arr1)));
-        TimeUtil.execute("优化版V2", () -> SymArrayUtil.print(sortV2(arr2)));
-        TimeUtil.execute("优化版V3", () -> SymArrayUtil.print(sortV3(arr3)));
-        TimeUtil.execute("优化版V4", () -> SymArrayUtil.print(sortV4(arr4)));
+        TimeUtil.execute("最简版V1", () -> ArrayUtil.print(sortV1(arr1)));
+        TimeUtil.execute("优化版V2", () -> ArrayUtil.print(sortV2(arr2)));
+        TimeUtil.execute("优化版V3", () -> ArrayUtil.print(sortV3(arr3)));
+        TimeUtil.execute("优化版V4", () -> ArrayUtil.print(sortV4(arr4)));
     }
 
     public BubbleSort(int[] array) {

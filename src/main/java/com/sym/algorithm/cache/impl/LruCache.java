@@ -1,4 +1,4 @@
-package com.sym.algorithm.cache.lru;
+package com.sym.algorithm.cache.impl;
 
 import com.sym.algorithm.cache.ICache;
 
@@ -14,11 +14,11 @@ import java.util.Objects;
  * @author shenyanming
  * Created on 2020/5/20 17:37
  */
-public class SymLruCache<K,V> implements ICache<K,V> {
+public class LruCache<K,V> implements ICache<K,V> {
 
     private LinkedHashMap<K,V> map;
 
-    public SymLruCache(int capacity){
+    public LruCache(int capacity){
         map = new LryLinkedHashMap<>(capacity);
     }
 
