@@ -1,9 +1,9 @@
-package com.sym.structure.unionfind.level1;
+package com.sym.structure.unionfind.impl.level1;
 
 import com.sym.structure.unionfind.impl.QuickUnion;
-import com.sym.structure.unionfind.level2.UnionFindWithPathCompression;
-import com.sym.structure.unionfind.level2.UnionFindWithPathHalving;
-import com.sym.structure.unionfind.level2.UnionFindWithPathSplitting;
+import com.sym.structure.unionfind.impl.level2.UnionFindWithPathCompression;
+import com.sym.structure.unionfind.impl.level2.UnionFindWithPathHalving;
+import com.sym.structure.unionfind.impl.level2.UnionFindWithPathSplitting;
 
 /**
  * 并查集一级优化, 基于rank的优化.

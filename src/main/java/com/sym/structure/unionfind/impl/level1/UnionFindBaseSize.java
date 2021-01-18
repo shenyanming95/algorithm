@@ -1,4 +1,4 @@
-package com.sym.structure.unionfind.level1;
+package com.sym.structure.unionfind.impl.level1;
 
 import com.sym.structure.unionfind.impl.QuickUnion;
 

@@ -1,6 +1,6 @@
-package com.sym.structure.unionfind.level2;
+package com.sym.structure.unionfind.impl.level2;
 
-import com.sym.structure.unionfind.level1.UnionFindBaseRank;
+import com.sym.structure.unionfind.impl.level1.UnionFindBaseRank;
 
 /**
  * 并查集二级优化-路径减半(Path Halving).

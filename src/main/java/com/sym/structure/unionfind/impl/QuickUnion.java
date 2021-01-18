@@ -1,8 +1,8 @@
 package com.sym.structure.unionfind.impl;
 
 import com.sym.structure.unionfind.AbstractUnionFind;
-import com.sym.structure.unionfind.level1.UnionFindBaseRank;
-import com.sym.structure.unionfind.level1.UnionFindBaseSize;
+import com.sym.structure.unionfind.impl.level1.UnionFindBaseRank;
+import com.sym.structure.unionfind.impl.level1.UnionFindBaseSize;
 
 /**
  * quick union的并查集, 它的union操作, 比如说集合A和集合B, 是将
