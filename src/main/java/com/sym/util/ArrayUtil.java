@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author ym.shen
  * Created on 2020/5/8 14:44
  */
-public class SymArrayUtil {
+public class ArrayUtil {
 
     /**
      * 打印一维数组

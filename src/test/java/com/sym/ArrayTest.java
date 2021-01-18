@@ -1,7 +1,7 @@
 package com.sym;
 
 import com.sym.structure.array.SparseArray;
-import com.sym.util.SymArrayUtil;
+import com.sym.util.ArrayUtil;
 import org.junit.Test;
 
 /**
@@ -19,7 +19,7 @@ public class ArrayTest {
     public void testOne() {
         // 打印一维数组
         int[] array = new int[]{12, 3, 43543, 534, 67};
-        SymArrayUtil.print(array);
+        ArrayUtil.print(array);
     }
 
 
@@ -38,20 +38,20 @@ public class ArrayTest {
 
         //打印原数组
         System.out.println("原数组：");
-        SymArrayUtil.print(array);
+        ArrayUtil.print(array);
         System.out.println();
 
         // 转换为稀疏数组后
         System.out.println();
         System.out.println("转换为稀疏数组：");
         int[][] sparseArray = SparseArray.toSparseArray(array);
-        SymArrayUtil.print(sparseArray);
+        ArrayUtil.print(sparseArray);
 
         // 稀疏数组还原回原数组
         System.out.println();
         System.out.println("还原为原数组：");
         int[][] srcArray = SparseArray.fromSparseArray(sparseArray);
-        SymArrayUtil.print(srcArray);
+        ArrayUtil.print(srcArray);
     }
 
 }

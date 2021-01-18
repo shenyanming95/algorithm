@@ -1,6 +1,6 @@
 package com.sym;
 
-import com.sym.algorithm.cache.lru.SymLruCache;
+import com.sym.algorithm.cache.impl.LruCache;
 import org.junit.Test;
 
 /**
@@ -16,7 +16,7 @@ public class CacheTest {
      */
     @Test
     public void test01(){
-        SymLruCache<String, String> lruCache = new SymLruCache<>(3);
+        LruCache<String, String> lruCache = new LruCache<>(3);
         lruCache.set("aa", "aa");
         lruCache.set("bb", "bb");
         lruCache.set("cc", "cc");

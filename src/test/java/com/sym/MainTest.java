@@ -86,6 +86,11 @@ public class MainTest {
 
     @Test
     public void test04() {
-        
+        // 9223372036854775807
+        long sum = 1;
+        for (int i = 0; i < 63; i++) {
+            sum *= 2;
+        }
+        System.out.println(sum - 1);
     }
 }

@@ -3,7 +3,7 @@ package com.sym;
 import com.sym.algorithm.sort.AbstractIntegerSort;
 import com.sym.algorithm.sort.ISort;
 import com.sym.algorithm.sort.impl.*;
-import com.sym.util.SymArrayUtil;
+import com.sym.util.ArrayUtil;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,7 +23,7 @@ public class SortTest {
     @Before
     public void init() {
         int length = 100;
-        array = SymArrayUtil.getRandomArray(length);
+        array = ArrayUtil.getRandomArray(length);
     }
 
     @Test
