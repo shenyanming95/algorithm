@@ -3,6 +3,8 @@ package com.sym;
 import com.sym.structure.list.array.SymArrayList;
 import com.sym.structure.list.linked.DoublyLinkedList;
 import com.sym.structure.list.linked.SingleLinkedList;
+import com.sym.structure.list.skip.SkipList;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Random;
@@ -80,7 +82,27 @@ public class ListTest {
         System.out.println("链表反转：");
         list.reverse();
         list.display();
+    }
 
+    /**
+     * 跳表测试类
+     */
+    @Test
+    public void testSkipList() {
+        int count = 100_0000;
+        int delta = 10;
 
+        SkipList<Integer, Integer> list = new SkipList<>();
+        for (int i = 0; i < count; i++) {
+            list.put(i, i + delta);
+        }
+        for (int i = 0; i < count; i++) {
+            Assert.assertEquals(list.get(i).intValue(), i + delta);
+        }
+        Assert.assertEquals(count, list.size());
+        for (int i = 0; i < count; i++) {
+            Assert.assertEquals(list.remove(i).intValue(), i + delta);
+        }
+        Assert.assertEquals(0, list.size());
     }
 }
