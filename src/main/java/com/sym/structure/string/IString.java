@@ -55,15 +55,6 @@ public interface IString {
     IString insert(int offset, IString str);
 
     /**
-     * 删除指定区间的串
-     *
-     * @param begin 起始位置
-     * @param end   终止位置
-     * @return 新串
-     */
-    IString delete(int begin, int end);
-
-    /**
      * 拼接串
      *
      * @param str 字符串
@@ -86,4 +77,27 @@ public interface IString {
      * @return -1表示不存在, 不然返回对应的下标位置
      */
     int indexOf(IString str);
+
+    /**
+     * 此字符串对应的字符数组
+     * @return 字符数组
+     */
+    char[] toArray();
+
+
+    /* 模式匹配接口 */
+
+    /**
+     * 字符串模式匹配策略
+     */
+    interface MatchingStrategy {
+        /**
+         * 匹配接口
+         *
+         * @param text    文本串(主串)
+         * @param pattern 模式串(副串)
+         * @return 值为<code>-1</code>表示模式串不存在与文本串, 反之返回模式串第一次出现在文本串的位置
+         */
+        int match(IString text, IString pattern);
+    }
 }
