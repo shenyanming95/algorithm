@@ -6,22 +6,22 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
- * 图接口
+ * 图接口. 图的基本表示有两种：邻接表和邻接矩阵
  *
- * @param <T> 顶点值的类型
- * @param <V> 权重值的类型
+ * @param <V> 顶点值的类型
+ * @param <E> 权重值的类型
  * @author shenyanming
  * @date 2020/11/1 21:14.
  */
-public interface IGraph<T, V> {
+public interface IGraph<V, E> {
 
     /**
      * 添加顶点
      *
-     * @param t 顶点值
+     * @param v 顶点值
      * @return true-添加成功
      */
-    boolean addVertex(T t);
+    boolean addVertex(V v);
 
     /**
      * 添加没有权值的边
@@ -30,7 +30,7 @@ public interface IGraph<T, V> {
      * @param to   边的终点
      * @return true-添加成功
      */
-    boolean addEdge(T from, T to);
+    boolean addEdge(V from, V to);
 
     /**
      * 添加带有权值的边
@@ -40,7 +40,7 @@ public interface IGraph<T, V> {
      * @param weight 权值
      * @return true-添加成功
      */
-    boolean addEdge(T from, T to, V weight);
+    boolean addEdge(V from, V to, E weight);
 
     /**
      * 删除顶点
@@ -48,7 +48,7 @@ public interface IGraph<T, V> {
      * @param t 顶点值
      * @return true-删除成功
      */
-    boolean removeVertex(T t);
+    boolean removeVertex(V t);
 
     /**
      * 删除边
@@ -57,7 +57,7 @@ public interface IGraph<T, V> {
      * @param to   边的终点
      * @return true-删除成功
      */
-    boolean removeEdge(T from, T to);
+    boolean removeEdge(V from, V to);
 
     /**
      * 节点数
@@ -76,16 +76,16 @@ public interface IGraph<T, V> {
     /**
      * 对外暴露的描述边的信息
      *
-     * @param <T> 顶点值的类型
-     * @param <V> 边的权重值的类型
+     * @param <V> 顶点值的类型
+     * @param <E> 边的权重值的类型
      */
     @Data
     @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    class EdgeInfo<T, V> {
-        T from;
-        T to;
-        V weight;
+    class EdgeInfo<V, E> {
+        V from;
+        V to;
+        E weight;
     }
 }
