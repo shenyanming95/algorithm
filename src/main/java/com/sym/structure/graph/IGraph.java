@@ -6,10 +6,12 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
- * 图接口. 图的基本表示有两种：邻接表和邻接矩阵
+ * 图接口, 定义图的基本操作.
+ * 图有两种表示方式, 其一邻接矩阵, 其二邻接表, 不过实现上不会
+ * 严格使用这两种表示方式, 因为边也有权重, 需要存储边的信息.
  *
  * @param <V> 顶点值的类型
- * @param <E> 权重值的类型
+ * @param <E> 边权值的类型
  * @author shenyanming
  * @date 2020/11/1 21:14.
  */

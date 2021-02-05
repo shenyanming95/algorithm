@@ -1,8 +1,13 @@
-package com.sym.structure.graph.base;
+package com.sym.structure.graph.impl.list;
 
-import com.sym.structure.graph.IGraph;
+import com.sym.structure.graph.impl.AbstractAdvancedGraph;
+import com.sym.structure.graph.strategy.impl.Dijkstra;
+import com.sym.structure.graph.strategy.impl.Prim;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * 邻接表实现的图
@@ -10,73 +15,21 @@ import java.util.*;
  * @author shenyanming
  * @date 2020/11/8 15:27.
  */
+public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
 
-public class LinkedListGraph<V, E> implements IGraph<V, E> {
-
-    // -------------------------------- fields
+    public LinkedListGraph() {
+        super(new Prim<>(), new Dijkstra<>());
+    }
 
     /**
-     * 每一个{@code V}都需要用一个{@link Vertex}存储, 用HashMap将它们关联起来.
+     * 图的顶点集
      */
     private Map<V, Vertex<V, E>> vertices = newMap();
 
     /**
-     * 存储当前图的所有边
+     * 图的边集
      */
     private Set<Edge<V, E>> edges = newSet();
-
-    // -------------------------------- static methods
-
-    /**
-     * 初始化set集合
-     *
-     * @param <T> 任意泛型
-     * @return HashSet
-     */
-    static <T> Set<T> newSet() {
-        return new HashSet<>();
-    }
-
-    /**
-     * 初始化map映射
-     *
-     * @param <K> 任意泛型
-     * @param <V> 任意泛型
-     * @return HashMap
-     */
-    static <K, V> Map<K, V> newMap() {
-        return new HashMap<>();
-    }
-
-    /**
-     * 初始化一个顶点
-     *
-     * @param v 顶点值
-     * @return Vertex
-     */
-    static <V, E> Vertex<V, E> newVertex(V v) {
-        Vertex<V, E> vertex = new Vertex<>();
-        vertex.value = v;
-        return vertex;
-    }
-
-    /**
-     * 初始化一条边
-     *
-     * @param from   起点
-     * @param to     终点
-     * @param weight 权重
-     * @return Edge
-     */
-    static <V, E> Edge<V, E> newEdge(Vertex<V, E> from, Vertex<V, E> to, E weight) {
-        Edge<V, E> edge = new Edge<>();
-        edge.from = from;
-        edge.to = to;
-        edge.weight = weight;
-        return edge;
-    }
-
-    // -------------------------------- methods
 
     @Override
     public boolean addVertex(V v) {
@@ -149,6 +102,49 @@ public class LinkedListGraph<V, E> implements IGraph<V, E> {
         return edges.size();
     }
 
+    @Override
+    public void bfs(Consumer<EdgeInfo<V, E>> consumer) {
+    }
+
+    @Override
+    public void dfs(Consumer<EdgeInfo<V, E>> consumer) {
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        edges.forEach(edge -> sb.append(edge.toString()).append(";\n"));
+        return sb.toString();
+    }
+
+    /**
+     * 初始化一个顶点
+     *
+     * @param v 顶点值
+     * @return Vertex
+     */
+    private static <V, E> Vertex<V, E> newVertex(V v) {
+        Vertex<V, E> vertex = new Vertex<>();
+        vertex.value = v;
+        return vertex;
+    }
+
+    /**
+     * 初始化一条边
+     *
+     * @param from   起点
+     * @param to     终点
+     * @param weight 权重
+     * @return Edge
+     */
+    private static <V, E> Edge<V, E> newEdge(Vertex<V, E> from, Vertex<V, E> to, E weight) {
+        Edge<V, E> edge = new Edge<>();
+        edge.from = from;
+        edge.to = to;
+        edge.weight = weight;
+        return edge;
+    }
+
     /**
      * 邻接表顶点
      *
@@ -180,6 +176,11 @@ public class LinkedListGraph<V, E> implements IGraph<V, E> {
         public boolean equals(Object o) {
             // 内部类不需要类型转换
             return Objects.equals(value, ((Vertex<?, ?>) o).value);
+        }
+
+        @Override
+        public String toString() {
+            return "[" + value + "]";
         }
     }
 
@@ -218,6 +219,11 @@ public class LinkedListGraph<V, E> implements IGraph<V, E> {
             Edge<?, ?> e = (Edge<?, ?>) obj;
             // 起点和终点确定一条边
             return Objects.equals(from, e.from) && Objects.equals(to, e.to);
+        }
+
+        @Override
+        public String toString() {
+            return from.toString() + "→" + to.toString() + ", w=" + weight;
         }
     }
 
