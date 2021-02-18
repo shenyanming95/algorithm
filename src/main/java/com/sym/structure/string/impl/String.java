@@ -63,7 +63,7 @@ public class String implements IString {
 
     @Override
     public char charAt(int index) {
-        if (index < 0 || index >= length() ) {
+        if (index < 0 || index >= length()) {
             throw new IllegalArgumentException("out of index");
         }
         return chars[index];
@@ -131,6 +131,40 @@ public class String implements IString {
     @Override
     public java.lang.String toString() {
         return new java.lang.String(this.chars);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o instanceof String) {
+            String anotherString = (String) o;
+            int n = chars.length;
+            if (n == anotherString.chars.length) {
+                char[] v1 = chars;
+                char[] v2 = anotherString.chars;
+                int i = 0;
+                while (n-- != 0) {
+                    if (v1[i] != v2[i]) return false;
+                    i++;
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int h = 0;
+        if (chars.length > 0) {
+            char[] val = chars;
+            for (int i = 0; i < chars.length; i++) {
+                h = 31 * h + val[i];
+            }
+        }
+        return h;
     }
 
     /**
