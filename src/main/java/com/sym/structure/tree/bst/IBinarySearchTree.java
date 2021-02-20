@@ -1,6 +1,6 @@
 package com.sym.structure.tree.bst;
 
-import com.sym.structure.tree.traversal.ITraversal;
+import com.sym.structure.tree.ITraversal;
 import com.sym.structure.tree.ITree;
 import com.sym.util.printer.BinaryTreeInfo;
 

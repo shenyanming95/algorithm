@@ -53,7 +53,7 @@ public class ArrayUtil {
             res[i] = (i + 1);
         }
         Random random = new Random();
-        int temp = 0;
+        int temp;
         for (int i = 0; i < len / 2; i++) {
             int x = random.nextInt(len);
             int y = random.nextInt(len);

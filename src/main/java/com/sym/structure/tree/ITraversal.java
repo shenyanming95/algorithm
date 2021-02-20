@@ -1,4 +1,4 @@
-package com.sym.structure.tree.traversal;
+package com.sym.structure.tree;
 
 /**
  * 树的遍历接口, 树这种数据结构, 有4种遍历方式：
