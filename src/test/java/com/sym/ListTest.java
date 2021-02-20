@@ -1,6 +1,7 @@
 package com.sym;
 
-import com.sym.structure.list.array.SymArrayList;
+import com.sym.structure.list.IList;
+import com.sym.structure.list.array.ArrayList;
 import com.sym.structure.list.linked.DoublyLinkedList;
 import com.sym.structure.list.linked.SingleLinkedList;
 import com.sym.structure.list.skip.SkipList;
@@ -17,52 +18,61 @@ import java.util.Random;
  */
 public class ListTest {
 
-    /**
-     * 测试顺序表
-     */
     @Test
-    public void testOrderTable() {
+    public void arrayListTest() {
         Random r = new Random();
-        System.out.println("===================测试顺序表=================");
         // 创建容量为3的集合, 向里面插入5个数据
-        SymArrayList<Integer> list = new SymArrayList<>(3);
+        IList<Integer> list = new ArrayList<>(3);
         for (int i = 0; i < 5; i++) {
             // 往数据表添加数据
             list.add(r.nextInt(100));
         }
         System.out.println("列表大小：" + list.size());
-        list.display();
-        System.out.println("下标为3,新增数据：");
+        System.out.println(list);
+        System.out.println("下标为3, 新增数据：");
         list.add(3, 1914);
-        list.display();
+        System.out.println(list);
         System.out.println("下标为0,修改数据：");
         list.update(0, 9527);
-        list.display();
+        System.out.println(list);
         System.out.println("删除下标为1的数据：");
         list.delete(1);
-        list.display();
+        System.out.println(list);
         System.out.println("数值为4的下标：" + list.indexOf(4));
     }
 
-    /**
-     * 测试双向链表
-     */
     @Test
-    public void testLinkTable() {
+    public void singleLinkedListTest(){
+        Random r = new Random();
+        SingleLinkedList<Integer> list = new SingleLinkedList<>();
+        for (int i = 0; i < 5; i++) {
+            // 往数据表添加数据
+            list.add(r.nextInt(100));
+        }
+        System.out.println(list);
+        list.add(3, 100);
+        System.out.println("下标为3新增数据：" + list);
+        list.add(6, 69);
+        System.out.println("下标为6新增数据：" + list);
+        System.out.println("下标为5的值：" + list.get(5));
+    }
+
+    @Test
+    public void doublyLinkedListTest() {
         System.out.println("===================测试链表=================");
         DoublyLinkedList<String> list = new DoublyLinkedList<>();
         for (int i = 0; i < 5; i++) {
             list.add("测试数据_" + i);
         }
-        list.display();
+        System.out.println(list);
         list.add(list.size(), "新插入1号");
         list.add(3, "新插入2号");
-        list.display();
+        System.out.println(list);
         System.out.printf("下标为4的元素为：%s\r\n", list.get(4));
         System.out.printf("数据【111】在链表的位置：%s\r\n", list.indexOf("测试111"));
         System.out.printf("数据【测试数据_1】在链表的位置：%s\n\r", list.indexOf("测试数据_1"));
         list.delete(2);
-        list.display();
+        System.out.println(list);
     }
 
 
@@ -77,11 +87,11 @@ public class ListTest {
             list.add(random.nextInt(100));
         }
         System.out.println("原链表：");
-        list.display();
+        System.out.println(list);
 
         System.out.println("链表反转：");
         list.reverse();
-        list.display();
+        System.out.println(list);
     }
 
     /**

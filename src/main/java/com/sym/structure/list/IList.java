@@ -67,10 +67,4 @@ public interface IList<T> {
      * @return true-为空
      */
     boolean isEmpty();
-
-    /**
-     * 打印列表的信息
-     */
-    void display();
-
 }
