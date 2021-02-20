@@ -44,13 +44,13 @@ public class ArrayTest {
         // 转换为稀疏数组后
         System.out.println();
         System.out.println("转换为稀疏数组：");
-        int[][] sparseArray = SparseArray.toSparseArray(array);
+        int[][] sparseArray = SparseArray.to(array);
         ArrayUtil.print(sparseArray);
 
         // 稀疏数组还原回原数组
         System.out.println();
         System.out.println("还原为原数组：");
-        int[][] srcArray = SparseArray.fromSparseArray(sparseArray);
+        int[][] srcArray = SparseArray.from(sparseArray);
         ArrayUtil.print(srcArray);
     }
 

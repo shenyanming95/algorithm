@@ -1,19 +1,14 @@
 package com.sym.structure.array;
 
 /**
- * 稀疏数组, 用来对数组进行压缩处理, 规定：
- * 1)、稀疏数组固定只有3列,  如：
- * a   b   e
- * *   *   *
- * ...
- * ...
- * 首行三列的含义分别是：a-原数组总行数; b=原数组总列数; c-原数组有效元素的个数
- * <p>
- * 2)、稀疏数组首行外的其它行, 表示原数组有效元素的下标以及值, 规定：
- * a  b  c
- * 0  2  110
- * ...
- * 原二维数组[0][2]的值为110, 即原二维数组第一行第三列的值为110
+ * 稀疏数组, 用来对数组进行压缩处理, 它尽可能地保存有效元素, 规定：
+ * <pre>
+ *     1.稀疏数组固定只有3列, 分别代表：原数组总行数、原数组总列数、原数组有效元素个数;
+ *     2.稀疏数组首行外的其它行, 表示原数组有效元素的下标以及对应值, 例如：
+ *       a b c
+ *       0 2 10
+ *       表示原二维数组[0][2]=10, 即原数组第一行第三列的值为10
+ * </pre>
  *
  * @author shenym
  * @date 2019/9/3
@@ -23,15 +18,15 @@ public class SparseArray {
     /**
      * 将一个整形数组转换为对应的稀疏数组
      */
-    public static int[][] toSparseArray(int[][] srcArray) {
-        if (null == srcArray || srcArray.length == 0) {
+    public static int[][] to(int[][] array) {
+        if (null == array || array.length == 0) {
             return null;
         }
-        // 先取原数组的行数、列数和有效值数 内部
-        int srcRows = srcArray.length;
-        int srcColumns = srcArray[0].length;
+        // 先取原数组的行数、列数和有效值数
+        int srcRows = array.length;
+        int srcColumns = array[0].length;
         int validValues = 0;
-        for (int[] internalArray : srcArray) {
+        for (int[] internalArray : array) {
             for (int i : internalArray) {
                 if (0 != i) {
                     validValues++;
@@ -50,7 +45,7 @@ public class SparseArray {
         // 将原数组的的有效值记录到稀疏数组上
         int m = 1;
         for (int i = 0; i < srcRows; i++) {
-            int[] internalArray = srcArray[i];
+            int[] internalArray = array[i];
             for (int j = 0, len = internalArray.length; j < len; j++) {
                 if (0 != internalArray[j]) {
                     //保存这个非零值在原数组的位置信息和它相应的值
@@ -68,7 +63,7 @@ public class SparseArray {
     /**
      * 将稀疏数组还原成原整型数组
      */
-    public static int[][] fromSparseArray(int[][] sparseArray) {
+    public static int[][] from(int[][] sparseArray) {
         if (null == sparseArray || sparseArray.length == 0) {
             return null;
         }
