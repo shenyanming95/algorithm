@@ -2,7 +2,6 @@ package com.sym.structure.list.linked;
 
 import com.sym.structure.list.IList;
 import lombok.Data;
-import lombok.experimental.Accessors;
 
 /**
  * 双向链表，表里的每个数据元素包含：数据项、上一个结点的引用、下一个结点的引用
@@ -27,17 +26,16 @@ public class DoublyLinkedList<T> implements IList<T> {
     /**
      * 链表的长度
      */
-    private int length;
+    private int size;
 
     /**
      * 双向链表使用的节点
      */
     @Data
-    @Accessors(chain = true)
     static class Node<T> {
-        private T data;
-        private Node<T> next;
-        private Node<T> prev;
+        T data;
+        Node<T> next;
+        Node<T> prev;
 
         Node() {
             this(null, null, null);
@@ -55,9 +53,7 @@ public class DoublyLinkedList<T> implements IList<T> {
 
         @Override
         public String toString() {
-            return "Node{" +
-                    "data=" + data +
-                    '}';
+            return "{" + data + "}";
         }
     }
 
@@ -65,7 +61,7 @@ public class DoublyLinkedList<T> implements IList<T> {
         // 初始化头结点
         head = new Node<>();
         tail = null;
-        length = 0;
+        size = 0;
     }
 
     @Override
@@ -85,16 +81,16 @@ public class DoublyLinkedList<T> implements IList<T> {
             dataNode.setPrev(temp);
         }
         tail = dataNode;
-        length++;
+        size++;
     }
 
     @Override
     public void add(int i, T t) {
-        if ((i < 0 || i > length) || (head.getNext() == null && i != 0)) {
+        if ((i < 0 || i > size) || (head.getNext() == null && i != 0)) {
             throw new IllegalArgumentException("错误的插入位置：" + i);
         }
         // 如果插入位置i恰好等于length,则相当于当前结点作为新的尾节点
-        if (i == length) {
+        if (i == size) {
             add(t);
             return;
         }
@@ -131,7 +127,7 @@ public class DoublyLinkedList<T> implements IList<T> {
             preNode.setNext(newNode);
             temp.setPrev(newNode);
         }
-        length++;
+        size++;
     }
 
     @Override
@@ -157,8 +153,8 @@ public class DoublyLinkedList<T> implements IList<T> {
     @SuppressWarnings("unChecked")
     public T get(int i) {
 
-        if (i < 0 || i > length) {
-            throw new RuntimeException("找不到第" + i + "个元素,链表区间应该为：[0," + length + "]");
+        if (i < 0 || i > size) {
+            throw new RuntimeException("找不到第" + i + "个元素,链表区间应该为：[0," + size + "]");
         }
 
         // 空链表返回null
@@ -173,7 +169,7 @@ public class DoublyLinkedList<T> implements IList<T> {
             p = p.getNext();
             j++;
         }
-        if(p == null){
+        if (p == null) {
             return null;
         }
         return (T) p.getData();
@@ -190,14 +186,14 @@ public class DoublyLinkedList<T> implements IList<T> {
         }
         if (p == null) {
             return -1;
-        } else{
+        } else {
             return j;
         }
     }
 
     @Override
     public int size() {
-        return length;
+        return size;
     }
 
     @Override
@@ -206,13 +202,18 @@ public class DoublyLinkedList<T> implements IList<T> {
     }
 
     @Override
-    public void display() {
-        //取到首结点
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[");
+        // 取到首结点
         Node<T> p = head.getNext();
         while (p != null) {
-            System.out.print(p.getData() + " ");
+            sb.append(p.data).append(", ");
             p = p.getNext();
         }
-        System.out.println();
+        int length = sb.length();
+        if (length > 1) {
+            sb.delete(length - 2, length);
+        }
+        return sb.append("]").toString();
     }
 }
