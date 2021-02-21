@@ -18,7 +18,7 @@ public abstract class AbstractBaseGraph<V, E> implements IGraph<V, E> {
     /**
      * 初始化set集合
      *
-     * @param <T> 任意泛型
+     * @param <T> 任意类型
      * @return HashSet
      */
     protected static <T> Set<T> newSet() {
@@ -28,8 +28,8 @@ public abstract class AbstractBaseGraph<V, E> implements IGraph<V, E> {
     /**
      * 初始化map映射
      *
-     * @param <K> 任意泛型
-     * @param <V> 任意泛型
+     * @param <K> 任意类型
+     * @param <V> 任意类型
      * @return HashMap
      */
     protected static <K, V> Map<K, V> newMap() {

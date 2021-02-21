@@ -76,6 +76,27 @@ public interface IGraph<V, E> {
     int edgeSize();
 
     /**
+     * 对外暴露的描述顶点的信息
+     *
+     * @param <V> 顶点值的类型
+     */
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    class VertexInfo<V> {
+        V value;
+
+        @Override
+        public String toString() {
+            return "{" + value + "}";
+        }
+
+        public static <V> VertexInfo<V> of(V value) {
+            return new VertexInfo<>(value);
+        }
+    }
+
+    /**
      * 对外暴露的描述边的信息
      *
      * @param <V> 顶点值的类型

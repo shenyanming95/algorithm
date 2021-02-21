@@ -1,8 +1,14 @@
 package com.sym.structure.graph.impl.list;
 
 import com.sym.structure.graph.impl.AbstractAdvancedGraph;
+import com.sym.structure.graph.strategy.IMstStrategy;
+import com.sym.structure.graph.strategy.IShortestPathStrategy;
 import com.sym.structure.graph.strategy.impl.Dijkstra;
 import com.sym.structure.graph.strategy.impl.Prim;
+import com.sym.structure.queue.IQueue;
+import com.sym.structure.queue.linked.LinkedQueue;
+import com.sym.structure.stack.IStack;
+import com.sym.structure.stack.linked.LinkedStack;
 
 import java.util.Map;
 import java.util.Objects;
@@ -10,7 +16,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 /**
- * 邻接表实现的图
+ * 邻接表实现的图(有向图)
  *
  * @author shenyanming
  * @date 2020/11/8 15:27.
@@ -18,16 +24,21 @@ import java.util.function.Consumer;
 public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
 
     public LinkedListGraph() {
-        super(new Prim<>(), new Dijkstra<>());
+        this(new Prim<>(), new Dijkstra<>());
+    }
+
+    public LinkedListGraph(IMstStrategy<V, E> mst, IShortestPathStrategy<V, E> sp) {
+        super(mst, sp);
     }
 
     /**
-     * 图的顶点集
+     * 图的顶点集, 不管是在创建边还是在创建顶点, 都需要确定当前顶点是否已经创建,
+     * 因此需要用Map来维护顶点集.
      */
     private Map<V, Vertex<V, E>> vertices = newMap();
 
     /**
-     * 图的边集
+     * 图的边集, 用于统计边的数量, 同时也可以用来确定边是否已经创建.
      */
     private Set<Edge<V, E>> edges = newSet();
 
@@ -69,7 +80,21 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
 
     @Override
     public boolean removeVertex(V v) {
-        return Objects.nonNull(vertices.remove(v));
+        Vertex<V, E> vertex = vertices.remove(v);
+        if (Objects.isNull(vertex)) {
+            return false;
+        }
+        // 删除该顶点的入度边
+        vertex.inEdges.forEach(edge -> {
+            edge.to.outEdges.remove(edge);
+            edges.remove(edge);
+        });
+        // 删除该顶点的出度边
+        vertex.outEdges.forEach(edge -> {
+            edge.to.inEdges.remove(edge);
+            edges.remove(edge);
+        });
+        return cleanVertex(vertex);
     }
 
     @Override
@@ -103,17 +128,97 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
     }
 
     @Override
-    public void bfs(Consumer<EdgeInfo<V, E>> consumer) {
+    public void bfs(V v, Consumer<VertexInfo<V>> consumer) {
+        // 广度优先搜索, Breadth First Search, 需要从指定顶点开始
+        Vertex<V, E> vertex = vertices.get(v);
+        if (Objects.isNull(vertex) || Objects.isNull(consumer)) {
+            return;
+        }
+        // 通过一个队列来存储下一个需要遍历的顶点
+        IQueue<Vertex<V, E>> queue = new LinkedQueue<>();
+        queue.offer(vertex);
+        // 通过一个集合来存储已经遍历过的顶点
+        Set<Vertex<V, E>> visitedSet = newSet();
+        // 遍历的终止条件, 就是队列不为空
+        while (!queue.isEmpty()) {
+            Vertex<V, E> ve;
+            // 仅当未被访问过顶点, 才需要访问, 并且将它出度边的对端顶点加入到集合中
+            if (!visitedSet.contains((ve = queue.poll()))) {
+                // 执行访问逻辑
+                consumer.accept(VertexInfo.of(ve.value));
+                // 将其加入到集合中表示已经访问过了
+                visitedSet.add(ve);
+                // 将该顶点出度边的对端顶点加入到队列中, 以便下次循环访问
+                ve.outEdges.forEach(edge -> queue.offer(edge.to));
+            }
+        }
     }
 
     @Override
-    public void dfs(Consumer<EdgeInfo<V, E>> consumer) {
+    public void dfs(V v, Consumer<VertexInfo<V>> consumer) {
+        // 深度优先搜索, Deep First Search, 需要从指定顶点开始
+        Vertex<V, E> vertex = vertices.get(v);
+        if (Objects.isNull(vertex) || Objects.isNull(consumer)) {
+            return;
+        }
+        // 用来存储已经访问到的顶点
+        Set<Vertex<V, E>> visitedSet = newSet();
+        // 递归实现
+        dfs(vertex, visitedSet, consumer);
+        // 非递归实现
+        dfs2(vertex, visitedSet, consumer);
+    }
+
+    /**
+     * 图的DFS搜索算法, 递归实现~
+     *
+     * @param vertex     起点
+     * @param visitedSet 标识已经访问过的顶点
+     * @param consumer   访问者模式
+     */
+    private void dfs(Vertex<V, E> vertex, Set<Vertex<V, E>> visitedSet, Consumer<VertexInfo<V>> consumer) {
+        // 访问当前顶点, 并将其加入标识集合中
+        consumer.accept(VertexInfo.of(vertex.value));
+        visitedSet.add(vertex);
+        // 获取它的出度边, 递归访问
+        vertex.outEdges.forEach(edge -> {
+            Vertex<V, E> toVertex = edge.to;
+            if (!visitedSet.contains(toVertex)) {
+                dfs(toVertex, visitedSet, consumer);
+            }
+        });
+    }
+
+    /**
+     * 图的DFS搜索算法, 非递归实现~
+     *
+     * @param vertex     起点
+     * @param visitedSet 标识已经访问过的顶点
+     * @param consumer   访问者模式
+     */
+    private void dfs2(Vertex<V, E> vertex, Set<Vertex<V, E>> visitedSet, Consumer<VertexInfo<V>> consumer) {
+        // 一切的递归都可以转化成非递归, 而其核心组件就是栈, BFS非递归实现同理也要用到栈
+        IStack<Vertex<V, E>> stack = new LinkedStack<>();
+        stack.push(vertex);
+
+        // 循环的条件就是栈未空
+        while (!stack.isEmpty()) {
+            // 弹出栈顶元素访问, 然后将其加入到标识集合中
+            Vertex<V, E> v = stack.pop();
+            consumer.accept(VertexInfo.of(v.value));
+            visitedSet.add(v);
+            // 同时将该顶点出度边的对端顶点加入到栈中, 注意要过滤掉已经访问过的顶点,
+            // 也就是保证每次从栈中弹出的顶点, 都是未访问过的.
+            v.outEdges.stream().filter(edge -> !visitedSet.contains(edge.to)).forEach(edge -> stack.push(edge.to));
+        }
+
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         edges.forEach(edge -> sb.append(edge.toString()).append(";\n"));
+        // TODO 没有边的顶点展示
         return sb.toString();
     }
 
@@ -143,6 +248,18 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
         edge.to = to;
         edge.weight = weight;
         return edge;
+    }
+
+    /**
+     * 清空一个顶点
+     *
+     * @param vertex 顶点
+     */
+    private static <V, E> boolean cleanVertex(Vertex<V, E> vertex) {
+        vertex.inEdges.clear();
+        vertex.outEdges.clear();
+        vertex.value = null;
+        return true;
     }
 
     /**
@@ -223,7 +340,7 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
 
         @Override
         public String toString() {
-            return from.toString() + "→" + to.toString() + ", w=" + weight;
+            return from.toString() + " → " + to.toString() + ", w=" + weight;
         }
     }
 
