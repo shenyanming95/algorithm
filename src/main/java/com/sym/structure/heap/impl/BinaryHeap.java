@@ -128,6 +128,11 @@ public class BinaryHeap<E> implements IHeap<E> {
     }
 
     @Override
+    public void addAll(Collection<E> collection) {
+        Objects.requireNonNull(collection).forEach(this::add);
+    }
+
+    @Override
     public E get() {
         // 返回堆顶元素
         return checkNotEmpty().elements[0];

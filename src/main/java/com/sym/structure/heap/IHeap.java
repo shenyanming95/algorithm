@@ -2,6 +2,8 @@ package com.sym.structure.heap;
 
 import com.sym.util.printer.BinaryTreeInfo;
 
+import java.util.Collection;
+
 /**
  * 如果一棵树, 它的任意节点总是 ≥ 或者 ≤ 它的子节点, 那么称这种数据结构为：堆（Heap）
  * 任意节点的值都 ≥ 它的子节点, 称为最大堆;
@@ -38,6 +40,12 @@ public interface IHeap<E> extends BinaryTreeInfo {
      * @param element 新元素
      */
     void add(E element);
+
+    /**
+     * 批量添加元素
+     * @param collection 集合
+     */
+    void addAll(Collection<E> collection);
 
     /**
      * 获取堆顶元素
