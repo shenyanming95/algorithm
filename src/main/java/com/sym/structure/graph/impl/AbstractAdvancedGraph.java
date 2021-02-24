@@ -47,4 +47,8 @@ public abstract class AbstractAdvancedGraph<V, E> extends AbstractBaseGraph<V, E
     public List<EdgeInfo<V, E>> shortestPath(V vertex) {
         return shortestPathStrategy.shortestPath(this, vertex);
     }
+
+    void get() {
+
+    };
 }

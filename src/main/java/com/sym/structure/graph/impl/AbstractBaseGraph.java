@@ -2,10 +2,7 @@ package com.sym.structure.graph.impl;
 
 import com.sym.structure.graph.IGraph;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 图基本实现的抽象父类, 满足图的基本操作
@@ -14,6 +11,16 @@ import java.util.Set;
  * Created on 2021/2/5 10:31
  */
 public abstract class AbstractBaseGraph<V, E> implements IGraph<V, E> {
+
+    /**
+     * 初始化List集合
+     *
+     * @param <T> 任意类型
+     * @return HashSet
+     */
+    protected static <T> List<T> newList() {
+        return new ArrayList<>();
+    }
 
     /**
      * 初始化set集合

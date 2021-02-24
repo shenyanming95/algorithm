@@ -1,19 +1,19 @@
 package com.sym.structure.graph.impl.list;
 
+import com.sym.structure.graph.IGraph;
 import com.sym.structure.graph.impl.AbstractAdvancedGraph;
 import com.sym.structure.graph.strategy.IMstStrategy;
 import com.sym.structure.graph.strategy.IShortestPathStrategy;
-import com.sym.structure.graph.strategy.impl.Dijkstra;
-import com.sym.structure.graph.strategy.impl.Prim;
+import com.sym.structure.heap.IHeap;
+import com.sym.structure.heap.impl.BinaryHeap;
 import com.sym.structure.queue.IQueue;
 import com.sym.structure.queue.linked.LinkedQueue;
 import com.sym.structure.stack.IStack;
 import com.sym.structure.stack.linked.LinkedStack;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * 邻接表实现的图(有向图)
@@ -169,6 +169,16 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
         dfs2(vertex, visitedSet, consumer);
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        // 先打印没有任何边的顶点
+        vertices.values().stream().filter(v -> v.outEdges.isEmpty()).forEach(v -> sb.append(v).append("\n"));
+        // 再打印所有边
+        edges.forEach(edge -> sb.append(edge.toString()).append(";\n"));
+        return sb.toString();
+    }
+
     /**
      * 图的DFS搜索算法, 递归实现~
      *
@@ -212,14 +222,6 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
             v.outEdges.stream().filter(edge -> !visitedSet.contains(edge.to)).forEach(edge -> stack.push(edge.to));
         }
 
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        edges.forEach(edge -> sb.append(edge.toString()).append(";\n"));
-        // TODO 没有边的顶点展示
-        return sb.toString();
     }
 
     /**
@@ -341,6 +343,90 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
         @Override
         public String toString() {
             return from.toString() + " → " + to.toString() + ", w=" + weight;
+        }
+    }
+
+    /**
+     * Prim算法实现, 利用切分定理来求得最小生成树
+     *
+     * @param <V> 顶点值
+     * @param <E> 边权值
+     */
+    private static class Prim<V, E> implements IMstStrategy<V, E> {
+
+        @Override
+        public List<EdgeInfo<V, E>> mst(IGraph<V, E> param) {
+            // 最小生成树是针对连通图计算的, 连通图都是无向的(强连通图才是有向的)
+            if (!(param instanceof UndirectedListGraph)) {
+                return Collections.emptyList();
+            }
+            LinkedListGraph<V, E> graph = (LinkedListGraph<V, E>) param;
+            if (graph.vertices.isEmpty()) {
+                return Collections.emptyList();
+            }
+            // 任意选取一个顶点开始
+            Vertex<V, E> begin = graph.vertices.values().stream().findAny().orElse(null);
+            // 返回值
+            List<EdgeInfo<V, E>> retList = newList();
+            // 已经访问到的顶点集合
+            Set<Vertex<V, E>> visitedVertexSet = newSet();
+            visitedVertexSet.add(begin);
+            // 通过堆来求得最小边
+            IHeap<Edge<V, E>> minHeap = new BinaryHeap<>(begin.outEdges, IHeap.Type.MIN);
+            // 生成树的边数等于原图顶点数减一, 因此这边循环的终止条件就是retList等于顶点数减一
+            int vertices = graph.vertices.size() - 1;
+            while (!minHeap.isEmpty() || retList.size() < vertices) {
+                // 移除堆顶元素, 相当于获取权重最小的边
+                Edge<V, E> minEdge = minHeap.remove();
+                if (visitedVertexSet.contains(minEdge.to)) {
+                    // 有可能当前这条最小边的对端顶点已经被访问过了, 就不能将它再选取
+                    continue;
+                }
+                // 获取到一条相对最小边, 将其加入到返回值中
+                retList.add(new EdgeInfo<>(minEdge.from.value, minEdge.to.value, minEdge.weight));
+                // 表示它的对端顶点已经被访问过了
+                visitedVertexSet.add(minEdge.to);
+                // 将被选取到的顶点的出度边也加入到最小堆中, 再下一轮中选择相对最小的边
+                minHeap.addAll(minEdge.to.outEdges.stream().filter(e -> !visitedVertexSet.contains(e.to)).collect(Collectors.toSet()));
+            }
+            return retList;
+        }
+    }
+
+    /**
+     * Kruskal算法实现
+     *
+     * @param <V> 顶点值
+     * @param <E> 边权值
+     */
+    private static class Kruskal<V, E> implements IMstStrategy<V, E> {
+
+        @Override
+        public List<IGraph.EdgeInfo<V, E>> mst(IGraph<V, E> graph) {
+            return null;
+        }
+
+    }
+
+    /**
+     * Dijkstra算法
+     */
+    private static class Dijkstra<V, E> implements IShortestPathStrategy<V, E> {
+
+        @Override
+        public List<IGraph.EdgeInfo<V, E>> shortestPath(IGraph<V, E> graph, V v) {
+            return null;
+        }
+    }
+
+    /**
+     * Bellman-Ford算法实现
+     */
+    private static class BellmanFord<V, E> implements IShortestPathStrategy<V, E> {
+
+        @Override
+        public List<IGraph.EdgeInfo<V, E>> shortestPath(IGraph<V, E> graph, V v) {
+            return null;
         }
     }
 
