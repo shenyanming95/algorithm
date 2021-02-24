@@ -60,4 +60,19 @@ public interface IHeap<E> extends BinaryTreeInfo {
      * @return 堆顶元素
      */
     E replace(E element);
+
+    /**
+     * 二叉堆类型, 即最大堆 or 最小堆
+     */
+    enum Type {
+        /**
+         * 最大堆
+         */
+        MAX,
+
+        /**
+         * 最小堆
+         */
+        MIN;
+    }
 }

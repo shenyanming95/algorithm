@@ -1,12 +1,14 @@
 package com.sym.structure.heap.impl;
 
 import com.sym.structure.heap.IHeap;
+
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Objects;
 
 /**
- * 二叉堆, 逻辑上属于完全二叉树结构, 所以可以使用数组作为它的底层存储结构.
- * 二叉堆一般可以用来解决 TopK 问题, 学习它记住两个点, 假设一个堆元素的下标为i：
+ * 二叉堆, 逻辑上属于完全二叉树结构, 因此可以使用数组作为它的底层存储结构.
+ * 二叉堆一般可以用来解决 TopK 问题, 学习它记住两个点, 假设堆中某个元素的下标为i：
  * 1.其父节点下标, floor((i-1)/2)
  * 2.其左子节点下标, 2i+1(如果有); 其右子节点下标, 2i+2(如果有)
  *
@@ -42,8 +44,14 @@ public class BinaryHeap<E> implements IHeap<E> {
      */
     private int threshold;
 
+    /**
+     * 二叉堆的类型, 可以通过它来指定最大堆或最小堆,
+     * 或者通过{@link BinaryHeap#comparator}
+     */
+    private Type type;
+
     public BinaryHeap() {
-        this(DEFAULT_CAPACITY, null);
+        this(DEFAULT_CAPACITY);
     }
 
     public BinaryHeap(int capacity) {
@@ -51,22 +59,36 @@ public class BinaryHeap<E> implements IHeap<E> {
     }
 
     public BinaryHeap(int capacity, Comparator<E> comparator) {
-        this.size = 0;
-        this.elements = (E[]) new Object[capacity];
-        this.comparator = comparator;
-        this.threshold = (int) (capacity * DEFAULT_LOAD_FACTORY);
+        this(capacity, Type.MAX, comparator);
     }
 
-    public BinaryHeap(E[] elements) {
-        // 拷贝原数组
-        this.elements = (E[]) new Object[Objects.requireNonNull(elements).length];
-        System.arraycopy(elements, 0, this.elements, 0, elements.length);
-        // 计算容量
-        this.size = this.elements.length;
-        // 在下一次add()的时候, 扩容
-        this.threshold = (int) (size * DEFAULT_LOAD_FACTORY);
-        // 修复堆的性质
-        heapify();
+    public BinaryHeap(int capacity, Type type, Comparator<E> comparator) {
+        this(capacity, type, null, comparator);
+    }
+
+    public BinaryHeap(Collection<E> collection) {
+        this(collection, Type.MAX);
+    }
+
+    public BinaryHeap(Collection<E> collection, Type type) {
+        this(collection, type, null);
+    }
+
+    public BinaryHeap(Collection<E> collection, Type type, Comparator<E> cp) {
+        this(collection.size(), type, (E[]) collection.toArray(new Object[0]), cp);
+    }
+
+    public BinaryHeap(int capacity, Type type, E[] els, Comparator<E> cp) {
+        boolean isBatch = Objects.nonNull(els);
+        this.size = isBatch ? els.length : 0;
+        this.elements = isBatch ? copy(els) : (E[]) new Object[capacity];
+        this.threshold = (int) (capacity * DEFAULT_LOAD_FACTORY);
+        this.comparator = cp;
+        this.type = type;
+        if (isBatch) {
+            // 批量建堆
+            heapify();
+        }
     }
 
     @Override
@@ -237,7 +259,7 @@ public class BinaryHeap<E> implements IHeap<E> {
             int right = left + 1;
             if (right < size) {
                 // 右子元素也存在
-                return compare((E) elements[left], (E) elements[right]) > 0 ? left : right;
+                return compare((E) elements[left], elements[right]) > 0 ? left : right;
             } else {
                 return left;
             }
@@ -290,10 +312,26 @@ public class BinaryHeap<E> implements IHeap<E> {
      *
      * @param e1 元素a
      * @param e2 元素b
-     * @return 大于0, a>b; 等于0, a=b; 小于0, a<b;
+     * @return 若当前堆是最大堆, 则大于0, a>b; 等于0, a=b; 小于0, a<b; 最小堆则依次相反.
      */
     private int compare(E e1, E e2) {
-        return comparator != null ? comparator.compare(e1, e2) : ((Comparable) e1).compareTo(e2);
+        int val = comparator != null ? comparator.compare(e1, e2) : ((Comparable<E>) e1).compareTo(e2);
+        if (Objects.equals(type, Type.MAX) || Objects.equals(0, val)) {
+            return val;
+        }
+        return -1 * val;
+    }
+
+    /**
+     * 数组拷贝
+     *
+     * @param elements 原数组
+     * @return 新数组
+     */
+    private E[] copy(E[] elements) {
+        E[] ret = (E[]) new Object[elements.length];
+        System.arraycopy(elements, 0, ret, 0, elements.length);
+        return ret;
     }
 
     private void checkNotNull(E element) {

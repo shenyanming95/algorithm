@@ -79,10 +79,12 @@ public class HeapTest {
     public void heapify(){
         List<Integer> list = getIntArray(25);
         log.info("构造整数：{}", list);
+        // 批量建最大堆
+        IHeap<Integer> heap = new BinaryHeap<>(list);
+        BinaryTrees.println(heap);
 
-        // 建堆
-        IHeap<Integer> heap = new BinaryHeap<>(list.toArray(new Integer[]{}));
-        // 打印堆信息
+        // 批量建最小堆
+        heap = new BinaryHeap<>(list, IHeap.Type.MIN);
         BinaryTrees.println(heap);
     }
 
