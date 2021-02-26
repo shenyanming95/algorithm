@@ -11,7 +11,12 @@ import com.sym.structure.queue.linked.LinkedQueue;
 import com.sym.structure.stack.IStack;
 import com.sym.structure.stack.linked.LinkedStack;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -24,11 +29,11 @@ import java.util.stream.Collectors;
 public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
 
     public LinkedListGraph() {
-        this(new Prim<>(), new Dijkstra<>());
+        this(new Prim<>(), new Dijkstra<>(), null);
     }
 
-    public LinkedListGraph(IMstStrategy<V, E> mst, IShortestPathStrategy<V, E> sp) {
-        super(mst, sp);
+    public LinkedListGraph(IMstStrategy<V, E> mst, IShortestPathStrategy<V, E> sp, Comparator<E> comparator) {
+        super(mst, sp, comparator);
     }
 
     /**
@@ -210,7 +215,6 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
         // 一切的递归都可以转化成非递归, 而其核心组件就是栈, BFS非递归实现同理也要用到栈
         IStack<Vertex<V, E>> stack = new LinkedStack<>();
         stack.push(vertex);
-
         // 循环的条件就是栈未空
         while (!stack.isEmpty()) {
             // 弹出栈顶元素访问, 然后将其加入到标识集合中
@@ -221,7 +225,6 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
             // 也就是保证每次从栈中弹出的顶点, 都是未访问过的.
             v.outEdges.stream().filter(edge -> !visitedSet.contains(edge.to)).forEach(edge -> stack.push(edge.to));
         }
-
     }
 
     /**
@@ -347,7 +350,7 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
     }
 
     /**
-     * Prim算法实现, 利用切分定理来求得最小生成树
+     * Prim算法, 利用切分定理来求得最小生成树
      *
      * @param <V> 顶点值
      * @param <E> 边权值
@@ -368,18 +371,18 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
             Vertex<V, E> begin = graph.vertices.values().stream().findAny().orElse(null);
             // 返回值
             List<EdgeInfo<V, E>> retList = newList();
-            // 已经访问到的顶点集合
+            // 已经访问过的顶点
             Set<Vertex<V, E>> visitedVertexSet = newSet();
             visitedVertexSet.add(begin);
             // 通过堆来求得最小边
-            IHeap<Edge<V, E>> minHeap = new BinaryHeap<>(begin.outEdges, IHeap.Type.MIN);
+            IHeap<Edge<V, E>> minHeap = new BinaryHeap<>(begin.outEdges, IHeap.Type.MIN, (o1, o2) -> graph.edgeCompare(o1.weight, o2.weight));
             // 生成树的边数等于原图顶点数减一, 因此这边循环的终止条件就是retList等于顶点数减一
             int vertices = graph.vertices.size() - 1;
             while (!minHeap.isEmpty() || retList.size() < vertices) {
                 // 移除堆顶元素, 相当于获取权重最小的边
                 Edge<V, E> minEdge = minHeap.remove();
                 if (visitedVertexSet.contains(minEdge.to)) {
-                    // 有可能当前这条最小边的对端顶点已经被访问过了, 就不能将它再选取
+                    // 有可能当前这条最小边的对端顶点已经被访问过了, 就不能再次选取它.
                     continue;
                 }
                 // 获取到一条相对最小边, 将其加入到返回值中
@@ -394,7 +397,7 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
     }
 
     /**
-     * Kruskal算法实现
+     * Kruskal算法
      *
      * @param <V> 顶点值
      * @param <E> 边权值
@@ -420,7 +423,7 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
     }
 
     /**
-     * Bellman-Ford算法实现
+     * Bellman-Ford算法
      */
     private static class BellmanFord<V, E> implements IShortestPathStrategy<V, E> {
 

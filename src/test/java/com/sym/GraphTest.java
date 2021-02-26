@@ -8,6 +8,8 @@ import com.sym.structure.string.impl.String;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
+import java.util.List;
+
 /**
  * 图的测试类
  *
@@ -57,5 +59,17 @@ public class GraphTest {
         graph.addEdge(1, 5);
         graph.addEdge(3, 7);
         graph.dfs(1, System.out::println);
+    }
+
+    @Test
+    public void primTest(){
+        IAdvancedGraph<java.lang.String, Integer> graph = new UndirectedListGraph<>();
+        graph.addEdge("1", "2", 10);
+        graph.addEdge("1", "4", 20);
+        graph.addEdge("2", "4", 30);
+        graph.addEdge("2", "3", 40);
+        graph.addEdge("3", "4", 50);
+        List<IGraph.EdgeInfo<java.lang.String, Integer>> list = graph.mst();
+        list.forEach(System.out::println);
     }
 }

@@ -103,12 +103,20 @@ public interface IGraph<V, E> {
      * @param <E> 边的权重值的类型
      */
     @Data
-    @ToString
     @NoArgsConstructor
     @AllArgsConstructor
     class EdgeInfo<V, E> {
         V from;
         V to;
         E weight;
+
+        @Override
+        public String toString() {
+            return "{" +
+                    "from=" + from +
+                    ", to=" + to +
+                    ", weight=" + weight +
+                    '}';
+        }
     }
 }
