@@ -64,12 +64,16 @@ public class GraphTest {
     @Test
     public void primTest(){
         IAdvancedGraph<java.lang.String, Integer> graph = new UndirectedListGraph<>();
-        graph.addEdge("1", "2", 10);
-        graph.addEdge("1", "4", 20);
-        graph.addEdge("2", "4", 30);
-        graph.addEdge("2", "3", 40);
-        graph.addEdge("3", "4", 50);
-        List<IGraph.EdgeInfo<java.lang.String, Integer>> list = graph.mst();
-        list.forEach(System.out::println);
+        graph.addEdge("A", "B", 17);
+        graph.addEdge("A", "E", 16);
+        graph.addEdge("A", "F", 1);
+        graph.addEdge("E", "F", 33);
+        graph.addEdge("B", "F", 11);
+        graph.addEdge("E", "D", 4);
+        graph.addEdge("F", "D", 14);
+        graph.addEdge("B", "D", 5);
+        graph.addEdge("B", "C", 6);
+        graph.addEdge("D", "C", 10);
+        graph.mst().forEach(System.out::println);
     }
 }
