@@ -10,6 +10,7 @@ import com.sym.structure.queue.IQueue;
 import com.sym.structure.queue.linked.LinkedQueue;
 import com.sym.structure.stack.IStack;
 import com.sym.structure.stack.linked.LinkedStack;
+import com.sym.structure.unionfind.GenericUnionFind;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -355,7 +356,7 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
      * @param <V> 顶点值
      * @param <E> 边权值
      */
-    private static class Prim<V, E> implements IMstStrategy<V, E> {
+    public static class Prim<V, E> implements IMstStrategy<V, E> {
 
         @Override
         public List<EdgeInfo<V, E>> mst(IGraph<V, E> param) {
@@ -364,7 +365,7 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
                 return Collections.emptyList();
             }
             LinkedListGraph<V, E> graph = (LinkedListGraph<V, E>) param;
-            if (graph.vertices.isEmpty()) {
+            if (graph.vertices.isEmpty() || graph.edges.isEmpty()) {
                 return Collections.emptyList();
             }
             // 任意选取一个顶点开始
@@ -397,24 +398,50 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
     }
 
     /**
-     * Kruskal算法
+     * Kruskal算法, 利用最小堆和并查集, 每次从所有边中选取权值最小的作为最小生成树的一部分.
      *
      * @param <V> 顶点值
      * @param <E> 边权值
      */
-    private static class Kruskal<V, E> implements IMstStrategy<V, E> {
+    public static class Kruskal<V, E> implements IMstStrategy<V, E> {
 
         @Override
-        public List<IGraph.EdgeInfo<V, E>> mst(IGraph<V, E> graph) {
-            return null;
+        public List<IGraph.EdgeInfo<V, E>> mst(IGraph<V, E> param) {
+            // 最小生成树是针对连通图计算的, 连通图都是无向的(强连通图才是有向的)
+            if (!(param instanceof UndirectedListGraph)) {
+                return Collections.emptyList();
+            }
+            LinkedListGraph<V, E> graph = (LinkedListGraph<V, E>) param;
+            if (graph.vertices.isEmpty() || graph.edges.isEmpty()) {
+                return Collections.emptyList();
+            }
+            // 用最小堆来比较边的权重大小
+            IHeap<Edge<V, E>> minHeap = new BinaryHeap<>(graph.edges, IHeap.Type.MIN, (o1, o2) -> graph.edgeCompare(o1.weight, o2.weight));
+            // 用并查集来判断是否形成环
+            GenericUnionFind<Vertex<V, E>> unionFind = new GenericUnionFind<>(graph.vertices.values());
+            // 返回值集合
+            List<IGraph.EdgeInfo<V, E>> retList = newList();
+            // 最小生成树的边数, 等于原图顶点数减一, 所以可以作为循环终止条件
+            int size = graph.vertices.size() - 1;
+            while (!minHeap.isEmpty() && retList.size() < size) {
+                // 每次从最小堆中取出权值最小的边
+                Edge<V, E> minEdge = minHeap.remove();
+                if (unionFind.isSame(minEdge.from, minEdge.to)) {
+                    // 如果这条的两个顶点属于同一个集合, 说明这两个顶点原先已经加入过并查集,
+                    // 并且会形成环, 所以这条边就必须被抛弃.
+                    continue;
+                }
+                retList.add(new EdgeInfo<>(minEdge.from.value, minEdge.to.value, minEdge.weight));
+                unionFind.union(minEdge.from, minEdge.to);
+            }
+            return retList;
         }
-
     }
 
     /**
      * Dijkstra算法
      */
-    private static class Dijkstra<V, E> implements IShortestPathStrategy<V, E> {
+    public static class Dijkstra<V, E> implements IShortestPathStrategy<V, E> {
 
         @Override
         public List<IGraph.EdgeInfo<V, E>> shortestPath(IGraph<V, E> graph, V v) {
@@ -425,7 +452,7 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
     /**
      * Bellman-Ford算法
      */
-    private static class BellmanFord<V, E> implements IShortestPathStrategy<V, E> {
+    public static class BellmanFord<V, E> implements IShortestPathStrategy<V, E> {
 
         @Override
         public List<IGraph.EdgeInfo<V, E>> shortestPath(IGraph<V, E> graph, V v) {
