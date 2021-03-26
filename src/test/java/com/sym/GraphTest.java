@@ -8,8 +8,6 @@ import com.sym.structure.string.impl.String;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
-import java.util.List;
-
 /**
  * 图的测试类
  *
@@ -21,7 +19,7 @@ public class GraphTest {
 
     @Test
     public void baseTest() {
-        IGraph<Integer, Integer> graph = new LinkedListGraph<>();
+        IGraph<Integer, Integer> graph = new LinkedListGraph<>(WeightHandlers.INTEGER_HANDLER);
         graph.addEdge(10, 20, 1);
         graph.addEdge(10, 30, 2);
         graph.addEdge(40, 50, 4);
@@ -37,8 +35,8 @@ public class GraphTest {
     }
 
     @Test
-    public void bfsTest(){
-        IAdvancedGraph<String, Integer> graph = new LinkedListGraph<>();
+    public void bfsTest() {
+        IAdvancedGraph<String, Integer> graph = new LinkedListGraph<>(WeightHandlers.INTEGER_HANDLER);
         graph.addEdge(new String("V1"), new String("V0"), 9);
         graph.addEdge(new String("V1"), new String("V2"), 3);
         graph.addEdge(new String("V2"), new String("V0"), 2);
@@ -49,8 +47,8 @@ public class GraphTest {
     }
 
     @Test
-    public void dfsTest(){
-        IAdvancedGraph<Integer, Void> graph = new UndirectedListGraph<>();
+    public void dfsTest() {
+        IAdvancedGraph<Integer, Void> graph = new UndirectedListGraph<>(WeightHandlers.VOID_HANDLER);
         graph.addEdge(1, 0);
         graph.addEdge(1, 3);
         graph.addEdge(1, 2);
@@ -62,8 +60,8 @@ public class GraphTest {
     }
 
     @Test
-    public void primTest(){
-        IAdvancedGraph<java.lang.String, Integer> graph = new UndirectedListGraph<>();
+    public void primTest() {
+        IAdvancedGraph<java.lang.String, Integer> graph = new UndirectedListGraph<>(WeightHandlers.INTEGER_HANDLER);
         graph.addEdge("A", "B", 17);
         graph.addEdge("A", "E", 16);
         graph.addEdge("A", "F", 1);
@@ -78,9 +76,9 @@ public class GraphTest {
     }
 
     @Test
-    public void kruskalTest(){
+    public void kruskalTest() {
         IAdvancedGraph<java.lang.String, Integer> graph =
-                new UndirectedListGraph<>(new LinkedListGraph.Kruskal<>(), new LinkedListGraph.Dijkstra<>());
+                new UndirectedListGraph<>(new LinkedListGraph.Kruskal<>(), new LinkedListGraph.Dijkstra<>(), WeightHandlers.INTEGER_HANDLER);
         graph.addEdge("A", "B", 17);
         graph.addEdge("A", "E", 16);
         graph.addEdge("A", "F", 1);
@@ -92,5 +90,84 @@ public class GraphTest {
         graph.addEdge("B", "C", 6);
         graph.addEdge("D", "C", 10);
         graph.mst().forEach(System.out::println);
+    }
+
+    @Test
+    public void dijkstraTest(){
+        IAdvancedGraph<Character, Integer> graph = new LinkedListGraph<>(WeightHandlers.INTEGER_HANDLER);
+        graph.addEdge('A', 'E', 100);
+        graph.addEdge('A', 'D', 30);
+        graph.addEdge('A', 'B', 10);
+        graph.addEdge('B', 'C', 50);
+        graph.addEdge('C', 'E', 10);
+        graph.addEdge('D', 'C', 20);
+        graph.addEdge('D', 'E', 60);
+        graph.shortestPath('A').forEach(System.out::println);
+    }
+
+
+    /**
+     * 边权值比较的工具类
+     */
+    static class WeightHandlers {
+        /**
+         * 整数
+         */
+        public static IGraph.IWeightHandler<Integer> INTEGER_HANDLER = new IGraph.IWeightHandler<Integer>() {
+            @Override
+            public int compare(Integer e1, Integer e2) {
+                return Integer.compare(e1, e2);
+            }
+
+            @Override
+            public Integer add(Integer e1, Integer e2) {
+                return Integer.sum(e1, e2);
+            }
+        };
+
+        /**
+         * 长整数
+         */
+        public static IGraph.IWeightHandler<Long> LONG_HANDLER = new IGraph.IWeightHandler<Long>() {
+            @Override
+            public int compare(Long e1, Long e2) {
+                return Long.compare(e1, e2);
+            }
+
+            @Override
+            public Long add(Long e1, Long e2) {
+                return Long.sum(e1, e2);
+            }
+        };
+
+        /**
+         * 字符串
+         */
+        public static IGraph.IWeightHandler<java.lang.String> STRING_HANDLER = new IGraph.IWeightHandler<java.lang.String>() {
+            @Override
+            public int compare(java.lang.String e1, java.lang.String e2) {
+                return e1.compareTo(e2);
+            }
+
+            @Override
+            public java.lang.String add(java.lang.String e1, java.lang.String e2) {
+                return e1.concat(e2);
+            }
+        };
+
+        /**
+         * 所有类型
+         */
+        public static IGraph.IWeightHandler<Void> VOID_HANDLER = new IGraph.IWeightHandler<Void>() {
+            @Override
+            public int compare(Void e1, Void e2) {
+                return 0;
+            }
+
+            @Override
+            public Void add(Void e1, Void e2) {
+                return null;
+            }
+        };
     }
 }

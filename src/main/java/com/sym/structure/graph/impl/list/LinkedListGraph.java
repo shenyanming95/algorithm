@@ -11,9 +11,10 @@ import com.sym.structure.queue.linked.LinkedQueue;
 import com.sym.structure.stack.IStack;
 import com.sym.structure.stack.linked.LinkedStack;
 import com.sym.structure.unionfind.GenericUnionFind;
+import lombok.Data;
 
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -29,12 +30,12 @@ import java.util.stream.Collectors;
  */
 public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
 
-    public LinkedListGraph() {
-        this(new Prim<>(), new Dijkstra<>(), null);
+    public LinkedListGraph(IWeightHandler<E> weightHandler) {
+        this(new Prim<>(), new Dijkstra<>(), weightHandler);
     }
 
-    public LinkedListGraph(IMstStrategy<V, E> mst, IShortestPathStrategy<V, E> sp, Comparator<E> comparator) {
-        super(mst, sp, comparator);
+    public LinkedListGraph(IMstStrategy<V, E> mst, IShortestPathStrategy<V, E> sp, IWeightHandler<E> weightHandler) {
+        super(mst, sp, weightHandler);
     }
 
     /**
@@ -376,7 +377,8 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
             Set<Vertex<V, E>> visitedVertexSet = newSet();
             visitedVertexSet.add(begin);
             // 通过堆来求得最小边
-            IHeap<Edge<V, E>> minHeap = new BinaryHeap<>(begin.outEdges, IHeap.Type.MIN, (o1, o2) -> graph.edgeCompare(o1.weight, o2.weight));
+            IHeap<Edge<V, E>> minHeap = new BinaryHeap<>(begin.outEdges, IHeap.Type.MIN,
+                    (o1, o2) -> graph.compareWithEdge(o1.weight, o2.weight));
             // 生成树的边数等于原图顶点数减一, 因此这边循环的终止条件就是retList等于顶点数减一
             int vertices = graph.vertices.size() - 1;
             while (!minHeap.isEmpty() || retList.size() < vertices) {
@@ -391,7 +393,8 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
                 // 表示它的对端顶点已经被访问过了
                 visitedVertexSet.add(minEdge.to);
                 // 将被选取到的顶点的出度边也加入到最小堆中, 再下一轮中选择相对最小的边
-                minHeap.addAll(minEdge.to.outEdges.stream().filter(e -> !visitedVertexSet.contains(e.to)).collect(Collectors.toSet()));
+                minHeap.addAll(minEdge.to.outEdges.stream().filter(e ->
+                        !visitedVertexSet.contains(e.to)).collect(Collectors.toSet()));
             }
             return retList;
         }
@@ -416,7 +419,8 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
                 return Collections.emptyList();
             }
             // 用最小堆来比较边的权重大小
-            IHeap<Edge<V, E>> minHeap = new BinaryHeap<>(graph.edges, IHeap.Type.MIN, (o1, o2) -> graph.edgeCompare(o1.weight, o2.weight));
+            IHeap<Edge<V, E>> minHeap = new BinaryHeap<>(graph.edges,
+                    IHeap.Type.MIN, (o1, o2) -> graph.compareWithEdge(o1.weight, o2.weight));
             // 用并查集来判断是否形成环
             GenericUnionFind<Vertex<V, E>> unionFind = new GenericUnionFind<>(graph.vertices.values());
             // 返回值集合
@@ -439,13 +443,122 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
     }
 
     /**
-     * Dijkstra算法
+     * Dijkstra算法, 通过松弛操作来求得单源最短路径
      */
     public static class Dijkstra<V, E> implements IShortestPathStrategy<V, E> {
 
+        @Data
+        private static class Wrapper<V, E> {
+            PathInfo<V, E> pathInfo;
+            Vertex<V, E> vertex;
+
+            static <V, E> Wrapper<V, E> of(PathInfo<V, E> pathInfo, Vertex<V, E> vertex) {
+                Wrapper<V, E> wrapper = new Wrapper<>();
+                wrapper.pathInfo = pathInfo;
+                wrapper.vertex = vertex;
+                return wrapper;
+            }
+        }
+
         @Override
-        public List<IGraph.EdgeInfo<V, E>> shortestPath(IGraph<V, E> graph, V v) {
-            return null;
+        public List<PathInfo<V, E>> shortestPath(IGraph<V, E> param, V v) {
+            if (!(param instanceof LinkedListGraph)) {
+                return Collections.emptyList();
+            }
+            LinkedListGraph<V, E> graph = (LinkedListGraph<V, E>) param;
+            Vertex<V, E> vertex = graph.vertices.get(v);
+            if (Objects.isNull(vertex)) {
+                // 起点不存在
+                return Collections.emptyList();
+            }
+            // 返回值
+            List<PathInfo<V, E>> retList = newList();
+            // Dijkstra算法需要一个路径表来维护起点到其它顶点的距离
+            Map<V, Wrapper<V, E>> pathMap = initPathMap(vertex);
+            // 主要是处理无向图, 用一个Set来保存已经处理过的顶点
+            Set<Vertex<V, E>> visitedSet = newSet(vertex);
+            while (true) {
+                // 选择当前路径表中权值最小的路径
+                Wrapper<V, E> minPath = findMinPath(pathMap, graph);
+                if (Objects.isNull(minPath)) {
+                    break;
+                }
+                // 从路径表中找出最小的路径, 将其加入到返回值中, 然后执行松弛操作
+                retList.add(minPath.pathInfo);
+                // 执行松弛操作
+                relaxation(pathMap, minPath, visitedSet, graph);
+                // 标记此顶点已经被处理过
+                visitedSet.add(minPath.vertex);
+            }
+            return retList;
+        }
+
+        /**
+         * 初始化路径表
+         *
+         * @param vertex 起点
+         * @return 路径表
+         */
+        private Map<V, Wrapper<V, E>> initPathMap(Vertex<V, E> vertex) {
+            Map<V, Wrapper<V, E>> pathMap = newMap();
+            vertex.outEdges.forEach(edge -> {
+                // 取起点的出度边, 依次放入到路径表中
+                PathInfo<V, E> pathInfo = new PathInfo<>(edge.to.value, edge.weight,
+                        Arrays.asList(vertex.value, edge.to.value));
+                pathMap.put(edge.to.value, Wrapper.of(pathInfo, edge.to));
+            });
+            return pathMap;
+        }
+
+        /**
+         * 从路径表中选择当前权值最小的路径
+         *
+         * @param pathMap 路径表
+         * @param graph   图, 用来比较边的大小
+         * @return [顶点, 权值]
+         */
+        private Wrapper<V, E> findMinPath(Map<V, Wrapper<V, E>> pathMap, LinkedListGraph<V, E> graph) {
+            Wrapper<V, E> wrapper = pathMap.values().stream()
+                    .min((o1, o2) -> graph.compareWithEdge(o1.pathInfo.getWeight(), o2.pathInfo.getWeight()))
+                    .orElse(null);
+            if (Objects.nonNull(wrapper)) {
+                // 从路径表中选择最小的路径后, 要将其移除, 避免在下一次循环中又被选择
+                pathMap.remove(wrapper.pathInfo.getTo());
+            }
+            return wrapper;
+        }
+
+        /**
+         * 执行松弛操作
+         *
+         * @param pathMap    路径表
+         * @param minPath    当前确定最短路径的路径
+         * @param visitedSet 已确定最短路径的顶点集
+         * @param graph      图, 用来比较边的大小
+         */
+        private void relaxation(Map<V, Wrapper<V, E>> pathMap, Wrapper<V, E> minPath,
+                                Set<Vertex<V, E>> visitedSet, LinkedListGraph<V, E> graph) {
+            // currentWeight 就是已经可以确定起点到目标顶点的最短路径的权值.
+            E currentWeight = minPath.pathInfo.getWeight();
+            // 对已经确定最短路径的顶点的出度边, 作松弛操作.
+            for (Edge<V, E> edge : minPath.vertex.outEdges) {
+                if (visitedSet.contains(edge.to)) {
+                    // 已经确定最短路径的顶点就不需要再处理
+                    continue;
+                }
+                Wrapper<V, E> old = pathMap.get(edge.to.value);
+                E newWeigh = graph.addWithEdge(currentWeight, edge.weight);
+                /*
+                 * 1.如果路径表中还未记录起点到edge.to的路径, 则为其创建一条新纪录;
+                 * 2.如果原先路径表中已存在起点到edge.to的路径, 就需要比较：当新路径（newWeight）
+                 *   的权值比旧路径（currentWeight）的权值还小, 则用新路径替换旧路径.
+                 */
+                if (Objects.isNull(old) || graph.compareWithEdge(old.pathInfo.getWeight(), newWeigh) > 0) {
+                    PathInfo<V, E> pathInfo = new PathInfo<>(edge.to.value, newWeigh,
+                            newList(minPath.pathInfo.getPaths(), edge.to.value));
+                    pathMap.put(edge.to.value, Wrapper.of(pathInfo, edge.to));
+                }
+            }
         }
     }
 
@@ -455,7 +568,7 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
     public static class BellmanFord<V, E> implements IShortestPathStrategy<V, E> {
 
         @Override
-        public List<IGraph.EdgeInfo<V, E>> shortestPath(IGraph<V, E> graph, V v) {
+        public List<PathInfo<V, E>> shortestPath(IGraph<V, E> graph, V v) {
             return null;
         }
     }

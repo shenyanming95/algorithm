@@ -3,7 +3,6 @@ package com.sym.structure.graph;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 /**
  * 图接口, 定义图的基本操作.
@@ -74,6 +73,32 @@ public interface IGraph<V, E> {
      * @return 总的边数量
      */
     int edgeSize();
+
+    /**
+     * 边权值的管理器, 用于比较边权值和简单边权值运算
+     *
+     * @param <E> 权值类型
+     */
+    interface IWeightHandler<E> {
+
+        /**
+         * 边权重的比较
+         *
+         * @param e1 权值1
+         * @param e2 权值2
+         * @return 比较结果
+         */
+        int compare(E e1, E e2);
+
+        /**
+         * 边权值的相加
+         *
+         * @param e1 权值1
+         * @param e2 权值2
+         * @return 新权值
+         */
+        E add(E e1, E e2);
+    }
 
     /**
      * 对外暴露的描述顶点的信息

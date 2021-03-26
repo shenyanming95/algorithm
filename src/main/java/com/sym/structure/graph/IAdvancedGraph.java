@@ -1,5 +1,7 @@
 package com.sym.structure.graph;
 
+import com.sym.structure.graph.strategy.IShortestPathStrategy;
+
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -44,5 +46,5 @@ public interface IAdvancedGraph<V, E> extends IGraph<V, E> {
      * @param vertex 指定顶点
      * @return 该顶点到不同顶点的最短路径
      */
-    List<EdgeInfo<V, E>> shortestPath(V vertex);
+    List<IShortestPathStrategy.PathInfo<V, E>> shortestPath(V vertex);
 }

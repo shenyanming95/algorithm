@@ -15,16 +15,12 @@ import java.util.Comparator;
 
 public class UndirectedListGraph<V, E> extends LinkedListGraph<V, E> {
 
-    public UndirectedListGraph() {
-        this(new Prim<>(), new Dijkstra<>(), null);
+    public UndirectedListGraph(IWeightHandler<E> weightHandler) {
+        this(new Prim<>(), new Dijkstra<>(), weightHandler);
     }
 
-    public UndirectedListGraph(IMstStrategy<V, E> mst, IShortestPathStrategy<V, E> sp) {
-        this(mst, sp, null);
-    }
-
-    public UndirectedListGraph(IMstStrategy<V, E> mst, IShortestPathStrategy<V, E> sp, Comparator<E> comparator) {
-        super(mst, sp, comparator);
+    public UndirectedListGraph(IMstStrategy<V, E> mst, IShortestPathStrategy<V, E> sp, IWeightHandler<E> weightHandler) {
+        super(mst, sp, weightHandler);
     }
 
     @Override
