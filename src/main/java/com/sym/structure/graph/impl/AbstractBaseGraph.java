@@ -63,6 +63,16 @@ public abstract class AbstractBaseGraph<V, E> implements IGraph<V, E> {
     }
 
     /**
+     * 初始化set集合
+     *
+     * @param <T> 任意类型
+     * @return HashSet
+     */
+    protected static <T> Set<T> newSet(Collection<T> collection) {
+        return new HashSet<>(collection);
+    }
+
+    /**
      * 初始化map映射
      *
      * @param <K> 任意类型
