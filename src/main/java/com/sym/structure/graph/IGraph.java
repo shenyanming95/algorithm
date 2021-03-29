@@ -98,6 +98,13 @@ public interface IGraph<V, E> {
          * @return 新权值
          */
         E add(E e1, E e2);
+
+        /**
+         * 获取边权重类型的初始值
+         *
+         * @return 初始值
+         */
+        E initialValue();
     }
 
     /**

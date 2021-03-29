@@ -13,7 +13,14 @@ import com.sym.structure.stack.linked.LinkedStack;
 import com.sym.structure.unionfind.GenericUnionFind;
 import lombok.Data;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -29,7 +36,8 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
         this(new Prim<>(), new Dijkstra<>(), weightHandler);
     }
 
-    public LinkedListGraph(IMstStrategy<V, E> mst, IShortestPathStrategy<V, E> sp, IWeightHandler<E> weightHandler) {
+    public LinkedListGraph(IMstStrategy<V, E> mst, IShortestPathStrategy<V, E> sp,
+                           IWeightHandler<E> weightHandler) {
         super(mst, sp, weightHandler);
     }
 
@@ -265,7 +273,7 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
     }
 
     /**
-     * 邻接表顶点
+     * 邻接表-顶点
      *
      * @param <V> 顶点值
      * @param <E> 边权重
@@ -304,7 +312,7 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
     }
 
     /**
-     * 邻接表的边
+     * 邻接表-边
      *
      * @param <V> 顶点值
      * @param <E> 边权值
@@ -348,9 +356,6 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
 
     /**
      * Prim算法, 利用切分定理来求得最小生成树
-     *
-     * @param <V> 顶点值
-     * @param <E> 边权值
      */
     public static class Prim<V, E> implements IMstStrategy<V, E> {
 
@@ -395,9 +400,6 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
 
     /**
      * Kruskal算法, 利用最小堆和并查集, 每次从所有边中选取权值最小的作为最小生成树的一部分.
-     *
-     * @param <V> 顶点值
-     * @param <E> 边权值
      */
     public static class Kruskal<V, E> implements IMstStrategy<V, E> {
 
@@ -560,43 +562,27 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
                 return Collections.emptyList();
             }
             LinkedListGraph<V, E> graph = (LinkedListGraph<V, E>) param;
-            Vertex<V, E> vertex = graph.vertices.get(v);
-            if (Objects.isNull(vertex)) {
+            Vertex<V, E> start = graph.vertices.get(v);
+            if (Objects.isNull(start)) {
                 // 起点不存在
                 return Collections.emptyList();
             }
-            // Bellman-Ford算法同样需要维护路径表, 同时将起点的出度边先加入到路径表中
-            Map<Vertex<V, E>, PathInfo<V, E>> pathMap = initPathMap(vertex);
-            // 获取图中的所有边, 并排除掉与起点相关联的边.
-            Set<Edge<V, E>> allEdgeSet = newSet(graph.edges.stream().filter(o ->
-                    !vertex.outEdges.contains(o)).collect(Collectors.toList()));
+            // Bellman-Ford算法同样需要维护路径表, 同时要将起点提前放入
+            Map<Vertex<V, E>, PathInfo<V, E>> pathMap = newMap();
+            pathMap.put(start, new PathInfo<>(start.value, graph.initEdgeWeight(), Collections.singletonList(start.value)));
+            // 获取图中的所有边
+            Set<Edge<V, E>> allEdgeSet = newSet(graph.edges);
             // 至多执行N-1次松弛操作
             for (int i = 0, max = graph.verticesSize() - 1; i < max; i++) {
                 // 对所有边执行松弛操作, 如果松弛结果返回true, 说明当前边可以被剔除,
                 // 就没必要在下次循环中执行松弛.
                 allEdgeSet.removeIf(edge -> relaxation(pathMap, edge, graph));
             }
-            // 如果图中不存在负权环, 那么代码走到这里, allEdgeSet 必定为空
-            if (!allEdgeSet.isEmpty()) {
-                throw new RuntimeException("the graph has negative power ring");
-            }
+            // 校验图中是否存在负权环.
+            checkNegativePowerRing(pathMap, graph.edges, graph);
+            // 去掉起点
+            pathMap.remove(start);
             return new ArrayList<>(pathMap.values());
-        }
-
-        /**
-         * 初始化路径表
-         *
-         * @param vertex 起点
-         * @return 路径表
-         */
-        private Map<Vertex<V, E>, PathInfo<V, E>> initPathMap(Vertex<V, E> vertex) {
-            Map<Vertex<V, E>, PathInfo<V, E>> pathMap = newMap();
-            vertex.outEdges.forEach(edge -> {
-                // 取起点的出度边, 依次放入到路径表中
-                PathInfo<V, E> pathInfo = new PathInfo<>(edge.to.value, edge.weight, Arrays.asList(vertex.value, edge.to.value));
-                pathMap.put(edge.to, pathInfo);
-            });
-            return pathMap;
         }
 
         /**
@@ -612,7 +598,8 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
             PathInfo<V, E> fromPath = pathMap.get(edge.from);
             PathInfo<V, E> toPath = pathMap.get(edge.to);
             if (Objects.isNull(fromPath)) {
-                // 起点的最短路径不存在, 就没办法执行松弛, 此次松弛失败.
+                // 起点不存在无法松弛（这里就是为啥创建路径表的时候需要将起点加入进去的原因）
+                // 不过, 当前松弛失败, 并不代表后面会一直失败, 所以这里需要返回false, 不能剔除当前边.
                 return false;
             }
             // 当前边终点的最短路径为null
@@ -630,8 +617,25 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
                 pathMap.replace(edge.to, newPathInfo(edge.to.value, newWeight, fromPath.getPaths()));
                 return false;
             }
-            // 如果旧路径的权值比新路径还小, 那么新路径的这条边就可以被剔除了, 已经没必要在后面的松弛操作继续比较它.
+            // 唯一可以剔除当前边的情况：如果旧路径的权值比新路径还小, 那么新路径的这条边就可以被剔除了,
+            // 已经没必要在后面的松弛操作继续比较它.
             return true;
+        }
+
+        private void checkNegativePowerRing(Map<Vertex<V, E>, PathInfo<V, E>> pathMap, Set<Edge<V, E>> allEdgeSet,
+                                            LinkedListGraph<V, E> graph) {
+            allEdgeSet.forEach(edge -> {
+                PathInfo<V, E> pathInfo = pathMap.get(edge.to);
+                if (Objects.isNull(pathInfo)) {
+                    return;
+                }
+                // 在经历V-1次松弛后, 如果发现还能找到比路径表中权值还小的新路径, 说明存在负权环
+                E oldWeight = pathInfo.getWeight();
+                E newWeight = graph.addWithEdge(oldWeight, edge.weight);
+                if (graph.compareWithEdge(oldWeight, newWeight) > 0) {
+                    throw new RuntimeException("the graph has negative weight ring");
+                }
+            });
         }
 
         private PathInfo<V, E> newPathInfo(V vertex, E weight, Collection<V> oldPath) {

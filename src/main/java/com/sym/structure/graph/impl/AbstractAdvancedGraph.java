@@ -68,4 +68,11 @@ public abstract class AbstractAdvancedGraph<V, E> extends AbstractBaseGraph<V, E
     protected E addWithEdge(E e1, E e2) {
         return weightHandler.add(e1, e2);
     }
+
+    /**
+     * 边权值初始值
+     */
+    protected E initEdgeWeight(){
+        return weightHandler.initialValue();
+    }
 }

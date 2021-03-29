@@ -136,6 +136,11 @@ public class GraphTest {
             public Integer add(Integer e1, Integer e2) {
                 return Integer.sum(e1, e2);
             }
+
+            @Override
+            public Integer initialValue() {
+                return 0;
+            }
         };
 
         /**
@@ -150,6 +155,11 @@ public class GraphTest {
             @Override
             public Long add(Long e1, Long e2) {
                 return Long.sum(e1, e2);
+            }
+
+            @Override
+            public Long initialValue() {
+                return 0L;
             }
         };
 
@@ -166,6 +176,11 @@ public class GraphTest {
             public java.lang.String add(java.lang.String e1, java.lang.String e2) {
                 return e1.concat(e2);
             }
+
+            @Override
+            public java.lang.String initialValue() {
+                return "";
+            }
         };
 
         /**
@@ -179,6 +194,11 @@ public class GraphTest {
 
             @Override
             public Void add(Void e1, Void e2) {
+                return null;
+            }
+
+            @Override
+            public Void initialValue() {
                 return null;
             }
         };
