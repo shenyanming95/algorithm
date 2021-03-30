@@ -8,7 +8,7 @@ package com.sym.algorithm.question.string;
  * @date 2020/3/26 19:37
  */
 
-public class Question1 {
+public class WildcardString {
 
     public static void main(String[] args) {
         // s = “internationalization"， abbr = "i12iz4n

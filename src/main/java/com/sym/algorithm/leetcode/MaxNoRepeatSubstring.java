@@ -1,4 +1,4 @@
-package com.sym.algorithm.question.leetcode;
+package com.sym.algorithm.leetcode;
 
 import org.apache.commons.lang3.tuple.Pair;
 

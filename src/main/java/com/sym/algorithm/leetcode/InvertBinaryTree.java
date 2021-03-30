@@ -1,4 +1,4 @@
-package com.sym.algorithm.question.leetcode;
+package com.sym.algorithm.leetcode;
 
 /**
  * 翻转一棵二叉树, 即任意一个节点的左右子节点互换位置, 例如：

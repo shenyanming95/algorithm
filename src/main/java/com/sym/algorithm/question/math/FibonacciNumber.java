@@ -10,24 +10,24 @@ import com.sym.util.TimeUtil;
  * @date 2020/3/26 20:52
  */
 
-public class Question5 {
+public class FibonacciNumber {
 
     public static void main(String[] args) {
         // 假设求第45位的斐波那契数
         int i = 45;
         // 递归算法
         TimeUtil.execute("递归算法", () -> {
-            int sum = Question5.getFibonacci0(i);
+            int sum = FibonacciNumber.getFibonacci0(i);
             System.out.println("结果值：" + sum);
         });
         // 循环算法
         TimeUtil.execute("循环算法", () -> {
-            int sum = Question5.getFibonacci1(i);
+            int sum = FibonacciNumber.getFibonacci1(i);
             System.out.println("结果值：" + sum);
         });
         // 特征方程求解
         TimeUtil.execute("特征方程", () -> {
-            int sum = Question5.getFibonacci2(i);
+            int sum = FibonacciNumber.getFibonacci2(i);
             System.out.println("结果值：" + sum);
         });
     }

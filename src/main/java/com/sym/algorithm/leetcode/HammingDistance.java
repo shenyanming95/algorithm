@@ -1,4 +1,4 @@
-package com.sym.algorithm.question.leetcode;
+package com.sym.algorithm.leetcode;
 
 /**
  * 给出两个整数, 计算它们之间的汉明距离(Hamming distance).何为汉明距离？汉明距离是两个字符串对应位置的不同字符的个数,

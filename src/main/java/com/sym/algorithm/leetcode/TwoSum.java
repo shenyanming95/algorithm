@@ -1,4 +1,4 @@
-package com.sym.algorithm.question.leetcode;
+package com.sym.algorithm.leetcode;
 
 import com.sym.util.ArrayUtil;
 

@@ -1,4 +1,4 @@
-package com.sym.algorithm.question.leetcode;
+package com.sym.algorithm.leetcode;
 
 /**
  * 给定两个大小为 m 和 n 的正序（从小到大）数组 nums1 和 nums2,
