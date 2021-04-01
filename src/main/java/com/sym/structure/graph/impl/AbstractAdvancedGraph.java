@@ -5,6 +5,7 @@ import com.sym.structure.graph.strategy.IMstStrategy;
 import com.sym.structure.graph.strategy.IShortestPathStrategy;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -55,6 +56,11 @@ public abstract class AbstractAdvancedGraph<V, E> extends AbstractBaseGraph<V, E
         return shortestPathStrategy.shortestPath(this, vertex);
     }
 
+    @Override
+    public Map<V, List<IShortestPathStrategy.PathInfo<V, E>>> shortestPath() {
+        return shortestPathStrategy.shortestPath(this);
+    }
+
     /**
      * 边权值比较
      */
@@ -72,7 +78,7 @@ public abstract class AbstractAdvancedGraph<V, E> extends AbstractBaseGraph<V, E
     /**
      * 边权值初始值
      */
-    protected E initEdgeWeight(){
+    protected E initEdgeWeight() {
         return weightHandler.initialValue();
     }
 }

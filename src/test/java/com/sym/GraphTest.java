@@ -119,6 +119,23 @@ public class GraphTest {
         graph.shortestPath('A').forEach(System.out::println);
     }
 
+    @Test
+    public void floydTest(){
+        IAdvancedGraph<Character, Integer> graph = new LinkedListGraph<>(new LinkedListGraph.Prim<>(),
+                new LinkedListGraph.Floyd<>(), WeightHandlers.INTEGER_HANDLER);
+        graph.addEdge('A', 'E', 100);
+        graph.addEdge('A', 'D', 30);
+        graph.addEdge('A', 'B', 10);
+        graph.addEdge('B', 'C', 50);
+        graph.addEdge('C', 'E', 10);
+        graph.addEdge('D', 'C', 20);
+        graph.addEdge('D', 'E', 60);
+        graph.shortestPath().forEach((k, v) -> {
+            System.out.println(java.lang.String.format("顶点[%s]：", k));
+            v.forEach(p -> System.out.println("\t" + p));
+        });
+    }
+
     /**
      * 边权值比较的工具类
      */

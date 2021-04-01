@@ -6,7 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -24,7 +26,19 @@ public interface IShortestPathStrategy<V, E> {
      * @param v     指定顶点
      * @return 该节点到其它顶点的最短路径
      */
-    List<PathInfo<V, E>> shortestPath(IGraph<V, E> graph, V v);
+    default List<PathInfo<V, E>> shortestPath(IGraph<V, E> graph, V v) {
+        return Collections.emptyList();
+    }
+
+    /**
+     * 多源最短路径
+     *
+     * @param graph 指定图
+     * @return 所有节点的最短路径
+     */
+    default Map<V, List<PathInfo<V, E>>> shortestPath(IGraph<V, E> graph) {
+        return Collections.emptyMap();
+    }
 
     /**
      * 用于记录最短路径

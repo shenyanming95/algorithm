@@ -11,7 +11,6 @@ import com.sym.structure.queue.linked.LinkedQueue;
 import com.sym.structure.stack.IStack;
 import com.sym.structure.stack.linked.LinkedStack;
 import com.sym.structure.unionfind.GenericUnionFind;
-import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -377,7 +376,8 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
             Set<Vertex<V, E>> visitedVertexSet = newSet();
             visitedVertexSet.add(begin);
             // 通过堆来求得最小边
-            IHeap<Edge<V, E>> minHeap = new BinaryHeap<>(begin.outEdges, IHeap.Type.MIN, (o1, o2) -> graph.compareWithEdge(o1.weight, o2.weight));
+            IHeap<Edge<V, E>> minHeap = new BinaryHeap<>(begin.outEdges, IHeap.Type.MIN,
+                    (o1, o2) -> graph.compareWithEdge(o1.weight, o2.weight));
             // 生成树的边数等于原图顶点数减一, 因此这边循环的终止条件就是retList等于顶点数减一
             int vertices = graph.vertices.size() - 1;
             while (!minHeap.isEmpty() || retList.size() < vertices) {
@@ -414,7 +414,8 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
                 return Collections.emptyList();
             }
             // 用最小堆来比较边的权重大小
-            IHeap<Edge<V, E>> minHeap = new BinaryHeap<>(graph.edges, IHeap.Type.MIN, (o1, o2) -> graph.compareWithEdge(o1.weight, o2.weight));
+            IHeap<Edge<V, E>> minHeap = new BinaryHeap<>(graph.edges, IHeap.Type.MIN,
+                    (o1, o2) -> graph.compareWithEdge(o1.weight, o2.weight));
             // 用并查集来判断是否形成环
             GenericUnionFind<Vertex<V, E>> unionFind = new GenericUnionFind<>(graph.vertices.values());
             // 返回值集合
@@ -441,19 +442,6 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
      */
     public static class Dijkstra<V, E> implements IShortestPathStrategy<V, E> {
 
-        @Data
-        private static class Wrapper<V, E> {
-            PathInfo<V, E> pathInfo;
-            Vertex<V, E> vertex;
-
-            static <V, E> Wrapper<V, E> of(PathInfo<V, E> pathInfo, Vertex<V, E> vertex) {
-                Wrapper<V, E> wrapper = new Wrapper<>();
-                wrapper.pathInfo = pathInfo;
-                wrapper.vertex = vertex;
-                return wrapper;
-            }
-        }
-
         @Override
         public List<PathInfo<V, E>> shortestPath(IGraph<V, E> param, V v) {
             if (!(param instanceof LinkedListGraph)) {
@@ -461,46 +449,29 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
             }
             LinkedListGraph<V, E> graph = (LinkedListGraph<V, E>) param;
             Vertex<V, E> vertex = graph.vertices.get(v);
+            // 起点不存在
             if (Objects.isNull(vertex)) {
-                // 起点不存在
                 return Collections.emptyList();
             }
-            // 返回值
-            List<PathInfo<V, E>> retList = newList();
-            // Dijkstra算法需要一个路径表来维护起点到其它顶点的距离
-            Map<V, Wrapper<V, E>> pathMap = initPathMap(vertex);
-            // 主要是处理无向图, 用一个Set来保存已经处理过的顶点
-            Set<Vertex<V, E>> visitedSet = newSet(vertex);
+            // 返回值,
+            Map<Vertex<V, E>, PathInfo<V, E>> retMap = newMap();
+            // Dijkstra算法需要一个路径表来维护起点到其它顶点的距离, 并且预先将起点加入到路径表中
+            Map<Vertex<V, E>, PathInfo<V, E>> pathMap = newMap();
+            pathMap.put(vertex, new PathInfo<>(vertex.value, graph.initEdgeWeight(), Collections.singletonList(vertex.value)));
             while (true) {
                 // 选择当前路径表中权值最小的路径
-                Wrapper<V, E> minPath = findMinPath(pathMap, graph);
+                Map.Entry<Vertex<V, E>, PathInfo<V, E>> minPath = findMinPath(pathMap, graph);
                 if (Objects.isNull(minPath)) {
                     break;
                 }
                 // 从路径表中找出最小的路径, 将其加入到返回值中, 然后执行松弛操作
-                retList.add(minPath.pathInfo);
+                retMap.put(minPath.getKey(), minPath.getValue());
                 // 执行松弛操作
-                relaxation(pathMap, minPath, visitedSet, graph);
-                // 标记此顶点已经被处理过
-                visitedSet.add(minPath.vertex);
+                relaxation(pathMap, retMap, minPath, graph);
             }
-            return retList;
-        }
-
-        /**
-         * 初始化路径表
-         *
-         * @param vertex 起点
-         * @return 路径表
-         */
-        private Map<V, Wrapper<V, E>> initPathMap(Vertex<V, E> vertex) {
-            Map<V, Wrapper<V, E>> pathMap = newMap();
-            vertex.outEdges.forEach(edge -> {
-                // 取起点的出度边, 依次放入到路径表中
-                PathInfo<V, E> pathInfo = new PathInfo<>(edge.to.value, edge.weight, Arrays.asList(vertex.value, edge.to.value));
-                pathMap.put(edge.to.value, Wrapper.of(pathInfo, edge.to));
-            });
-            return pathMap;
+            // 去除起点
+            retMap.remove(vertex);
+            return new ArrayList<>(retMap.values());
         }
 
         /**
@@ -510,42 +481,45 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
          * @param graph   图, 用来比较边的大小
          * @return [顶点, 权值]
          */
-        private Wrapper<V, E> findMinPath(Map<V, Wrapper<V, E>> pathMap, LinkedListGraph<V, E> graph) {
-            Wrapper<V, E> wrapper = pathMap.values().stream().min((o1, o2) -> graph.compareWithEdge(o1.pathInfo.getWeight(), o2.pathInfo.getWeight())).orElse(null);
-            if (Objects.nonNull(wrapper)) {
+        private Map.Entry<Vertex<V, E>, PathInfo<V, E>> findMinPath(Map<Vertex<V, E>, PathInfo<V, E>> pathMap,
+                                                                    LinkedListGraph<V, E> graph) {
+            Map.Entry<Vertex<V, E>, PathInfo<V, E>> entry = pathMap.entrySet().stream().min((o1, o2) ->
+                    graph.compareWithEdge(o1.getValue().getWeight(), o2.getValue().getWeight())).orElse(null);
+            if (Objects.nonNull(entry)) {
                 // 从路径表中选择最小的路径后, 要将其移除, 避免在下一次循环中又被选择
-                pathMap.remove(wrapper.pathInfo.getTo());
+                pathMap.remove(entry.getKey());
             }
-            return wrapper;
+            return entry;
         }
 
         /**
          * 执行松弛操作
          *
-         * @param pathMap    路径表
-         * @param minPath    当前确定最短路径的路径
-         * @param visitedSet 已确定最短路径的顶点集
-         * @param graph      图, 用来比较边的大小
+         * @param pathMap         路径表
+         * @param selectedPathMap 已确定最短路径的顶点集
+         * @param minPath         当前确定最短路径的路径
+         * @param graph           图, 用来比较边的大小
          */
-        private void relaxation(Map<V, Wrapper<V, E>> pathMap, Wrapper<V, E> minPath, Set<Vertex<V, E>> visitedSet, LinkedListGraph<V, E> graph) {
+        private void relaxation(Map<Vertex<V, E>, PathInfo<V, E>> pathMap, Map<Vertex<V, E>, PathInfo<V, E>> selectedPathMap,
+                                Map.Entry<Vertex<V, E>, PathInfo<V, E>> minPath, LinkedListGraph<V, E> graph) {
             // currentWeight 就是已经可以确定起点到目标顶点的最短路径的权值.
-            E currentWeight = minPath.pathInfo.getWeight();
+            E currentWeight = minPath.getValue().getWeight();
             // 对已经确定最短路径的顶点的出度边, 作松弛操作.
-            for (Edge<V, E> edge : minPath.vertex.outEdges) {
-                if (visitedSet.contains(edge.to)) {
+            for (Edge<V, E> edge : minPath.getKey().outEdges) {
+                if (selectedPathMap.containsKey(edge.to)) {
                     // 已经确定最短路径的顶点就不需要再处理
                     continue;
                 }
-                Wrapper<V, E> old = pathMap.get(edge.to.value);
+                PathInfo<V, E> old = pathMap.get(edge.to);
                 E newWeigh = graph.addWithEdge(currentWeight, edge.weight);
                 /*
                  * 1.如果路径表中还未记录起点到edge.to的路径, 则为其创建一条新纪录;
                  * 2.如果原先路径表中已存在起点到edge.to的路径, 就需要比较：当新路径（newWeight）
                  *   的权值比旧路径（currentWeight）的权值还小, 则用新路径替换旧路径.
                  */
-                if (Objects.isNull(old) || graph.compareWithEdge(old.pathInfo.getWeight(), newWeigh) > 0) {
-                    PathInfo<V, E> pathInfo = new PathInfo<>(edge.to.value, newWeigh, newList(minPath.pathInfo.getPaths(), edge.to.value));
-                    pathMap.put(edge.to.value, Wrapper.of(pathInfo, edge.to));
+                if (Objects.isNull(old) || graph.compareWithEdge(old.getWeight(), newWeigh) > 0) {
+                    PathInfo<V, E> pathInfo = new PathInfo<>(edge.to.value, newWeigh, newList(minPath.getValue().getPaths(), edge.to.value));
+                    pathMap.put(edge.to, pathInfo);
                 }
             }
         }
@@ -647,4 +621,93 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
         }
     }
 
+    /**
+     * Floyd算法, 求得多源最短路径算法
+     */
+    public static class Floyd<V, E> implements IShortestPathStrategy<V, E> {
+
+        @Override
+        public Map<V, List<PathInfo<V, E>>> shortestPath(IGraph<V, E> param) {
+            if (!(param instanceof LinkedListGraph)) {
+                return Collections.emptyMap();
+            }
+            LinkedListGraph<V, E> graph = (LinkedListGraph<V, E>) param;
+            // 获取所有的顶点
+            Collection<Vertex<V, E>> allVertices = graph.vertices.values();
+            // 存储最短路径
+            Map<Vertex<V, E>, Map<Vertex<V, E>, PathInfo<V, E>>> pathMap = newMap();
+            // Floyd算法的核心就是三层循环, 每个顶点依次作为i、j、k求得最短路径
+            for (Vertex<V, E> k : allVertices) {
+                for (Vertex<V, E> i : allVertices) {
+                    for (Vertex<V, E> j : allVertices) {
+                        //同个节点不需要比较
+                        if (k.equals(i) || i.equals(j) || j.equals(k)) continue;
+
+                        // i → k的最短路径
+                        PathInfo<V, E> p1 = getWeight(i, k, pathMap);
+                        if (Objects.isNull(p1)) continue;
+
+                        // k → j的最短路径
+                        PathInfo<V, E> p2 = getWeight(k, j, pathMap);
+                        if (Objects.isNull(p2)) continue;
+
+                        // i → j的最短路径
+                        PathInfo<V, E> p3 = getWeight(i, j, pathMap);
+
+                        E newWeight = graph.addWithEdge(p1.getWeight(), p2.getWeight());
+                        if (Objects.isNull(p3)) {
+                            // 若 i → j 没有最短路径, 那么此时 (i → k) + (k → j) 就是 i → j 的最短路径
+                            Map<Vertex<V, E>, PathInfo<V, E>> map = pathMap.computeIfAbsent(i, o -> newMap());
+                            map.put(j, new PathInfo<>(j.value, newWeight, newPathList(p1, p2)));
+                            pathMap.put(i, map);
+                            continue;
+                        }
+                        // 若 i → j 存在最短路径, 比较哪个路径比较短
+                        if (graph.compareWithEdge(newWeight, p3.getWeight()) < 0) {
+                            p3.setWeight(newWeight);
+                            p3.setPaths(newPathList(p1, p2));
+                        }
+                    }
+                }
+            }
+            // 转换成返回值类型
+            return pathMap.entrySet().stream().collect(Collectors.toMap(
+                    v -> v.getKey().value,
+                    e -> new ArrayList<>(e.getValue().values())));
+        }
+
+        /**
+         * 计算 start → end 的权值
+         *
+         * @param start   起点
+         * @param end     终点
+         * @param pathMap 路径表
+         * @return 权值
+         */
+        private PathInfo<V, E> getWeight(Vertex<V, E> start, Vertex<V, E> end,
+                                         Map<Vertex<V, E>, Map<Vertex<V, E>, PathInfo<V, E>>> pathMap) {
+            // 如果路径表中不存在起点, 则将起点所有出度边加入到路径表中.
+            Map<Vertex<V, E>, PathInfo<V, E>> paths = pathMap.computeIfAbsent(start,
+                    v -> v.outEdges.stream().collect(Collectors.toMap(
+                            e -> e.to,
+                            e -> new PathInfo<>(e.to.value, e.weight, Arrays.asList(start.value, e.to.value))))
+            );
+            return paths.get(end);
+        }
+
+        /**
+         * 将两条路径融合成一条路径
+         *
+         * @param p1 路径1
+         * @param p2 路径2
+         * @return 新路径
+         */
+        private List<V> newPathList(PathInfo<V, E> p1, PathInfo<V, E> p2) {
+            List<V> pathList = newList();
+            pathList.addAll(p1.getPaths());
+            // 去除p2的第一个路径元素
+            pathList.addAll(p2.getPaths().stream().skip(1).collect(Collectors.toList()));
+            return pathList;
+        }
+    }
 }
