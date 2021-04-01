@@ -622,7 +622,8 @@ public class LinkedListGraph<V, E> extends AbstractAdvancedGraph<V, E> {
     }
 
     /**
-     * Floyd算法, 求得多源最短路径算法
+     * Floyd算法, 对于每个顶点K, 计算dist(i,j)=min(dist(i,j), dist(i,k) + dist(k,j)),
+     * 通过动态规划的思想, 求任意两个顶点之间的最短路径, 因此称为多源最短路径算法.
      */
     public static class Floyd<V, E> implements IShortestPathStrategy<V, E> {
 

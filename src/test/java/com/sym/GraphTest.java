@@ -123,13 +123,15 @@ public class GraphTest {
     public void floydTest(){
         IAdvancedGraph<Character, Integer> graph = new LinkedListGraph<>(new LinkedListGraph.Prim<>(),
                 new LinkedListGraph.Floyd<>(), WeightHandlers.INTEGER_HANDLER);
-        graph.addEdge('A', 'E', 100);
-        graph.addEdge('A', 'D', 30);
-        graph.addEdge('A', 'B', 10);
-        graph.addEdge('B', 'C', 50);
-        graph.addEdge('C', 'E', 10);
-        graph.addEdge('D', 'C', 20);
-        graph.addEdge('D', 'E', 60);
+        graph.addEdge('B', 'E', 2);
+        graph.addEdge('D', 'B', 1);
+        graph.addEdge('B', 'D', 3);
+        graph.addEdge('A', 'B', -1);
+        graph.addEdge('A', 'C', 4);
+        graph.addEdge('D', 'C', 5);
+        graph.addEdge('B', 'C', 3);
+        graph.addEdge('E', 'D', -3);
+
         graph.shortestPath().forEach((k, v) -> {
             System.out.println(java.lang.String.format("顶点[%s]：", k));
             v.forEach(p -> System.out.println("\t" + p));
