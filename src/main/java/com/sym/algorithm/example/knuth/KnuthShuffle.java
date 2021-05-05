@@ -1,4 +1,4 @@
-package com.sym.algorithm.knuth;
+package com.sym.algorithm.example.knuth;
 
 import java.security.SecureRandom;
 import java.util.Arrays;

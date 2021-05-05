@@ -1,6 +1,6 @@
-package com.sym.algorithm.sort.impl;
+package com.sym.algorithm.example.sort.impl;
 
-import com.sym.algorithm.sort.AbstractIntegerSort;
+import com.sym.algorithm.example.sort.AbstractIntegerSort;
 import com.sym.util.ArrayUtil;
 
 /**

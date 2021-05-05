@@ -1,8 +1,8 @@
 package com.sym;
 
-import com.sym.algorithm.sort.AbstractIntegerSort;
-import com.sym.algorithm.sort.ISort;
-import com.sym.algorithm.sort.impl.*;
+import com.sym.algorithm.example.sort.AbstractIntegerSort;
+import com.sym.algorithm.example.sort.ISort;
+import com.sym.algorithm.example.sort.impl.*;
 import com.sym.util.ArrayUtil;
 import org.junit.Before;
 import org.junit.Test;

@@ -1,4 +1,4 @@
-package com.sym.algorithm.cache;
+package com.sym.algorithm.example.cache;
 
 /**
  * 缓存接口

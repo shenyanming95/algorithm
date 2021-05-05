@@ -1,4 +1,4 @@
-package com.sym.algorithm.sort;
+package com.sym.algorithm.example.sort;
 
 import java.math.BigDecimal;
 import java.util.Arrays;

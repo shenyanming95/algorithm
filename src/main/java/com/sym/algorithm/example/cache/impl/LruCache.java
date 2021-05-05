@@ -1,6 +1,6 @@
-package com.sym.algorithm.cache.impl;
+package com.sym.algorithm.example.cache.impl;
 
-import com.sym.algorithm.cache.ICache;
+import com.sym.algorithm.example.cache.ICache;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

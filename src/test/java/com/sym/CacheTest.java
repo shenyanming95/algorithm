@@ -1,6 +1,6 @@
 package com.sym;
 
-import com.sym.algorithm.cache.impl.LruCache;
+import com.sym.algorithm.example.cache.impl.LruCache;
 import org.junit.Test;
 
 /**

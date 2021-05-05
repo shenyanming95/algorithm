@@ -1,4 +1,4 @@
-package com.sym.algorithm.snowflake;
+package com.sym.algorithm.example.snowflake;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;

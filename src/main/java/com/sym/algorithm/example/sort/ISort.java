@@ -1,4 +1,4 @@
-package com.sym.algorithm.sort;
+package com.sym.algorithm.example.sort;
 
 /**
  * 排序接口
