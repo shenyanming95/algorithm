@@ -1,5 +1,8 @@
 package com.sym.algorithm.thought.backtrack;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 回溯算法思想：
  * <pre>
@@ -26,7 +29,8 @@ public class EightQueens {
 
     public static void main(String[] args) {
         int n = 8;
-        new BoardV1(n).run();
+        // new BoardV1(n).run();
+        new BoardV2(n).run();
     }
 
 
@@ -126,24 +130,85 @@ public class EightQueens {
         private int n;
 
         /**
-         * N皇后多少种摆法
-         */
-        private int ways;
-
-        /**
          * 棋盘
          */
         private int[][] board;
 
-        BoardV2(int n){
+        /**
+         * 摆放结果快照
+         */
+        private List<String> resultList;
+
+        BoardV2(int n) {
             this.n = n;
             this.board = new int[n][n];
+            this.resultList = new ArrayList<>();
         }
 
 
         @Override
         public void run() {
+            place(0);
+            resultList.forEach(System.out::println);
+            System.out.printf("%d皇后共有%d种摆法", n, resultList.size());
+        }
 
+        private void place(int row) {
+            if (row == n) {
+                // 满足结束条件
+                saveResult();
+                return;
+            }
+            for (int col = 0; col < n; col++) {
+                // 当前列没办法摆放, 选择另一条列
+                if (!isValid(row, col)) {
+                    continue;
+                }
+                // 做选择
+                board[row][col] = 1;
+                // 进入下一行选择
+                place(row + 1);
+                // 撤销选择
+                board[row][col] = 0;
+            }
+        }
+
+        private boolean isValid(int row, int col) {
+            // 判断列是否有冲突
+            for (int i = 0; i < row; i++) {
+                if (board[i][col] == 1) {
+                    return false;
+                }
+            }
+
+            // 判断左上方斜线是否有冲突
+            for (int i = row - 1, j = col - 1; i >= 0 && j >= 0; i--, j--) {
+                if (board[i][j] == 1) {
+                    return false;
+                }
+            }
+
+            // 判断右上方斜线是否有冲突
+            for (int i = row - 1, j = col + 1; i >= 0 && j < n; i--, j++) {
+                if (board[i][j] == 1)
+                    return false;
+            }
+
+            return true;
+        }
+
+        /**
+         * 类似数组快照, 保存摆放位置
+         */
+        private void saveResult() {
+            StringBuilder sb = new StringBuilder();
+            for (int row = 0; row < n; row++) {
+                for (int col = 0; col < n; col++) {
+                    sb.append(board[row][col]).append(" ");
+                }
+                sb.append("\n");
+            }
+            resultList.add(sb.toString());
         }
     }
 
