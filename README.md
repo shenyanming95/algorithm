@@ -1,11 +1,8 @@
 #数据结构与算法(Java描述)
 #### Algorithm
-- cache：缓存算法
-- knuth：洗牌算法
+- 算法实例：缓存算法、洗牌算法、雪花算法、排序算法
 - leetcode：算法题
-- question：常见问题
-- snowflake：雪花算法
-- sort：排序算法
+- 算法思想：递归、回溯、分治、贪心、动态规划
 #### Data Structure
 - 数组、稀疏数组
 - 布隆过滤器
