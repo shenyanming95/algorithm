@@ -15,7 +15,8 @@ public class LongestCommonSubsequence {
     public static void main(String[] args) {
         int[] num1 = {1, 2, 3, 4};
         int[] num2 = {5, 3, 7, 8};
-        System.out.println(lengthOfLcs(num1, num2));
+        System.out.println(lengthOfLcsV1(num1, num2));
+        System.out.println(lengthOfLcsV2(num1, num2));
     }
 
     /**
@@ -30,7 +31,7 @@ public class LongestCommonSubsequence {
      * @param nums2 序列2
      * @return 最大公共子序列
      */
-    private static int lengthOfLcs(int[] nums1, int[] nums2) {
+    private static int lengthOfLcsV1(int[] nums1, int[] nums2) {
         int[][] dp = new int[nums1.length + 1][nums2.length + 1];
         for (int i = 1; i <= nums1.length; i++) {
             for (int j = 1; j <= nums2.length; j++) {
@@ -42,5 +43,31 @@ public class LongestCommonSubsequence {
             }
         }
         return dp[nums1.length][nums2.length];
+    }
+
+    /**
+     * 通过动态规划{@link #lengthOfLcsV1(int[], int[])}可以求解最大公共子序列的值,
+     * 但实际上发生每求得新一行数据, 都只需要借助前一行数据, 所以可以节省空间不需要初始
+     * 化i行j列的数组.
+     *
+     * @param nums1 序列1
+     * @param nums2 序列2
+     * @return 最大公共子序列
+     */
+    private static int lengthOfLcsV2(int[] nums1, int[] nums2){
+        int[][] dp = new int[2][nums2.length + 1];
+        for (int i = 1; i <= nums1.length; i++) {
+            // 分别对2求余, 以确定它们存放在dp数组的哪一行上, 又因为对2求余实际上等同于和1进行与运算.
+            int row = i & 1;
+            int prevRow = (i - 1) & 1;
+            for (int j = 1; j <= nums2.length; j++) {
+                if (nums1[i - 1] == nums2[j - 1]) {
+                    dp[row][j] = dp[prevRow][j - 1] + 1;
+                } else {
+                    dp[row][j] = Math.max(dp[prevRow][j], dp[row][j - 1]);
+                }
+            }
+        }
+        return dp[nums1.length & 1][nums2.length];
     }
 }
