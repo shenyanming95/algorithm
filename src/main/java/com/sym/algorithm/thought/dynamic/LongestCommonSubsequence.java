@@ -13,10 +13,11 @@ package com.sym.algorithm.thought.dynamic;
 public class LongestCommonSubsequence {
 
     public static void main(String[] args) {
-        int[] num1 = {1, 2, 3, 4};
-        int[] num2 = {5, 3, 7, 8};
+        int[] num1 = {1, 3, 5, 9, 10};
+        int[] num2 = {1, 4, 9, 10};
         System.out.println(lengthOfLcsV1(num1, num2));
         System.out.println(lengthOfLcsV2(num1, num2));
+        System.out.println(lengthOfLcsV3(num1, num2));
     }
 
     /**
@@ -69,5 +70,36 @@ public class LongestCommonSubsequence {
             }
         }
         return dp[nums1.length & 1][nums2.length];
+    }
+
+    /**
+     * 通过{@link #lengthOfLcsV2(int[], int[])}可以将空间利用到两行多列的<b>滚动数组</b>,
+     * 但实际上, 每次计算当前行dp[i][j]只需要用到前一行数据, 之所以要用两行的滚动数组, 是因为要
+     * 存储新计算得到的当前行dp[i][j], 以便在求解下一行数据用到.
+     *
+     * 因此还可以继续对其优化, 将二维数组压缩成一维数组, 当前行新计算的结果覆盖掉原先一维dp数组的值,
+     * 所以呢, nums1[i] == nums2[j], 则dp[i]=dp[i-1]+1; 而nums1[i]!=nums2[j], 那么dp[i]
+     * = max{dp[i-1],dp[i]}, 其中dp[i]是上一行计算好的值, 则dp[i-1]是当前行计算好的值, 但是呢
+     * 上一行<b>i-1</b>这个位置的值已经被覆盖掉, 所以我们必须开辟一个变量用来存储上一行<b>i-1</b>这个位置的值.
+     *
+     * @param nums1 序列1
+     * @param nums2 序列2
+     * @return 最大公共子序列
+     */
+    private static int lengthOfLcsV3(int[] nums1, int[] nums2){
+        int[] dp = new int[nums2.length + 1];
+        for (int i = 1; i <= nums1.length; i++) {
+            int cur = 0;
+            for (int j = 1; j <= nums2.length; j++) {
+                int leftTop = cur;
+                cur = dp[j];
+                if (nums1[i - 1] == nums2[j - 1]) {
+                    dp[j] = leftTop + 1;
+                } else {
+                    dp[j] = Math.max(dp[j - 1], dp[j]);
+                }
+            }
+        }
+        return dp[nums2.length];
     }
 }
