@@ -112,7 +112,7 @@ public class HashMap<K, V> implements IMap<K, V> {
     /**
      * 默认容量
      */
-    private final static int DEFAULT_CAPACITY = 1 >> 4;
+    private final static int DEFAULT_CAPACITY = 1 << 4;
 
     /**
      * 最大容量

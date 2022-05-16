@@ -1,6 +1,7 @@
 package com.sym;
 
 import com.sym.structure.map.IMap;
+import com.sym.structure.map.hash.HashMap;
 import com.sym.structure.map.tree.TreeMap;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -44,5 +45,19 @@ public class MapTest {
         map.remove("rrr");
         log.info("remove: {}", map.size());
         log.info("TreeMap遍历: {}", map);
+    }
+
+    @Test
+    public void hashMapTest(){
+        IMap<String, Integer> map = new HashMap<>();
+        log.info("map.size:{}", map.size());
+        map.put("11", 11);
+        map.put("22", 22);
+        map.put("33", 22);
+        log.info("map.size:{}", map.size());
+        Integer i1 = map.get("11");
+        log.info("mao.get key:11={}", i1);
+        Integer i2 = map.get("44");
+        log.info("mao.get key:44={}", i2);
     }
 }
