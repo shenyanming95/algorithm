@@ -1,4 +1,7 @@
-#数据结构与算法(Java描述)
+# 数据结构与算法
+
+![](./src/main/resources/logo.jpeg)
+
 #### Algorithm
 - 算法实例：缓存算法、洗牌算法、雪花算法、排序算法
 - leetcode：算法题
@@ -15,5 +18,3 @@
 - 字符串(模式匹配算法)
 - 二叉搜索树、AVL树、红黑树、字典树
 - 并查集
-
-![](./src/main/resources/algorithm.jpg)
