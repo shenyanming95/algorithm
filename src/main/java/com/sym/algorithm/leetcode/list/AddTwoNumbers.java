@@ -1,18 +1,16 @@
-package com.sym.algorithm.leetcode;
+package com.sym.algorithm.leetcode.list;
 
 /**
  * 给出两个非空的链表用来表示两个非负的整数。其中，它们各自的位数是按照逆序的方式存储的，并且
  * 它们的每个节点只能存储 一位 数字。如果将这两个数相加起来，则会返回一个新的链表来表示它们的和.
  * 可以假设除了数字 0 之外，这两个数都不会以 0 开头。
  * 例如：输入：(2 -> 4 -> 3) + (5 -> 6 -> 4)
- *      输出：7 -> 0 -> 8
- *      原因：342 + 465 = 807
- * 注意：要考虑 int 类型的溢出, 所以不能简单地进行加减
- *
- * 来源：力扣（LeetCode）
- * 链接：https://leetcode-cn.com/problems/add-two-numbers
+ * 输出：7 -> 0 -> 8
+ * 原因：342 + 465 = 807
+ * 注意：要考虑 int 类型的溢出, 所以不能简单地进行加减.
  *
  * @author shenyanming
+ * {@link <a href="https://leetcode-cn.com/problems/add-two-numbers">两数相加</a>}
  * Created on 2020/5/13 08:38
  */
 public class AddTwoNumbers {
@@ -51,17 +49,18 @@ public class AddTwoNumbers {
 
     /**
      * 解题思路就是类似手算加减乘除一样, 按位就算, 最大的数也就 9 + 9 + 1 = 19
-     * @param first 链表1
+     *
+     * @param first  链表1
      * @param second 链表2
      * @return 相加后的链表
      */
-    public static ListNode addTwoNumbers(ListNode first, ListNode second){
+    public static ListNode addTwoNumbers(ListNode first, ListNode second) {
         ListNode resultNode = null;
         ListNode currentNode = null;
         ListNode n1 = first;
         ListNode n2 = second;
         int carry = 0;
-        while(n1 != null || n2 != null){
+        while (n1 != null || n2 != null) {
             int v1 = n1 == null ? 0 : n1.val;
             int v2 = n2 == null ? 0 : n2.val;
             int sum = v1 + v2 + carry;
@@ -71,32 +70,32 @@ public class AddTwoNumbers {
             int val = (sum % 10);
 
             // 创建节点
-            if(null == resultNode){
+            if (null == resultNode) {
                 resultNode = new ListNode(val);
                 currentNode = resultNode;
-            }else{
+            } else {
                 currentNode.next = new ListNode(val);
                 currentNode = currentNode.next;
             }
-            if(n1 != null){
+            if (n1 != null) {
                 n1 = n1.next;
             }
-            if(n2 != null){
+            if (n2 != null) {
                 n2 = n2.next;
             }
         }
         return resultNode;
     }
 
-    public static ListNode initList(String numberString){
+    public static ListNode initList(String numberString) {
         ListNode resultNode = null;
         ListNode currentNode = null;
-        for(String number : numberString.split(",")){
+        for (String number : numberString.split(",")) {
             int n = Integer.parseInt(number);
-            if(null == resultNode){
+            if (null == resultNode) {
                 resultNode = new ListNode(n);
                 currentNode = resultNode;
-            }else{
+            } else {
                 currentNode.next = new ListNode(n);
                 currentNode = currentNode.next;
             }

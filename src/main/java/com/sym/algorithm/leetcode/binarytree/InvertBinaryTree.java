@@ -1,7 +1,8 @@
-package com.sym.algorithm.leetcode;
+package com.sym.algorithm.leetcode.binarytree;
 
 /**
  * 翻转一棵二叉树, 即任意一个节点的左右子节点互换位置, 例如：
+ * <pre>
  * 输入：
  *      4
  *    /   \
@@ -15,11 +16,10 @@ package com.sym.algorithm.leetcode;
  *   7     2
  *  / \   / \
  * 9   6 3   1
- *
- * 来源：力扣（LeetCode）
- * 链接：https://leetcode-cn.com/problems/invert-binary-tree
+ * </pre>
  *
  * @author shenyanming
+ * {@link <a href="https://leetcode-cn.com/problems/invert-binary-tree">翻转二叉树</a>}
  * Created on 2020/5/31 20:59
  */
 public class InvertBinaryTree {
@@ -32,8 +32,8 @@ public class InvertBinaryTree {
      * 每个节点都要互换左右子节点, 则需要对二叉树进行遍历, 就可以需要前序遍历、中序遍历、后序遍历和层次遍历
      * 都可以， 但要注意子节点互换后, 进行递归的时候子节点的取值方向
      */
-    private static TreeNode invertBinaryTree(TreeNode root){
-        if(root == null){
+    private static TreeNode invertBinaryTree(TreeNode root) {
+        if (root == null) {
             return null;
         }
         TreeNode temp = root.left;
@@ -48,10 +48,13 @@ public class InvertBinaryTree {
      * 二叉树节点
      */
     static class TreeNode {
-      int val;
-      TreeNode left;
-      TreeNode right;
-      TreeNode(int x) { val = x; }
+        int val;
+        TreeNode left;
+        TreeNode right;
+
+        TreeNode(int x) {
+            val = x;
+        }
     }
 
 
